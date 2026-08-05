@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<!-- index.html & product.html -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAWZ | Store</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Utilisation du même chemin que la navbar -->
+  <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+
+  <!-- BANNIÈRE D'ANNONCE DÉFILANTE -->
+  <div class="marquee-banner">
+    <div class="marquee-content">
+      <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
+      <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
+      <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- En-tête / Navigation -->
+  <header class="navbar">
+  <div class="nav-container">
+    <!-- BOUTON BURGER -->
+    <button class="burger-btn" id="burger-toggle" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <a href="index.html" class="brand-logo">
+      <img src="images/logo.png" alt="RAWZ Logo" class="logo-img">
+    </a>
+
+    <div class="nav-controls">
+      <input type="text" placeholder="Rechercher..." class="search-bar">
+      <button id="theme-toggle-btn" class="theme-btn" title="Changer le thème">🌙</button>
+      <button id="cart-toggle-btn" class="cart-btn">
+        Panier <span id="cart-badge" class="badge">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MENU LATÉRAL -->
+<div class="menu-overlay" id="menu-overlay"></div>
+<aside class="menu-drawer" id="menu-drawer">
+  <div class="menu-header">
+    <h2>Menu</h2>
+    <button class="close-btn" id="close-menu">&times;</button>
+  </div>
+  <ul class="menu-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="#catalog" class="menu-filter-link" data-category="chemise">Chemises</a></li>
+    <li><a href="#catalog" class="menu-filter-link" data-category="polo">Polos</a></li>
+    <li><a href="#catalog" class="menu-filter-link" data-category="t-shirt">T-shirts</a></li>
+  </ul>
+</aside>
+
+<!-- Section Hero avec image en arrière-plan -->
+<section class="hero-banner">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>NOUVELLE COLLECTION ÉTÉ 2026</h1>
+    <p>Des vêtements épurés, durables et confectionnés avec soin.</p>
+    <a href="#catalog" class="cta-btn">Découvrir le catalogue</a>
+  </div>
+</section>
+
+<!-- Section Catalogue & Filtres -->
+<main class="catalog-container" id="catalog">
+  <div class="filters-bar">
+    <div class="categories">
+      <button class="filter-btn active" data-category="all">Tous</button>
+      <button class="filter-btn" data-category="chemise">Chemise</button>
+      <button class="filter-btn" data-category="polo">Polo</button>
+      <button class="filter-btn" data-category="t-shirt">T-shirts</button> <!-- Corrigé en "t-shirt" -->
+    </div>
+    <div class="sorting">
+      <select id="sort-select" class="sort-dropdown">
+        <option value="default">Trier par...</option>
+        <option value="price-asc">Prix : croissant</option>
+        <option value="price-desc">Prix : décroissant</option>
+      </select>
+    </div>
+  </div>
+  
+  <div id="product-grid" class="product-grid"></div>
+</main>
+
+    <!-- Grille des produits -->
+    <div id="product-grid" class="product-grid"></div>
+  </main>
+
+  <!-- Drawer Panier -->
+  <aside id="cart-drawer" class="cart-drawer">
+    <div class="cart-header">
+      <h2>Mon Panier</h2>
+      <button id="close-cart-btn" class="close-btn">&times;</button>
+    </div>
+    <div id="cart-items" class="cart-items-container"></div>
+    
+    <div class="cart-footer">
+      <div class="promo-box">
+        <input type="text" id="promo-input" placeholder="Code promo" class="promo-input">
+        <button id="apply-promo-btn" class="promo-btn">Appliquer</button>
+      </div>
+      <p id="promo-msg" class="promo-message"></p>
+
+      <div class="cart-total">
+        <span>Total :</span>
+        <span id="cart-total-price">0,00 €</span>
+      </div>
+      <button onclick="openCheckoutModal()" class="checkout-btn">Commander</button>
+    </div>
+  </aside>
+  <div id="cart-overlay" class="cart-overlay"></div>
+
+  <!-- MODALE FORMULAIRE DE COMMANDE -->
+  <div id="checkout-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button id="close-modal-btn" class="modal-close">&times;</button>
+      <h2>Informations de livraison</h2>
+      <form id="checkout-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-firstname">Prénom *</label>
+            <input type="text" id="client-firstname" required placeholder="Jean">
+          </div>
+          <div class="form-group">
+            <label for="client-lastname">Nom *</label>
+            <input type="text" id="client-lastname" required placeholder="Dupont">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-email">E-mail *</label>
+            <input type="email" id="client-email" required placeholder="jean.dupont@email.com">
+          </div>
+          <div class="form-group">
+            <label for="client-phone">Téléphone *</label>
+            <input type="tel" id="client-phone" required placeholder="06 12 34 56 78">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="client-address">Adresse *</label>
+          <input type="text" id="client-address" required placeholder="12 rue des Fleurs">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-zipcode">Code postal *</label>
+            <input type="text" id="client-zipcode" required placeholder="75001">
+          </div>
+          <div class="form-group">
+            <label for="client-city">Ville *</label>
+            <input type="text" id="client-city" required placeholder="Paris">
+          </div>
+        </div>
+        <button type="submit" class="submit-order-btn">Valider et envoyer la commande</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
