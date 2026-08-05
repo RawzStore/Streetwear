@@ -8,7 +8,13 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir"],
     description: "Coupe ample à manches courtes, style vintage à carreaux brodés avec double poche.",
-    mainImage: "images/chemise-devant.jpg"
+    mainImage: "images/chemise-devant.jpg",
+    images: [
+      "images/chemise-devant.jpg",
+      "images/chemise-back.jpg",
+      "images/chemise-zoom-logo-devant.jpg",
+      "images/chemise-zoom-logo-back.jpg"
+    ]
   },
   { 
     id: 2, 
@@ -18,7 +24,25 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir/Blanc", "Noir/Rose", "Blanc/Rouge", "Rouge/Blanc"],
     description: "Col en polyester élastique avec motif à rayures color-block et imprimé typographique.",
-    mainImage: "images/polo-noir-r-blanches.jpg"
+    mainImage: "images/polo-noir-r-blanches.jpg",
+    imagesByColor: {
+      "Noir/Blanc": [
+        "images/polo-noir-r-blanches.jpg",
+        "images/polo-noir-r-blanches-back.jpg"
+      ],
+      "Noir/Rose": [
+        "images/polo-noir-r-roses.jpg",
+        "images/polo-noir-r-roses-back.jpg"
+      ],
+      "Blanc/Rouge": [
+        "images/polo-blanc-r-rouges.jpg",
+        "images/polo-blanc-r-rouges-back.jpg"
+      ],
+      "Rouge/Blanc": [
+        "images/polo-rouge-r-blanches.jpg",
+        "images/polo-rouge-r-blanches-back.jpg"
+      ]
+    }
   },
   { 
     id: 3, 
@@ -28,7 +52,11 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir"],
     description: "Style : Streetwear | Matière : 100 % Coton | Col : Col rabattu | Coupe : Régulière",
-    mainImage: "images/polo-signature.jpg"
+    mainImage: "images/polo-signature.jpg",
+    images: [
+      "images/polo-signature.jpg",
+      "images/polo-signature-zoom.jpg"
+    ]
   },
   { 
     id: 4, 
@@ -38,7 +66,11 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Sable"],
     description: "T-Shirt Tricoté couleur sable / orange / blanc",
-    mainImage: "images/tshirt-tricoté.jpg"
+    mainImage: "images/tshirt-tricoté.jpg",
+    images: [
+      "images/tshirt-tricoté.jpg",
+      "images/tshirt-tricoté-back.jpg"
+    ]
   }
 ];
 
@@ -60,10 +92,6 @@ const applyPromoBtn = document.getElementById('apply-promo-btn');
 const promoMsg = document.getElementById('promo-msg');
 const themeToggleBtn = document.getElementById('theme-toggle-btn');
 
-const checkoutModal = document.getElementById('checkout-modal');
-const closeCheckoutBtn = document.getElementById('close-checkout-btn');
-const checkoutForm = document.getElementById('checkout-form');
-
 // Mode sombre
 if (themeToggleBtn) {
   themeToggleBtn.addEventListener('click', () => {
@@ -74,7 +102,7 @@ if (themeToggleBtn) {
   });
 }
 
-// Rendu catalogue
+// Rendu du catalogue
 function renderProducts(items) {
   const productGrid = document.getElementById('product-grid');
   if (!productGrid) return;
@@ -88,6 +116,7 @@ function renderProducts(items) {
   items.forEach(product => {
     const card = document.createElement('article');
     card.className = 'product-card';
+
     card.innerHTML = `
       <a href="product.html?id=${product.id}" class="product-card-link">
         <div class="img-wrapper">
@@ -103,7 +132,7 @@ function renderProducts(items) {
   });
 }
 
-// Sauvegarde et affichage du panier
+// Sauvegarde et mise à jour de l'affichage du panier
 window.saveCart = function() {
   localStorage.setItem('cart', JSON.stringify(window.cart));
 };
@@ -142,7 +171,7 @@ window.updateCartUI = function() {
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
 };
 
-// Modification quantités
+// Modification des quantités et suppression
 window.changeQuantity = function(cartItemKey, delta) {
   const item = window.cart.find(i => i.key === cartItemKey);
   if (!item) return;
@@ -162,7 +191,7 @@ window.removeFromCart = function(cartItemKey) {
   window.updateCartUI();
 };
 
-// Drawer Panier
+// Drawer Panier (Ouverture / Fermeture)
 function openCart() {
   if (cartDrawer && cartOverlay) {
     cartDrawer.classList.add('open');
@@ -198,11 +227,15 @@ if (applyPromoBtn) {
   });
 }
 
-// Filtres et Recherche
+// Recherche & Filtres
 const searchInput = document.getElementById('search-input');
 const sortSelect = document.getElementById('sort-select');
 
 if (searchInput) {
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') e.preventDefault();
+  });
+
   searchInput.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     renderProducts(products.filter(p => p.name.toLowerCase().includes(term)));
@@ -227,40 +260,44 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
-// Gestion de la modale de commande
-function sendOrderEmail() {
+// Initialisation au chargement
+document.addEventListener('DOMContentLoaded', () => {
+  renderProducts(products);
+  window.updateCartUI();
+});
+
+// Envoi de la commande par Formspree
+async function sendOrderEmail() {
   if (window.cart.length === 0) {
     alert("Ton panier est vide !");
     return;
   }
-  if (checkoutModal) checkoutModal.classList.add('active');
-}
 
-if (closeCheckoutBtn) {
-  closeCheckoutBtn.addEventListener('click', () => {
-    checkoutModal.classList.remove('active');
-  });
-}
+  const nom = prompt("Ton Nom :");
+  if (!nom) return;
 
-// Soumission du formulaire
-if (checkoutForm) {
-  checkoutForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  const prenom = prompt("Ton Prénom :");
+  if (!prenom) return;
 
-    const nom = document.getElementById('client-nom').value;
-    const prenom = document.getElementById('client-prenom').value;
-    const email = document.getElementById('client-email').value;
-    const telephone = document.getElementById('client-tel').value;
-    const adresse = document.getElementById('client-adresse').value;
-    const ville = document.getElementById('client-ville').value;
+  const email = prompt("Ton adresse E-mail :");
+  if (!email) return;
 
-    let orderDetails = window.cart.map(item => 
-      `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
-    ).join('\n');
+  const telephone = prompt("Ton numéro de Téléphone :");
+  if (!telephone) return;
 
-    let total = window.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+  const adresse = prompt("Ton Adresse postale :");
+  if (!adresse) return;
 
-    const messageBody = `
+  const ville = prompt("Ta Ville et Code Postal :");
+  if (!ville) return;
+
+  let orderDetails = window.cart.map(item => 
+    `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
+  ).join('\n');
+
+  let total = window.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+
+  const messageBody = `
 NOUVELLE COMMANDE RAWZ
 
 --- INFORMATIONS CLIENT ---
@@ -275,37 +312,33 @@ Ville : ${ville}
 ${orderDetails}
 
 TOTAL : ${total.toFixed(2)} €
-    `;
+  `;
 
-    try {
-      const response = await fetch("https://formspree.io/f/xjybbzln", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({ email: email, message: messageBody })
-      });
+  const data = {
+    email: email,
+    message: messageBody
+  };
 
-      if (response.ok) {
-        alert("Commande envoyée avec succès !");
-        window.cart = [];
-        window.saveCart();
-        window.updateCartUI();
-        checkoutModal.classList.remove('active');
-        closeCart();
-        checkoutForm.reset();
-      } else {
-        alert("Erreur lors de l'envoi de la commande. Réessaie plus tard.");
-      }
-    } catch (error) {
-      alert("Erreur réseau : impossible d'envoyer la commande.");
+  try {
+    const response = await fetch("https://formspree.io/f/xjybbzln", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+      alert("Commande envoyée avec succès ! Tu recevras un récapitulatif rapidement.");
+      window.cart = [];
+      window.saveCart();
+      window.updateCartUI();
+      closeCart();
+    } else {
+      alert("Erreur lors de l'envoi de la commande. Réessaie plus tard.");
     }
-  });
+  } catch (error) {
+    alert("Erreur réseau : impossible d'envoyer la commande.");
+  }
 }
-
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-  renderProducts(products);
-  window.updateCartUI();
-});
