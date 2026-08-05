@@ -100,59 +100,57 @@ document.addEventListener('DOMContentLoaded', () => {
   updateGallery(getImagesForColor(initialColor));
 
   // 9. Ajout au panier avec notification Toast (sans ouvrir le tiroir)
+  // 9. Ajout au panier avec notification Toast
+if (addToCartBtn) {
   addToCartBtn.addEventListener('click', () => {
-  // 1. Récupération des choix
-  const selectedSize = document.getElementById('size-select').value;
-  const selectedColor = document.getElementById('color-select').value;
+    // 1. Récupération des choix
+    const sizeSelect = document.getElementById('size-select');
+    const colorSelect = document.getElementById('color-select');
 
-  // 2. Création de l'article
-  const itemToAdd = {
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    image: product.images[0],
-    selectedSize: selectedSize,
-    selectedColor: selectedColor,
-    quantity: 1
-  };
+    const selectedSize = sizeSelect ? sizeSelect.value : '';
+    const selectedColor = colorSelect ? colorSelect.value : '';
 
-  // 3. Recherche de doublon dans le panier
-  const existingIndex = cart.findIndex(item => 
-    item.id === itemToAdd.id && 
-    item.selectedSize === itemToAdd.selectedSize && 
-    item.selectedColor === itemToAdd.selectedColor
-  );
+    // 2. Création de l'article
+    const itemToAdd = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      selectedSize: selectedSize,
+      selectedColor: selectedColor,
+      quantity: 1
+    };
 
-  if (existingIndex > -1) {
-    cart[existingIndex].quantity += 1;
-  } else {
-    cart.push(itemToAdd);
-  }
+    // 3. Recherche de doublon dans le panier
+    const existingIndex = cart.findIndex(item => 
+      item.id === itemToAdd.id && 
+      item.selectedSize === itemToAdd.selectedSize && 
+      item.selectedColor === itemToAdd.selectedColor
+    );
 
-  // 4. LES DEUX LIGNES À AJOUTER
-  saveCart();
-  updateCartUI();
+    if (existingIndex > -1) {
+      cart[existingIndex].quantity += 1;
+    } else {
+      cart.push(itemToAdd);
+    }
 
-  // 5. Notification Toast et Ouverture
-  showToast();
-  openCart();
-});
+    // 4. Sauvegarde et mise à jour
+    if (typeof saveCart === 'function') saveCart();
+    if (typeof updateCartUI === 'function') updateCartUI();
 
+    // 5. Notification Toast et Ouverture
+    showToast();
+    if (typeof openCart === 'function') openCart();
+  });
+}
 
-      if (typeof saveCart === 'function') saveCart();
-      if (typeof updateCartUI === 'function') updateCartUI();
+// Fonction Toast
+function showToast() {
+  const toast = document.getElementById('toast-notification');
+  if (!toast) return;
 
-      showToast();
-    });
-  }
-
-  function showToast() {
-    const toast = document.getElementById('toast-notification');
-    if (!toast) return;
-
-    toast.classList.add('show');
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3000);
-  }
-});
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
