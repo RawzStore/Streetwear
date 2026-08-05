@@ -3,96 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RAWZ | Streetwear Store</title>
+  <title>RAWZ Store</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="images/logo.png">
 </head>
 <body>
 
-  <!-- BANNIÈRE D'ANNONCE DÉFILANTE -->
-  <div class="marquee-banner">
-    <div class="marquee-content">
-      <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
-      <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
-      <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
-    </div>
-  </div>
-
-  <!-- En-tête / Navigation -->
-  <header class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="brand-logo">
-        <img src="images/logo.png" alt="RAWZ Logo" class="logo-img">
-      </a>
-      <div class="nav-controls">
-        <input type="text" id="search-input" placeholder="Rechercher..." class="search-bar">
-        
-        <button id="theme-toggle-btn" class="theme-btn" title="Changer le thème">🌙</button>
-
-        <button id="cart-toggle-btn" class="cart-btn">
-          Panier <span id="cart-badge" class="badge">0</span>
-        </button>
-      </div>
+  <!-- En-tête -->
+  <header class="header">
+    <div class="logo">RAWZ</div>
+    <div class="header-actions">
+      <button id="theme-toggle-btn" class="icon-btn">🌙</button>
+      <button id="cart-toggle-btn" class="icon-btn">
+        🛒 <span id="cart-badge">0</span>
+      </button>
     </div>
   </header>
 
-  <!-- Section Hero -->
-  <section class="hero-banner">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1>NOUVELLE COLLECTION ÉTÉ 2026</h1>
-      <p>Des vêtements épurés, durables et confectionnés avec soin.</p>
-      <a href="#catalog" class="cta-btn">Découvrir le catalogue</a>
+  <!-- Filtres & Recherche -->
+  <section class="controls">
+    <input type="text" id="search-input" placeholder="Rechercher un produit...">
+    <div class="filters">
+      <button class="filter-btn active" data-category="all">Tous</button>
+      <button class="filter-btn" data-category="chemise">Chemises</button>
+      <button class="filter-btn" data-category="polo">Polos</button>
+      <button class="filter-btn" data-category="tshirts">T-Shirts</button>
     </div>
+    <select id="sort-select">
+      <option value="default">Trier par</option>
+      <option value="price-asc">Prix croissant</option>
+      <option value="price-desc">Prix décroissant</option>
+    </select>
   </section>
 
-  <!-- Section Catalogue & Filtres -->
-  <main class="catalog-container" id="catalog">
-    <div class="filters-bar">
-      <div class="categories">
-        <button class="filter-btn active" data-category="all">Tous</button>
-        <button class="filter-btn" data-category="chemise">Chemise</button>
-        <button class="filter-btn" data-category="polo">Polo</button>
-        <button class="filter-btn" data-category="tshirts">T-shirts</button>
-      </div>
-      <div class="sorting">
-        <select id="sort-select" class="sort-dropdown">
-          <option value="default">Trier par...</option>
-          <option value="price-asc">Prix : croissant</option>
-          <option value="price-desc">Prix : décroissant</option>
-        </select>
-      </div>
-    </div>
+  <!-- Catalogue -->
+  <main class="product-grid" id="product-grid"></main>
 
-    <!-- Grille des produits -->
-    <div id="product-grid" class="product-grid"></div>
-  </main>
-
-  <!-- Drawer Panier -->
+  <!-- Panier Latéral (Drawer) -->
+  <div id="cart-overlay" class="cart-overlay"></div>
   <aside id="cart-drawer" class="cart-drawer">
     <div class="cart-header">
       <h2>Mon Panier</h2>
       <button id="close-cart-btn" class="close-btn">&times;</button>
     </div>
-    <div id="cart-items" class="cart-items-container"></div>
     
+    <div id="cart-items" class="cart-items"></div>
+
     <div class="cart-footer">
-      <div class="promo-box">
-        <input type="text" id="promo-input" placeholder="Code promo" class="promo-input">
-        <button id="apply-promo-btn" class="promo-btn">Appliquer</button>
+      <div class="promo-section">
+        <input type="text" id="promo-input" placeholder="CODE PROMO">
+        <button id="apply-promo-btn">Appliquer</button>
       </div>
       <p id="promo-msg" class="promo-message"></p>
-
-      <div class="cart-total">
+      
+      <div class="total-row">
         <span>Total :</span>
-        <span id="cart-total-price">0,00 €</span>
+        <strong id="cart-total-price">0.00 €</strong>
       </div>
-      <button class="checkout-btn" onclick="sendOrderEmail()">
-        Commander maintenant
-      </button>
+
+      <button onclick="sendOrderEmail()" class="checkout-btn">Commander maintenant</button>
     </div>
   </aside>
-  <div id="cart-overlay" class="cart-overlay"></div>
+
+  <!-- Modale Formulaire de Livraison -->
+  <div id="checkout-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-checkout-btn" class="close-btn">&times;</span>
+      <h2>Informations de livraison</h2>
+      <form id="checkout-form">
+        <div class="form-group">
+          <label for="client-nom">Nom</label>
+          <input type="text" id="client-nom" required>
+        </div>
+        <div class="form-group">
+          <label for="client-prenom">Prénom</label>
+          <input type="text" id="client-prenom" required>
+        </div>
+        <div class="form-group">
+          <label for="client-email">E-mail</label>
+          <input type="email" id="client-email" required>
+        </div>
+        <div class="form-group">
+          <label for="client-tel">Téléphone</label>
+          <input type="tel" id="client-tel" required>
+        </div>
+        <div class="form-group">
+          <label for="client-adresse">Adresse postale</label>
+          <input type="text" id="client-adresse" required>
+        </div>
+        <div class="form-group">
+          <label for="client-ville">Ville et Code Postal</label>
+          <input type="text" id="client-ville" required>
+        </div>
+        <button type="submit" class="submit-order-btn">Valider et envoyer la commande</button>
+      </form>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
