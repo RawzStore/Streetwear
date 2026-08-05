@@ -874,3 +874,75 @@ body.dark-theme .submit-order-btn:hover {
   background-color: #ddd;
 }
 
+/* ==========================================
+   CORRECTIONS MOBILE & RESPONSIVE
+   ========================================== */
+
+/* 1. NOTIFICATION TOAST (Fix position mobile) */
+.toast-notification {
+  position: fixed;
+  bottom: 20px;            /* Fixé proprement en bas de l'écran */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3000;           /* Au-dessus de tout le monde */
+  width: calc(100% - 40px);
+  max-width: 380px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 2. MODALE & FORMULAIRE EN 1 COLONNE SUR MOBILE */
+@media (max-width: 600px) {
+  
+  /* Modale plus large sur petit écran */
+  .modal-content {
+    width: 92% !important;
+    padding: 20px 16px !important;
+    max-height: 85vh;
+  }
+
+  .modal-content h2 {
+    font-size: 1.1rem;
+    padding-right: 25px; /* Évite de chevaucher la croix de fermeture */
+  }
+
+  /* Passer les champs à la verticale au lieu de 2 colonnes */
+  .form-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  /* Garantir que les inputs prennent toute la largeur sans déborder */
+  .form-group {
+    width: 100% !important;
+  }
+
+  .form-group input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important; /* Évite le zoom automatique du navigateur sur iOS */
+  }
+
+  /* Ajustement Header Mobile */
+  .nav-container {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+/* 3. FIX TEXTES ET ACCORDÉONS (Image 1) */
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.accordion-header span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
