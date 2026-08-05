@@ -27,6 +27,7 @@
 
   <!-- Contenu Fiche Produit -->
   <main class="product-page-container">
+    <!-- Galerie Photos -->
     <div class="product-gallery">
       <div class="main-image-container">
         <img id="display-img" src="" alt="Image produit">
@@ -34,15 +35,18 @@
       <div id="thumbnails-container" class="thumbnails-grid"></div>
     </div>
 
+    <!-- Panneau Info & Options -->
     <div class="product-info-panel">
       <h1 id="product-name"></h1>
       <p id="product-price" class="price"></p>
 
+      <!-- Options Couleur -->
       <div class="option-group">
         <label for="color-select"><strong>Couleur :</strong></label>
         <select id="color-select" class="custom-select"></select>
       </div>
 
+      <!-- Options Taille -->
       <div class="option-group">
         <label for="size-select"><strong>Taille :</strong></label>
         <select id="size-select" class="custom-select"></select>
@@ -50,11 +54,13 @@
 
       <button id="add-to-cart-btn" class="add-cart-large-btn">Ajouter au panier</button>
 
+      <!-- Caractéristiques -->
       <ul class="product-features">
         <li>Livraison offerte dès 80€ d'achat</li>
         <li>Précommande désormais disponible</li>
       </ul>
 
+      <!-- Accordéons -->
       <div class="accordion-section">
         <details class="accordion-item">
           <summary class="accordion-header">
@@ -98,55 +104,12 @@
         <span>Total :</span>
         <span id="cart-total-price">0,00 €</span>
       </div>
-      <button onclick="openCheckoutModal()" class="checkout-btn">Commander</button>
+      <button class="checkout-btn" onclick="sendOrderEmail()">
+        Commander maintenant
+      </button>
     </div>
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
-
-  <!-- MODALE FORMULAIRE DE COMMANDE -->
-  <div id="checkout-modal" class="modal-overlay">
-    <div class="modal-content">
-      <button id="close-modal-btn" class="modal-close">&times;</button>
-      <h2>Informations de livraison</h2>
-      <form id="checkout-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="client-firstname">Prénom *</label>
-            <input type="text" id="client-firstname" required placeholder="Jean">
-          </div>
-          <div class="form-group">
-            <label for="client-lastname">Nom *</label>
-            <input type="text" id="client-lastname" required placeholder="Dupont">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="client-email">E-mail *</label>
-            <input type="email" id="client-email" required placeholder="jean.dupont@email.com">
-          </div>
-          <div class="form-group">
-            <label for="client-phone">Téléphone *</label>
-            <input type="tel" id="client-phone" required placeholder="06 12 34 56 78">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="client-address">Adresse *</label>
-          <input type="text" id="client-address" required placeholder="12 rue des Fleurs">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="client-zipcode">Code postal *</label>
-            <input type="text" id="client-zipcode" required placeholder="75001">
-          </div>
-          <div class="form-group">
-            <label for="client-city">Ville *</label>
-            <input type="text" id="client-city" required placeholder="Paris">
-          </div>
-        </div>
-        <button type="submit" class="submit-order-btn">Valider et envoyer la commande</button>
-      </form>
-    </div>
-  </div>
 
   <script src="script.js"></script>
   <script src="product-detail.js"></script>
