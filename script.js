@@ -18,7 +18,7 @@ const products = [
   },
   { 
     id: 2, 
-    name: "Polo Rayures", 
+    name: "Polo à Rayures", 
     category: "polo", 
     price: 17.99, 
     sizes: ["S", "M", "L", "XL"],
