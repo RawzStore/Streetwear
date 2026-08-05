@@ -1,41 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Récupération de l'ID du produit dans l'URL
+  // 1. Récupération de l'ID dans l'URL
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('id');
 
-  // 2. Vérification si le tableau 'products' existe (défini dans script.js)
+  // 2. Vérification que le tableau products existe
   if (typeof products === 'undefined') {
-    console.error("Le tableau 'products' est introuvable. Vérifie que script.js est bien chargé avant product-detail.js.");
+    console.error("Le tableau 'products' est introuvable dans script.js");
     return;
   }
 
-  // 3. Recherche du produit
-  const product = products.find(p => p.id === productId);
+  // 3. Recherche du produit (détection souple string/number et id/slug)
+  const product = products.find(p => 
+    String(p.id) === String(productId) || 
+    p.slug === productId
+  );
 
   if (!product) {
-    const container = document.querySelector('.product-page-container');
-    if (container) {
-      container.innerHTML = "<h2>Produit introuvable.</h2><a href='index.html'>Retour au catalogue</a>";
-    }
+    console.warn("Produit non trouvé pour l'ID :", productId);
     return;
   }
 
-  // 4. Injection des infos de base
+  // 4. Affichage des informations
   const productName = document.getElementById('product-name');
   const productPrice = document.getElementById('product-price');
   const productDesc = document.getElementById('product-description');
   const displayImg = document.getElementById('display-img');
-  
+
   if (productName) productName.textContent = product.name;
-  if (productPrice) productPrice.textContent = `${product.price.toFixed(2)} €`;
-  if (productDesc) productDesc.textContent = product.description || "Aucune description disponible.";
-  
-  if (displayImg && product.images && product.images.length > 0) {
-    displayImg.src = product.images[0];
+  if (productPrice) productPrice.textContent = `${Number(product.price).toFixed(2)} €`;
+  if (productDesc) productDesc.textContent = product.description || "";
+
+  // Image principale
+  const mainImageSrc = (product.images && product.images.length > 0) ? product.images[0] : (product.image || '');
+  if (displayImg && mainImageSrc) {
+    displayImg.src = mainImageSrc;
     displayImg.alt = product.name;
   }
 
-  // 5. Remplissage des selecteurs Couleur & Taille
+  // 5. Remplissage des menus déroulants
   const colorSelect = document.getElementById('color-select');
   const sizeSelect = document.getElementById('size-select');
 
@@ -47,15 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
     sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
   }
 
-  // 6. Remplissage des vignettes photos
+  // 6. Vignettes photos
   const thumbnailsContainer = document.getElementById('thumbnails-container');
-  if (thumbnailsContainer && product.images) {
+  if (thumbnailsContainer && product.images && product.images.length > 0) {
     thumbnailsContainer.innerHTML = product.images.map((imgSrc, index) => `
-      <img src="${imgSrc}" alt="Vignette ${index + 1}" class="thumbnail-img ${index === 0 ? 'active' : ''}" onclick="changeMainImage('${imgSrc}', this)">
+      <img src="${imgSrc}" alt="" class="thumbnail-img ${index === 0 ? 'active' : ''}" onclick="changeMainImage('${imgSrc}', this)">
     `).join('');
   }
 
-  // 7. Gestion de l'ajout au panier
+  // 7. Bouton Ajouter au panier
   const addToCartBtn = document.getElementById('add-to-cart-btn');
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
@@ -66,14 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.images[0],
+        image: mainImageSrc,
         selectedSize: selectedSize,
         selectedColor: selectedColor,
         quantity: 1
       };
 
       const existingIndex = cart.findIndex(item => 
-        item.id === itemToAdd.id && 
+        String(item.id) === String(itemToAdd.id) && 
         item.selectedSize === itemToAdd.selectedSize && 
         item.selectedColor === itemToAdd.selectedColor
       );
@@ -93,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Fonction pour changer l'image principale au clic sur une vignette
 function changeMainImage(src, element) {
   const displayImg = document.getElementById('display-img');
   if (displayImg) displayImg.src = src;
@@ -102,7 +103,6 @@ function changeMainImage(src, element) {
   if (element) element.classList.add('active');
 }
 
-// Fonction Toast
 function showToast() {
   const toast = document.getElementById('toast-notification');
   if (!toast) return;
@@ -112,4 +112,3 @@ function showToast() {
     toast.classList.remove('show');
   }, 3000);
 }
-
