@@ -134,9 +134,10 @@ body {
   font-size: 0.8rem;
   margin-left: 4px;
 }
-/* BOUTON BURGER (Affiché partout) */
+
+/* BOUTON BURGER */
 .burger-btn {
-  display: flex; /* Remplace "none" par "flex" */
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 26px;
@@ -347,6 +348,7 @@ body {
   width: 100%;
   height: 320px;
   overflow: hidden;
+  background-color: var(--gray-light);
 }
 
 .product-img {
@@ -385,11 +387,17 @@ body {
   gap: 15px;
 }
 
+.main-image-container {
+  width: 100%;
+  background-color: var(--gray-light);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .main-image-container img {
   width: 100%;
   height: 500px;
   object-fit: cover;
-  border-radius: 8px;
 }
 
 .thumbnails-grid {
@@ -406,6 +414,7 @@ body {
   opacity: 0.6;
   border: 2px solid transparent;
   transition: opacity 0.2s, border-color 0.2s;
+  background-color: var(--gray-light);
 }
 
 .thumbnail:hover, .thumbnail.active {
@@ -610,7 +619,7 @@ body {
 .product-features {
   margin: 15px 0;
   padding-left: 20px;
-  color: var(--gray-text, #666);
+  color: var(--gray-text);
   font-size: 0.95rem;
 }
 
@@ -621,11 +630,11 @@ body {
 /* --- ACCORDÉONS (DESCRIPTION / LIVRAISON) --- */
 .accordion-section {
   margin-top: 20px;
-  border-top: 1px solid var(--border-color, #eee);
+  border-top: 1px solid var(--border-color);
 }
 
 .accordion-item {
-  border-bottom: 1px solid var(--border-color, #eee);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .accordion-header {
@@ -654,7 +663,7 @@ body {
 
 .accordion-content {
   padding-bottom: 16px;
-  color: var(--gray-text, #666);
+  color: var(--gray-text);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -703,7 +712,7 @@ body {
   font-weight: bold;
 }
 
-/* --- MODALE DE COMMANDE --- */
+/* --- MODALE DE COMMANDE / LIVRAISON --- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -723,8 +732,8 @@ body {
 }
 
 .modal-content {
-  background: var(--bg-color, #ffffff);
-  color: var(--text-color, #111111);
+  background: var(--bg-color);
+  color: var(--text-color);
   padding: 30px;
   border-radius: 12px;
   width: 90%;
@@ -779,34 +788,34 @@ body {
 
 .form-group input {
   padding: 10px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.95rem;
-  background: inherit;
-  color: inherit;
+  background: var(--input-bg);
+  color: var(--text-color);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #000;
+  border-color: var(--text-color);
 }
 
 .submit-order-btn {
   margin-top: 10px;
   padding: 14px;
-  background-color: #000;
-  color: #fff;
+  background-color: var(--accent-color);
+  color: var(--bg-color);
   border: none;
   border-radius: 6px;
   font-weight: bold;
   font-size: 1rem;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .submit-order-btn:hover {
-  background-color: #333;
+  opacity: 0.9;
 }
 
 /* Support Mode Sombre pour Modale */
@@ -814,21 +823,6 @@ body.dark-theme .modal-content {
   background-color: #1a1a1a;
   color: #ffffff;
   border: 1px solid #333;
-}
-
-body.dark-theme .form-group input {
-  border-color: #444;
-  background-color: #222;
-  color: #fff;
-}
-
-body.dark-theme .submit-order-btn {
-  background-color: #fff;
-  color: #000;
-}
-
-body.dark-theme .submit-order-btn:hover {
-  background-color: #ddd;
 }
 
 /* --- ADAPTATION MOBILE (RESPONSIVE) --- */
@@ -856,7 +850,7 @@ body.dark-theme .submit-order-btn:hover {
   }
 
   .search-bar {
-    display: none; /* Masquée sur mobile pour libérer l'espace */
+    display: none;
   }
 
   /* Hero Section */
@@ -906,14 +900,19 @@ body.dark-theme .submit-order-btn:hover {
     width: 100%;
   }
 
-  /* Grille Produits */
+  /* Grille Produits & Images sur Mobile */
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
-  .product-card {
-    margin-bottom: 0;
+  .img-wrapper {
+    height: 220px;
+  }
+
+  .product-img {
+    object-fit: contain;
+    padding: 6px;
   }
 
   .product-details {
@@ -928,11 +927,17 @@ body.dark-theme .submit-order-btn:hover {
     font-size: 0.85rem;
   }
 
-  /* Page Produit */
+  /* Fiche Produit sur Mobile */
   .product-page-container {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 15px;
+  }
+
+  .main-image-container img {
+    height: 380px;
+    object-fit: contain;
+    padding: 8px;
   }
 
   .thumbnails-grid {
@@ -942,11 +947,39 @@ body.dark-theme .submit-order-btn:hover {
   .thumbnail {
     width: 60px;
     height: 60px;
+    object-fit: contain;
+    padding: 2px;
   }
 
   /* Tiroir du Panier */
   .cart-drawer {
     width: 100%;
     right: -100%;
+  }
+
+  /* Formulaire de livraison sur Mobile */
+  .modal-content {
+    width: 92%;
+    padding: 20px 16px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-group input {
+    padding: 12px 14px;
+    font-size: 1rem;
+  }
+
+  .submit-order-btn {
+    padding: 16px;
+    font-size: 0.95rem;
   }
 }
