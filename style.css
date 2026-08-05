@@ -530,347 +530,178 @@ body {
 
 .cart-overlay.active { display: block; }
 
-/* --- ADAPTATION MOBILE (RESPONSIVE) --- */
+/* --- ADAPTATION MOBILE OPTIMISÉE (RESPONSIVE) --- */
 @media (max-width: 768px) {
-  /* 1. Espacement général de la page */
+  /* 1. Structure globale & Espacement */
   body {
-    padding-bottom: 2rem;
+    padding-bottom: 1.5rem;
   }
 
-  /* 2. En-tête / Barre de navigation */
+  /* 2. En-tête / Navigation compacte */
   .nav-container {
     flex-direction: column;
-    gap: 12px;
-    padding: 10px 15px;
+    gap: 10px;
+    padding: 12px 15px;
+  }
+
+  .brand-logo {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .logo-img {
+    height: 55px; /* Taille ajustée pour écran mobile */
   }
 
   .nav-controls {
     width: 100%;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto auto; /* Recherche prend toute la largeur, boutons à droite */
     gap: 8px;
+    align-items: center;
   }
 
   .search-bar {
     width: 100%;
-    max-width: none;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .theme-btn, .cart-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
 
   /* 3. Section Hero / Bannière */
   .hero-banner {
-    min-height: 280px;
-    padding: 2rem 1rem;
+    min-height: 240px;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .hero-content h1 {
-    font-size: 1.6rem;
-    line-height: 1.3;
-    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    line-height: 1.25;
+    margin-bottom: 0.6rem;
   }
 
   .hero-content p {
-    font-size: 0.95rem;
-    margin-bottom: 1.2rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
   }
 
-  /* 4. Filtres et Recherche */
+  .cta-btn {
+    padding: 0.7rem 1.4rem;
+    font-size: 0.8rem;
+  }
+
+  /* 4. Filtres défilables sans coupure */
   .catalog-container {
-    padding: 0 15px;
+    padding: 0 12px;
+    margin: 20px auto;
   }
 
   .filters-bar {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
-    margin-bottom: 1.5rem;
+    gap: 10px;
+    margin-bottom: 1.2rem;
   }
 
   .categories {
     display: flex;
-    overflow-x: auto; /* Permet de scroller les filtres de gauche à droite */
+    overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 8px;
+    padding-bottom: 6px;
     gap: 8px;
+    -webkit-overflow-scrolling: touch; /* Scroll fluide sur iOS */
+    scrollbar-width: none; /* Cache la barre de scroll */
+  }
+
+  .categories::-webkit-scrollbar {
+    display: none;
   }
 
   .filter-btn {
-    padding: 8px 14px;
-    font-size: 0.85rem;
+    padding: 6px 14px;
+    font-size: 0.8rem;
     flex-shrink: 0;
+    margin-right: 0;
   }
 
   .sort-dropdown {
     width: 100%;
+    font-size: 0.85rem;
+    padding: 8px;
   }
 
-  /* 5. Grille des produits */
+  /* 5. Grille produit 2 colonnes avec visuels adaptés */
   .product-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 colonnes propres sur mobile */
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
-  .product-card {
-    margin-bottom: 0;
+  .img-wrapper {
+    height: 200px; /* Proportion optimisée pour 2 colonnes */
   }
 
   .product-details {
-    padding: 10px;
+    padding: 10px 8px;
   }
 
   .product-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
   }
 
   .product-price {
     font-size: 0.85rem;
   }
 
-  /* 6. Page Produit (product.html) */
+  /* 6. Page Produit détaillée (product.html) */
   .product-page-container {
-    grid-template-columns: 1fr; /* Image en haut, infos en dessous */
-    gap: 20px;
-    padding: 15px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 12px;
+    margin: 10px auto;
+  }
+
+  .main-image-container img {
+    height: 380px;
   }
 
   .thumbnails-grid {
+    overflow-x: auto;
+    padding-bottom: 6px;
     gap: 8px;
   }
 
   .thumbnail {
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
   }
 
-  /* 7. Tiroir du Panier */
+  .add-cart-large-btn {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  /* 7. Panier Drawer plein écran */
   .cart-drawer {
-    width: 100%; /* Prend toute la largeur sur mobile pour respirer */
+    width: 100%;
     right: -100%;
   }
-}
 
-/* --- LISTE DES CARACTÉRISTIQUES --- */
-.product-features {
-  margin: 15px 0;
-  padding-left: 20px;
-  color: var(--gray-text, #666);
-  font-size: 0.95rem;
-}
+  /* 8. Modale Formulaire de Commande */
+  .modal-content {
+    width: 95%;
+    padding: 20px 15px;
+  }
 
-.product-features li {
-  margin-bottom: 6px;
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
 }
-
-/* --- ACCORDÉONS (DESCRIPTION / LIVRAISON) --- */
-.accordion-section {
-  margin-top: 20px;
-  border-top: 1px solid var(--border-color, #eee);
-}
-
-.accordion-item {
-  border-bottom: 1px solid var(--border-color, #eee);
-}
-
-.accordion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  list-style: none;
-}
-
-.accordion-header::-webkit-details-marker {
-  display: none;
-}
-
-.accordion-header .chevron {
-  transition: transform 0.3s ease;
-  font-size: 0.8rem;
-}
-
-.accordion-item[open] .chevron {
-  transform: rotate(90deg);
-}
-
-.accordion-content {
-  padding-bottom: 16px;
-  color: var(--gray-text, #666);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.accordion-content p + p {
-  margin-top: 8px;
-}
-
-/* --- NOTIFICATION TOAST --- */
-.toast-notification {
-  position: fixed;
-  bottom: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-  padding: 12px 20px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: bottom 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  opacity: 0;
-  z-index: 2000;
-}
-
-.toast-notification.show {
-  bottom: 30px;
-  opacity: 1;
-}
-
-.toast-icon {
-  background-color: #28a745;
-  color: #fff;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: bold;
-}
-
-/* --- MODALE DE COMMANDE --- */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  display: none; /* Masquée par défaut */
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px);
-}
-
-/* Affichage de la modale au clic */
-.modal-overlay.active {
-  display: flex !important;
-}
-
-.modal-content {
-  background: var(--bg-color, #ffffff);
-  color: var(--text-color, #111111);
-  padding: 30px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  color: inherit;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 1.4rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Formulaire */
-#checkout-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-row {
-  display: flex;
-  gap: 10px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.form-group label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-.form-group input {
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  background: inherit;
-  color: inherit;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #000;
-}
-
-.submit-order-btn {
-  margin-top: 10px;
-  padding: 14px;
-  background-color: #000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 1rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.submit-order-btn:hover {
-  background-color: #333;
-}
-
-/* Support Mode Sombre */
-body.dark-theme .modal-content {
-  background-color: #1a1a1a;
-  color: #ffffff;
-  border: 1px solid #333;
-}
-
-body.dark-theme .form-group input {
-  border-color: #444;
-  background-color: #222;
-  color: #fff;
-}
-
-body.dark-theme .submit-order-btn {
-  background-color: #fff;
-  color: #000;
-}
-
-body.dark-theme .submit-order-btn:hover {
-  background-color: #ddd;
-}
-
