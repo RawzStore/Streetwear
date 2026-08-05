@@ -8,37 +8,41 @@
 </head>
 <body>
 
-  <!-- En-tête -->
+  <!-- En-tête avec Logo centré -->
   <header class="header">
-    <div class="logo">RAWZ</div>
-    <div class="header-actions">
-      <button id="theme-toggle-btn" class="icon-btn">🌙</button>
-      <button id="cart-toggle-btn" class="icon-btn">
-        🛒 <span id="cart-badge">0</span>
+    <div class="logo-container">
+      <img src="images/logo.png" alt="RAWZ" class="logo-img">
+    </div>
+    <div class="top-bar">
+      <input type="text" id="search-input" placeholder="Rechercher...">
+      <button id="theme-toggle-btn" class="theme-btn">🌙</button>
+      <button id="cart-toggle-btn" class="cart-btn">
+        Panier <span id="cart-badge">0</span>
       </button>
     </div>
   </header>
 
-  <!-- Filtres & Recherche -->
+  <!-- Filtres & Tri -->
   <section class="controls">
-    <input type="text" id="search-input" placeholder="Rechercher un produit...">
     <div class="filters">
       <button class="filter-btn active" data-category="all">Tous</button>
-      <button class="filter-btn" data-category="chemise">Chemises</button>
-      <button class="filter-btn" data-category="polo">Polos</button>
-      <button class="filter-btn" data-category="tshirts">T-Shirts</button>
+      <button class="filter-btn" data-category="chemise">Chemise</button>
+      <button class="filter-btn" data-category="polo">Polo</button>
+      <button class="filter-btn" data-category="tshirts">T-shirts</button>
     </div>
-    <select id="sort-select">
-      <option value="default">Trier par</option>
-      <option value="price-asc">Prix croissant</option>
-      <option value="price-desc">Prix décroissant</option>
-    </select>
+    <div class="sort-container">
+      <select id="sort-select">
+        <option value="default">Trier par...</option>
+        <option value="price-asc">Prix croissant</option>
+        <option value="price-desc">Prix décroissant</option>
+      </select>
+    </div>
   </section>
 
-  <!-- Catalogue -->
+  <!-- Grille Produits -->
   <main class="product-grid" id="product-grid"></main>
 
-  <!-- Panier Latéral (Drawer) -->
+  <!-- Panier Latéral -->
   <div id="cart-overlay" class="cart-overlay"></div>
   <aside id="cart-drawer" class="cart-drawer">
     <div class="cart-header">
