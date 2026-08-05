@@ -79,10 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
       updateGallery(getImagesForColor(e.target.value));
     });
   } else if (colorSelect) {
-    colorSelect.parentElement.style.display = 'none'; // Masque le champ si pas de couleur
+    colorSelect.parentElement.style.display = 'none';
   }
 
-  // 7. Injection des Tailles (Correction ici)
+  // 7. Injection des Tailles
   if (sizeSelect && product.sizes && product.sizes.length > 0) {
     sizeSelect.innerHTML = '';
     product.sizes.forEach(size => {
@@ -92,14 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
       sizeSelect.appendChild(option);
     });
   } else if (sizeSelect) {
-    sizeSelect.parentElement.style.display = 'none'; // Masque le champ si pas de taille
+    sizeSelect.parentElement.style.display = 'none';
   }
 
   // 8. Galerie initiale
   const initialColor = colorSelect ? colorSelect.value : null;
   updateGallery(getImagesForColor(initialColor));
 
-  // 9. Ajout au panier
+  // 9. Ajout au panier avec notification Toast (sans ouvrir le tiroir)
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedColor = colorSelect ? colorSelect.value : '';
@@ -125,7 +125,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (typeof saveCart === 'function') saveCart();
       if (typeof updateCartUI === 'function') updateCartUI();
-      if (typeof openCart === 'function') openCart();
+
+      showToast();
     });
+  }
+
+  function showToast() {
+    const toast = document.getElementById('toast-notification');
+    if (!toast) return;
+
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
   }
 });
