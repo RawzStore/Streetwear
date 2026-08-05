@@ -81,8 +81,8 @@ body {
 }
 
 .logo-img {
-  height: 75px; /* Ajuste la hauteur selon tes besoins (ex: 35px à 50px) */
-  width: auto;  /* Conserve les proportions de ton logo */
+  height: 75px;
+  width: auto;
   object-fit: contain;
 }
 
@@ -140,7 +140,6 @@ body {
   position: relative;
   width: 100%;
   min-height: 400px;
-  /* Remplace le chemin par ton image */
   background: url('images/hero-banner.jpg') center/cover no-repeat;
   display: flex;
   align-items: center;
@@ -155,7 +154,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.55); /* Ajuste de 0.1 à 0.9 pour foncer/éclaircir */
+  background: rgba(0, 0, 0, 0.55);
   z-index: 1;
 }
 
@@ -530,14 +529,12 @@ body {
 
 .cart-overlay.active { display: block; }
 
-/* --- ADAPTATION MOBILE (RESPONSIVE) --- */
+/* RESPONSIVE MOBILE */
 @media (max-width: 768px) {
-  /* 1. Espacement général de la page */
   body {
     padding-bottom: 2rem;
   }
 
-  /* 2. En-tête / Barre de navigation */
   .nav-container {
     flex-direction: column;
     gap: 12px;
@@ -555,7 +552,6 @@ body {
     max-width: none;
   }
 
-  /* 3. Section Hero / Bannière */
   .hero-banner {
     min-height: 280px;
     padding: 2rem 1rem;
@@ -572,7 +568,6 @@ body {
     margin-bottom: 1.2rem;
   }
 
-  /* 4. Filtres et Recherche */
   .catalog-container {
     padding: 0 15px;
   }
@@ -586,7 +581,7 @@ body {
 
   .categories {
     display: flex;
-    overflow-x: auto; /* Permet de scroller les filtres de gauche à droite */
+    overflow-x: auto;
     white-space: nowrap;
     padding-bottom: 8px;
     gap: 8px;
@@ -602,9 +597,8 @@ body {
     width: 100%;
   }
 
-  /* 5. Grille des produits */
   .product-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 colonnes propres sur mobile */
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
@@ -624,9 +618,8 @@ body {
     font-size: 0.85rem;
   }
 
-  /* 6. Page Produit (product.html) */
   .product-page-container {
-    grid-template-columns: 1fr; /* Image en haut, infos en dessous */
+    grid-template-columns: 1fr;
     gap: 20px;
     padding: 15px;
   }
@@ -640,14 +633,13 @@ body {
     height: 60px;
   }
 
-  /* 7. Tiroir du Panier */
   .cart-drawer {
-    width: 100%; /* Prend toute la largeur sur mobile pour respirer */
+    width: 100%;
     right: -100%;
   }
 }
 
-/* --- LISTE DES CARACTÉRISTIQUES --- */
+/* CARACTÉRISTIQUES */
 .product-features {
   margin: 15px 0;
   padding-left: 20px;
@@ -659,7 +651,7 @@ body {
   margin-bottom: 6px;
 }
 
-/* --- ACCORDÉONS (DESCRIPTION / LIVRAISON) --- */
+/* ACCORDÉONS */
 .accordion-section {
   margin-top: 20px;
   border-top: 1px solid var(--border-color, #eee);
@@ -704,7 +696,7 @@ body {
   margin-top: 8px;
 }
 
-/* --- NOTIFICATION TOAST --- */
+/* NOTIFICATION TOAST */
 .toast-notification {
   position: fixed;
   bottom: -60px;
@@ -743,267 +735,3 @@ body {
   font-size: 0.75rem;
   font-weight: bold;
 }
-
-/* --- MODALE DE COMMANDE --- */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  display: none; /* Masquée par défaut */
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px);
-}
-
-/* Affichage de la modale au clic */
-.modal-overlay.active {
-  display: flex !important;
-}
-
-.modal-content {
-  background: var(--bg-color, #ffffff);
-  color: var(--text-color, #111111);
-  padding: 30px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  color: inherit;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 1.4rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Formulaire */
-#checkout-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-row {
-  display: flex;
-  gap: 10px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.form-group label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-.form-group input {
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  background: inherit;
-  color: inherit;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #000;
-}
-
-.submit-order-btn {
-  margin-top: 10px;
-  padding: 14px;
-  background-color: #000;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 1rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.submit-order-btn:hover {
-  background-color: #333;
-}
-
-/* Support Mode Sombre */
-body.dark-theme .modal-content {
-  background-color: #1a1a1a;
-  color: #ffffff;
-  border: 1px solid #333;
-}
-
-body.dark-theme .form-group input {
-  border-color: #444;
-  background-color: #222;
-  color: #fff;
-}
-
-body.dark-theme .submit-order-btn {
-  background-color: #fff;
-  color: #000;
-}
-
-body.dark-theme .submit-order-btn:hover {
-  background-color: #ddd;
-}
-
-/* ==========================================
-   CORRECTIONS MOBILE & RESPONSIVE
-   ========================================== */
-
-/* 1. NOTIFICATION TOAST (Fix position mobile) */
-.toast-notification {
-  position: fixed;
-  bottom: 20px;            /* Fixé proprement en bas de l'écran */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3000;           /* Au-dessus de tout le monde */
-  width: calc(100% - 40px);
-  max-width: 380px;
-  box-sizing: border-box;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
-/* 2. MODALE & FORMULAIRE EN 1 COLONNE SUR MOBILE */
-@media (max-width: 600px) {
-  
-  /* Modale plus large sur petit écran */
-  .modal-content {
-    width: 92% !important;
-    padding: 20px 16px !important;
-    max-height: 85vh;
-  }
-
-  .modal-content h2 {
-    font-size: 1.1rem;
-    padding-right: 25px; /* Évite de chevaucher la croix de fermeture */
-  }
-
-  /* Passer les champs à la verticale au lieu de 2 colonnes */
-  .form-row {
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-
-  /* Garantir que les inputs prennent toute la largeur sans déborder */
-  .form-group {
-    width: 100% !important;
-  }
-
-  .form-group input {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    font-size: 16px !important; /* Évite le zoom automatique du navigateur sur iOS */
-  }
-
-  /* Ajustement Header Mobile */
-  .nav-container {
-    padding: 10px 15px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-}
-
-/* 3. FIX TEXTES ET ACCORDÉONS (Image 1) */
-.accordion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.accordion-header span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Galerie photos produit */
-.product-gallery {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.main-image-container {
-  width: 100%;
-  aspect-ratio: 1 / 1; /* Garde le format carré */
-  overflow: hidden;
-  border-radius: 8px;
-  background-color: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.main-image-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Remplit parfaitement le cadre sans déformer */
-  display: block;
-}
-
-/* Vignettes sous la photo */
-.thumbnails-grid {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-  overflow-x: auto;
-}
-
-.thumbnail-img {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.thumbnail-img.active,
-.thumbnail-img:hover {
-  border-color: #000;
-}
-
-/* Ajustement Mobile */
-@media (max-width: 600px) {
-  .product-gallery {
-    max-width: 100%;
-  }
-  
-  .thumbnail-img {
-    width: 60px;
-    height: 60px;
-  }
-}
-
