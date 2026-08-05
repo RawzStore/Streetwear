@@ -735,3 +735,67 @@ body {
   font-size: 0.75rem;
   font-weight: bold;
 }
+
+/* MODAL FORMULAIRE COMMANDE MOBILE & DESKTOP */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 15px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--card-bg, #fff);
+  color: var(--text-color, #000);
+  width: 100%;
+  max-width: 450px;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 6px;
+  background: var(--input-bg, #fff);
+  color: var(--text-color, #000);
+  font-size: 1rem;
+}
+
+.submit-order-btn {
+  width: 100%;
+  padding: 14px;
+  background: #2b9348;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
