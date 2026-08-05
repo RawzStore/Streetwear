@@ -100,28 +100,44 @@ document.addEventListener('DOMContentLoaded', () => {
   updateGallery(getImagesForColor(initialColor));
 
   // 9. Ajout au panier avec notification Toast (sans ouvrir le tiroir)
-  if (addToCartBtn) {
-    addToCartBtn.addEventListener('click', () => {
-      const selectedColor = colorSelect ? colorSelect.value : '';
-      const selectedSize = sizeSelect ? sizeSelect.value : '';
+  addToCartBtn.addEventListener('click', () => {
+  // 1. Récupération des choix
+  const selectedSize = document.getElementById('size-select').value;
+  const selectedColor = document.getElementById('color-select').value;
 
-      const cartItemKey = `${product.id}-${selectedSize}-${selectedColor}`;
-      const existingItem = cart.find(item => item.key === cartItemKey);
+  // 2. Création de l'article
+  const itemToAdd = {
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.images[0],
+    selectedSize: selectedSize,
+    selectedColor: selectedColor,
+    quantity: 1
+  };
 
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: displayImg ? displayImg.src : product.mainImage,
-          selectedSize: selectedSize,
-          selectedColor: selectedColor,
-          key: cartItemKey,
-          quantity: 1
-        });
-      }
+  // 3. Recherche de doublon dans le panier
+  const existingIndex = cart.findIndex(item => 
+    item.id === itemToAdd.id && 
+    item.selectedSize === itemToAdd.selectedSize && 
+    item.selectedColor === itemToAdd.selectedColor
+  );
+
+  if (existingIndex > -1) {
+    cart[existingIndex].quantity += 1;
+  } else {
+    cart.push(itemToAdd);
+  }
+
+  // 4. LES DEUX LIGNES À AJOUTER
+  saveCart();
+  updateCartUI();
+
+  // 5. Notification Toast et Ouverture
+  showToast();
+  openCart();
+});
+
 
       if (typeof saveCart === 'function') saveCart();
       if (typeof updateCartUI === 'function') updateCartUI();
