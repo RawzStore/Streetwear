@@ -23,7 +23,7 @@ const products = [
     price: 17.99, 
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir/Blanc", "Noir/Rose", "Blanc/Rouge", "Rouge/Blanc"],
-    description: "Col en polyester élastique avec motif à rayures color-block et imprimé typographique (lettres et chiffres). Lavable en machine. Convient parfaitement pour une tenue décontractée, en extérieur ou pour le quotidien, avec une coupe régulière adaptée à toutes les occasions.",
+    description: "Col en polyester élastique avec motif à rayures color-block et imprimé typographique (lettres et chiffres). Lavable en machine.",
     mainImage: "images/polo-noir-r-blanches.jpg",
     imagesByColor: {
       "Noir/Blanc": [
@@ -51,7 +51,7 @@ const products = [
     price: 17.99, 
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir"],
-    description: "Style : Streetwear | Matière : 100 % Coton | Col : Col rabattu | Coupe : Régulière | Longueur : Court | Tissage : Tricot",
+    description: "Style : Streetwear | Matière : 100 % Coton | Col : Col rabattu | Coupe : Régulière",
     mainImage: "images/polo-signature.jpg",
     images: [
       "images/polo-signature.jpg",
@@ -101,7 +101,7 @@ if (themeToggleBtn) {
   });
 }
 
-// Rendu du catalogue sur index.html
+// Rendu du catalogue
 function renderProducts(items) {
   const productGrid = document.getElementById('product-grid');
   if (!productGrid) return;
@@ -131,11 +131,12 @@ function renderProducts(items) {
   });
 }
 
-// Logique du Panier
+// Sauvegarde du panier
 function saveCart() {
   localStorage.setItem('cart', JSON.stringify(cart));
 }
 
+// Mise à jour du panier
 function updateCartUI() {
   if (!cartItemsContainer) return;
 
@@ -155,14 +156,36 @@ function updateCartUI() {
         <small>Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''}</small>
         <small>${item.price.toFixed(2)} €</small>
         <div class="qty-controls">
-          <button onclick="changeQuantity('${item.key}', -1)">-</button>
+          <button type="button" class="btn-qty btn-minus" data-key="${item.key}">-</button>
           <span>${item.quantity}</span>
-          <button onclick="changeQuantity('${item.key}', 1)">+</button>
+          <button type="button" class="btn-qty btn-plus" data-key="${item.key}">+</button>
         </div>
       </div>
-      <button onclick="removeFromCart('${item.key}')" class="delete-btn">✕</button>
+      <button type="button" class="delete-btn" data-key="${item.key}">✕</button>
     `;
     cartItemsContainer.appendChild(itemEl);
+  });
+
+  // Écouteurs d'événements pour les boutons de quantité et de suppression (solution optimale mobile/desktop)
+  document.querySelectorAll('.btn-minus').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      changeQuantity(btn.dataset.key, -1);
+    });
+  });
+
+  document.querySelectorAll('.btn-plus').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      changeQuantity(btn.dataset.key, 1);
+    });
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeFromCart(btn.dataset.key);
+    });
   });
 
   let finalTotal = subtotal * (1 - appliedDiscount);
@@ -170,12 +193,15 @@ function updateCartUI() {
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
 }
 
+// Fonctions de modification
 function changeQuantity(cartItemKey, delta) {
   const item = cart.find(i => i.key === cartItemKey);
   if (!item) return;
 
   item.quantity += delta;
-  if (item.quantity <= 0) cart = cart.filter(i => i.key !== cartItemKey);
+  if (item.quantity <= 0) {
+    cart = cart.filter(i => i.key !== cartItemKey);
+  }
 
   saveCart();
   updateCartUI();
@@ -186,6 +212,10 @@ function removeFromCart(cartItemKey) {
   saveCart();
   updateCartUI();
 }
+
+// Rendre accessible globalement au besoin
+window.changeQuantity = changeQuantity;
+window.removeFromCart = removeFromCart;
 
 // Ouverture & fermeture Panier
 function openCart() {
@@ -206,7 +236,7 @@ if (cartToggleBtn) cartToggleBtn.addEventListener('click', openCart);
 if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
 if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 
-// Appliquer le Code Promo
+// Code Promo
 if (applyPromoBtn) {
   applyPromoBtn.addEventListener('click', () => {
     const code = promoInput.value.trim().toUpperCase();
@@ -260,13 +290,77 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
+  injectCheckoutModal();
 });
 
-async function sendOrderEmail() {
+// Injection dynamique du formulaire de commande adapté au mobile
+function injectCheckoutModal() {
+  if (document.getElementById('checkout-modal')) return;
+
+  const modalHTML = `
+    <div id="checkout-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Informations de livraison</h3>
+          <button type="button" id="close-modal-btn" class="close-btn">&times;</button>
+        </div>
+        <form id="checkout-form">
+          <div class="form-group">
+            <input type="text" id="cust-nom" placeholder="Nom" required>
+          </div>
+          <div class="form-group">
+            <input type="text" id="cust-prenom" placeholder="Prénom" required>
+          </div>
+          <div class="form-group">
+            <input type="email" id="cust-email" placeholder="Adresse e-mail" required>
+          </div>
+          <div class="form-group">
+            <input type="tel" id="cust-tel" placeholder="Téléphone" required>
+          </div>
+          <div class="form-group">
+            <input type="text" id="cust-adresse" placeholder="Adresse postale" required>
+          </div>
+          <div class="form-group">
+            <input type="text" id="cust-ville" placeholder="Ville et Code Postal" required>
+          </div>
+          <button type="submit" class="submit-order-btn">Confirmer la commande</button>
+        </form>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  const modal = document.getElementById('checkout-modal');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const checkoutForm = document.getElementById('checkout-form');
+
+  closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+  checkoutForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await processOrder();
+  });
+}
+
+// Déclenchement de la commande
+function sendOrderEmail() {
   if (cart.length === 0) {
     alert("Ton panier est vide !");
     return;
   }
+  const modal = document.getElementById('checkout-modal');
+  if (modal) modal.classList.add('active');
+}
+window.sendOrderEmail = sendOrderEmail;
+
+// Traitement et envoi de la commande à Formspree
+async function processOrder() {
+  const nom = document.getElementById('cust-nom').value.trim();
+  const prenom = document.getElementById('cust-prenom').value.trim();
+  const email = document.getElementById('cust-email').value.trim();
+  const telephone = document.getElementById('cust-tel').value.trim();
+  const adresse = document.getElementById('cust-adresse').value.trim();
+  const ville = document.getElementById('cust-ville').value.trim();
 
   let orderDetails = cart.map(item => 
     `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
@@ -274,13 +368,30 @@ async function sendOrderEmail() {
 
   let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
 
-  const clientEmail = prompt("Entre ton adresse e-mail pour confirmer la commande :");
-  if (!clientEmail) return;
+  const messageBody = `
+NOUVELLE COMMANDE RAWZ
+
+--- INFORMATIONS CLIENT ---
+Nom : ${nom}
+Prénom : ${prenom}
+E-mail : ${email}
+Téléphone : ${telephone}
+Adresse : ${adresse}
+Ville : ${ville}
+
+--- DÉTAIL DU PANIER ---
+${orderDetails}
+
+TOTAL : ${total.toFixed(2)} €
+  `;
 
   const data = {
-    email: clientEmail,
-    message: `NOUVELLE COMMANDE RAWZ :\n\n${orderDetails}\n\nTOTAL : ${total.toFixed(2)} €`
+    email: email,
+    message: messageBody
   };
+
+  const submitBtn = document.querySelector('.submit-order-btn');
+  if (submitBtn) submitBtn.textContent = "Envoi en cours...";
 
   try {
     const response = await fetch("https://formspree.io/f/xjybbzln", {
@@ -293,15 +404,19 @@ async function sendOrderEmail() {
     });
 
     if (response.ok) {
-      alert("Commande envoyée avec succès ! Un e-mail de confirmation t'a été envoyé.");
+      alert("Commande envoyée avec succès ! Tu recevras un récapitulatif rapidement.");
       cart = [];
       saveCart();
       updateCartUI();
       closeCart();
+      document.getElementById('checkout-modal').classList.remove('active');
+      document.getElementById('checkout-form').reset();
     } else {
       alert("Erreur lors de l'envoi de la commande. Réessaie plus tard.");
     }
   } catch (error) {
     alert("Erreur réseau : impossible d'envoyer la commande.");
+  } finally {
+    if (submitBtn) submitBtn.textContent = "Confirmer la commande";
   }
 }
