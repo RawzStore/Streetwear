@@ -1,26 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Récupération de l'ID dans l'URL
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('id');
 
-  // 2. Vérification que le tableau products existe
   if (typeof products === 'undefined') {
     console.error("Le tableau 'products' est introuvable dans script.js");
     return;
   }
 
-  // 3. Recherche du produit (détection souple string/number et id/slug)
-  const product = products.find(p => 
-    String(p.id) === String(productId) || 
-    p.slug === productId
-  );
+  const product = products.find(p => String(p.id) === String(productId));
 
   if (!product) {
-    console.warn("Produit non trouvé pour l'ID :", productId);
     return;
   }
 
-  // 4. Affichage des informations
   const productName = document.getElementById('product-name');
   const productPrice = document.getElementById('product-price');
   const productDesc = document.getElementById('product-description');
@@ -30,14 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (productPrice) productPrice.textContent = `${Number(product.price).toFixed(2)} €`;
   if (productDesc) productDesc.textContent = product.description || "";
 
-  // Image principale
   const mainImageSrc = (product.images && product.images.length > 0) ? product.images[0] : (product.image || '');
   if (displayImg && mainImageSrc) {
     displayImg.src = mainImageSrc;
     displayImg.alt = product.name;
   }
 
-  // 5. Remplissage des menus déroulants
   const colorSelect = document.getElementById('color-select');
   const sizeSelect = document.getElementById('size-select');
 
@@ -49,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
   }
 
-  // 6. Vignettes photos
   const thumbnailsContainer = document.getElementById('thumbnails-container');
   if (thumbnailsContainer && product.images && product.images.length > 0) {
     thumbnailsContainer.innerHTML = product.images.map((imgSrc, index) => `
@@ -57,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // 7. Bouton Ajouter au panier
   const addToCartBtn = document.getElementById('add-to-cart-btn');
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
