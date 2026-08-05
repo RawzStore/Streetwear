@@ -81,8 +81,8 @@ body {
 }
 
 .logo-img {
-  height: 75px; /* Ajuste la hauteur selon tes besoins (ex: 35px à 50px) */
-  width: auto;  /* Conserve les proportions de ton logo */
+  height: 75px;
+  width: auto;
   object-fit: contain;
 }
 
@@ -140,7 +140,6 @@ body {
   position: relative;
   width: 100%;
   min-height: 400px;
-  /* Remplace le chemin par ton image */
   background: url('images/hero-banner.jpg') center/cover no-repeat;
   display: flex;
   align-items: center;
@@ -155,7 +154,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.55); /* Ajuste de 0.1 à 0.9 pour foncer/éclaircir */
+  background: rgba(0, 0, 0, 0.55);
   z-index: 1;
 }
 
@@ -550,13 +549,13 @@ body {
   }
 
   .logo-img {
-    height: 55px; /* Taille ajustée pour écran mobile */
+    height: 55px;
   }
 
   .nav-controls {
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr auto auto; /* Recherche prend toute la largeur, boutons à droite */
+    grid-template-columns: 1fr auto auto;
     gap: 8px;
     align-items: center;
   }
@@ -615,8 +614,8 @@ body {
     white-space: nowrap;
     padding-bottom: 6px;
     gap: 8px;
-    -webkit-overflow-scrolling: touch; /* Scroll fluide sur iOS */
-    scrollbar-width: none; /* Cache la barre de scroll */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
 
   .categories::-webkit-scrollbar {
@@ -643,7 +642,7 @@ body {
   }
 
   .img-wrapper {
-    height: 200px; /* Proportion optimisée pour 2 colonnes */
+    height: 200px;
   }
 
   .product-details {
@@ -704,4 +703,230 @@ body {
     flex-direction: column;
     gap: 15px;
   }
+}
+
+/* LISTE DES CARACTÉRISTIQUES */
+.product-features {
+  margin: 15px 0;
+  padding-left: 20px;
+  color: var(--gray-text, #666);
+  font-size: 0.95rem;
+}
+
+.product-features li {
+  margin-bottom: 6px;
+}
+
+/* ACCORDÉONS (DESCRIPTION / LIVRAISON) */
+.accordion-section {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color, #eee);
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.accordion-header::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-header .chevron {
+  transition: transform 0.3s ease;
+  font-size: 0.8rem;
+}
+
+.accordion-item[open] .chevron {
+  transform: rotate(90deg);
+}
+
+.accordion-content {
+  padding-bottom: 16px;
+  color: var(--gray-text, #666);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.accordion-content p + p {
+  margin-top: 8px;
+}
+
+/* NOTIFICATION TOAST */
+.toast-notification {
+  position: fixed;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: bottom 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0;
+  z-index: 2000;
+}
+
+.toast-notification.show {
+  bottom: 30px;
+  opacity: 1;
+}
+
+.toast-icon {
+  background-color: #28a745;
+  color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* MODALE DE COMMANDE */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+  display: flex !important;
+}
+
+.modal-content {
+  background: var(--bg-color, #ffffff);
+  color: var(--text-color, #111111);
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* FORMULAIRE */
+#checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: inherit;
+  color: inherit;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #000;
+}
+
+.submit-order-btn {
+  margin-top: 10px;
+  padding: 14px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-order-btn:hover {
+  background-color: #333;
+}
+
+/* SUPPORT MODE SOMBRE */
+body.dark-theme .modal-content {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border: 1px solid #333;
+}
+
+body.dark-theme .form-group input {
+  border-color: #444;
+  background-color: #222;
+  color: #fff;
+}
+
+body.dark-theme .submit-order-btn {
+  background-color: #fff;
+  color: #000;
+}
+
+body.dark-theme .submit-order-btn:hover {
+  background-color: #ddd;
 }
