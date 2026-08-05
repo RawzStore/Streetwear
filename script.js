@@ -132,7 +132,7 @@ function renderProducts(items) {
   });
 }
 
-// Fonctions de synchronisation et mise à jour du panier
+// Sauvegarde et mise à jour de l'affichage du panier
 window.saveCart = function() {
   localStorage.setItem('cart', JSON.stringify(window.cart));
 };
@@ -154,14 +154,14 @@ window.updateCartUI = function() {
       <div class="cart-item-info">
         <strong>${item.name}</strong>
         <small>Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''}</small>
-        <small>${item.price.toFixed(2)} €</small>
+        <small>${(item.price * item.quantity).toFixed(2)} €</small>
         <div class="qty-controls">
-          <button type="button" class="btn-qty-minus" data-key="${item.key}">-</button>
+          <button type="button" onclick="window.changeQuantity('${item.key}', -1)">-</button>
           <span>${item.quantity}</span>
-          <button type="button" class="btn-qty-plus" data-key="${item.key}">+</button>
+          <button type="button" onclick="window.changeQuantity('${item.key}', 1)">+</button>
         </div>
       </div>
-      <button type="button" class="delete-btn" data-key="${item.key}">✕</button>
+      <button type="button" class="delete-btn" onclick="window.removeFromCart('${item.key}')">✕</button>
     `;
     cartItemsContainer.appendChild(itemEl);
   });
@@ -171,23 +171,7 @@ window.updateCartUI = function() {
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
 };
 
-// Écoute des événements sur le panier (Boutons +, - et Supprimer)
-if (cartItemsContainer) {
-  cartItemsContainer.addEventListener('click', (e) => {
-    const key = e.target.getAttribute('data-key');
-    if (!key) return;
-
-    if (e.target.classList.contains('btn-qty-plus')) {
-      window.changeQuantity(key, 1);
-    } else if (e.target.classList.contains('btn-qty-minus')) {
-      window.changeQuantity(key, -1);
-    } else if (e.target.classList.contains('delete-btn')) {
-      window.removeFromCart(key);
-    }
-  });
-}
-
-// Actions sur le panier
+// Modification des quantités et suppression
 window.changeQuantity = function(cartItemKey, delta) {
   const item = window.cart.find(i => i.key === cartItemKey);
   if (!item) return;
@@ -207,7 +191,7 @@ window.removeFromCart = function(cartItemKey) {
   window.updateCartUI();
 };
 
-// Drawer Panier (Ouverture/Fermeture)
+// Drawer Panier (Ouverture / Fermeture)
 function openCart() {
   if (cartDrawer && cartOverlay) {
     cartDrawer.classList.add('open');
