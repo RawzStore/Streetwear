@@ -39,7 +39,6 @@
     <div class="product-info-panel">
       <h1 id="product-name"></h1>
       <p id="product-price" class="price"></p>
-      <p id="product-description" class="description"></p>
 
       <!-- Options Couleur -->
       <div class="option-group">
@@ -54,6 +53,35 @@
       </div>
 
       <button id="add-to-cart-btn" class="add-cart-large-btn">Ajouter au panier</button>
+
+      <!-- Caractéristiques sous forme de liste -->
+      <ul class="product-features">
+        <li>Livraison offerte dès 80€ d'achat</li>
+        <li>Précommande désormais disponible</li>
+      </ul>
+
+      <!-- Accordéons dépliables -->
+      <div class="accordion-section">
+        <details class="accordion-item">
+          <summary class="accordion-header">
+            <span>Description</span>
+            <span class="chevron">❯</span>
+          </summary>
+          <div class="accordion-content">
+            <p id="product-description"></p>
+          </div>
+        </details>
+
+        <details class="accordion-item">
+          <summary class="accordion-header">
+            <span>Livraison et retour</span>
+            <span class="chevron">❯</span>
+          </summary>
+          <div class="accordion-content">
+            <p>Livraison standard à domicile ou en point relais. Suivi de colis disponible dès l'expédition.</p>
+          </div>
+        </details>
+      </div>
     </div>
   </main>
 
@@ -77,8 +105,8 @@
         <span id="cart-total-price">0,00 €</span>
       </div>
       <button class="checkout-btn" onclick="sendOrderEmail()">
-  Commander maintenant
-</button>
+        Commander maintenant
+      </button>
     </div>
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
