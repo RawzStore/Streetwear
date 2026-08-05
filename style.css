@@ -647,3 +647,60 @@ body {
   }
 }
 
+/* --- LISTE DES CARACTÉRISTIQUES --- */
+.product-features {
+  margin: 15px 0;
+  padding-left: 20px;
+  color: var(--gray-text, #666);
+  font-size: 0.95rem;
+}
+
+.product-features li {
+  margin-bottom: 6px;
+}
+
+/* --- ACCORDÉONS (DESCRIPTION / LIVRAISON) --- */
+.accordion-section {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color, #eee);
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.accordion-header::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-header .chevron {
+  transition: transform 0.3s ease;
+  font-size: 0.8rem;
+}
+
+.accordion-item[open] .chevron {
+  transform: rotate(90deg);
+}
+
+.accordion-content {
+  padding-bottom: 16px;
+  color: var(--gray-text, #666);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.accordion-content p + p {
+  margin-top: 8px;
+}
+
