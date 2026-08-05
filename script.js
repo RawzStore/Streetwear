@@ -23,7 +23,7 @@ const products = [
     price: 17.99, 
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir/Blanc", "Noir/Rose", "Blanc/Rouge", "Rouge/Blanc"],
-    description: "Col en polyester élastique avec motif à rayures color-block et imprimé typographique.",
+    description: "Col en polyester élastique avec motif à rayures color-block et imprimé typographique (lettres et chiffres). Lavable en machine. Convient parfaitement pour une tenue décontractée, en extérieur ou pour le quotidien, avec une coupe régulière adaptée à toutes les occasions.",
     mainImage: "images/polo-noir-r-blanches.jpg",
     imagesByColor: {
       "Noir/Blanc": [
@@ -51,7 +51,7 @@ const products = [
     price: 17.99, 
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir"],
-    description: "Style : Streetwear | Matière : 100 % Coton | Col : Col rabattu | Coupe : Régulière",
+    description: "Style : Streetwear | Matière : 100 % Coton | Col : Col rabattu | Coupe : Régulière | Longueur : Court | Tissage : Tricot",
     mainImage: "images/polo-signature.jpg",
     images: [
       "images/polo-signature.jpg",
@@ -74,11 +74,10 @@ const products = [
   }
 ];
 
-// État global du panier
-window.cart = JSON.parse(localStorage.getItem('cart')) || [];
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let appliedDiscount = 0;
 
-// Éléments DOM
+// Éléments DOM généraux
 const cartDrawer = document.getElementById('cart-drawer');
 const cartOverlay = document.getElementById('cart-overlay');
 const cartToggleBtn = document.getElementById('cart-toggle-btn');
@@ -102,7 +101,7 @@ if (themeToggleBtn) {
   });
 }
 
-// Rendu du catalogue
+// Rendu du catalogue sur index.html
 function renderProducts(items) {
   const productGrid = document.getElementById('product-grid');
   if (!productGrid) return;
@@ -132,19 +131,19 @@ function renderProducts(items) {
   });
 }
 
-// Sauvegarde et mise à jour de l'affichage du panier
-window.saveCart = function() {
-  localStorage.setItem('cart', JSON.stringify(window.cart));
-};
+// Logique du Panier
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
 
-window.updateCartUI = function() {
+function updateCartUI() {
   if (!cartItemsContainer) return;
 
   cartItemsContainer.innerHTML = '';
   let subtotal = 0;
   let count = 0;
 
-  window.cart.forEach(item => {
+  cart.forEach(item => {
     subtotal += item.price * item.quantity;
     count += item.quantity;
 
@@ -154,14 +153,14 @@ window.updateCartUI = function() {
       <div class="cart-item-info">
         <strong>${item.name}</strong>
         <small>Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''}</small>
-        <small>${(item.price * item.quantity).toFixed(2)} €</small>
+        <small>${item.price.toFixed(2)} €</small>
         <div class="qty-controls">
-          <button type="button" onclick="window.changeQuantity('${item.key}', -1)">-</button>
+          <button onclick="changeQuantity('${item.key}', -1)">-</button>
           <span>${item.quantity}</span>
-          <button type="button" onclick="window.changeQuantity('${item.key}', 1)">+</button>
+          <button onclick="changeQuantity('${item.key}', 1)">+</button>
         </div>
       </div>
-      <button type="button" class="delete-btn" onclick="window.removeFromCart('${item.key}')">✕</button>
+      <button onclick="removeFromCart('${item.key}')" class="delete-btn">✕</button>
     `;
     cartItemsContainer.appendChild(itemEl);
   });
@@ -169,29 +168,26 @@ window.updateCartUI = function() {
   let finalTotal = subtotal * (1 - appliedDiscount);
   if (cartBadge) cartBadge.textContent = count;
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
-};
+}
 
-// Modification des quantités et suppression
-window.changeQuantity = function(cartItemKey, delta) {
-  const item = window.cart.find(i => i.key === cartItemKey);
+function changeQuantity(cartItemKey, delta) {
+  const item = cart.find(i => i.key === cartItemKey);
   if (!item) return;
 
   item.quantity += delta;
-  if (item.quantity <= 0) {
-    window.cart = window.cart.filter(i => i.key !== cartItemKey);
-  }
+  if (item.quantity <= 0) cart = cart.filter(i => i.key !== cartItemKey);
 
-  window.saveCart();
-  window.updateCartUI();
-};
+  saveCart();
+  updateCartUI();
+}
 
-window.removeFromCart = function(cartItemKey) {
-  window.cart = window.cart.filter(item => item.key !== cartItemKey);
-  window.saveCart();
-  window.updateCartUI();
-};
+function removeFromCart(cartItemKey) {
+  cart = cart.filter(item => item.key !== cartItemKey);
+  saveCart();
+  updateCartUI();
+}
 
-// Drawer Panier (Ouverture / Fermeture)
+// Ouverture & fermeture Panier
 function openCart() {
   if (cartDrawer && cartOverlay) {
     cartDrawer.classList.add('open');
@@ -210,7 +206,7 @@ if (cartToggleBtn) cartToggleBtn.addEventListener('click', openCart);
 if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
 if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 
-// Code Promo
+// Appliquer le Code Promo
 if (applyPromoBtn) {
   applyPromoBtn.addEventListener('click', () => {
     const code = promoInput.value.trim().toUpperCase();
@@ -223,11 +219,11 @@ if (applyPromoBtn) {
       promoMsg.textContent = "Code invalide.";
       promoMsg.className = "promo-message error";
     }
-    window.updateCartUI();
+    updateCartUI();
   });
 }
 
-// Recherche & Filtres
+// Filtres et Recherche
 const searchInput = document.getElementById('search-input');
 const sortSelect = document.getElementById('sort-select');
 
@@ -263,60 +259,27 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 // Initialisation au chargement
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
-  window.updateCartUI();
+  updateCartUI();
 });
 
-// Envoi de la commande par Formspree
 async function sendOrderEmail() {
-  if (window.cart.length === 0) {
+  if (cart.length === 0) {
     alert("Ton panier est vide !");
     return;
   }
 
-  const nom = prompt("Ton Nom :");
-  if (!nom) return;
-
-  const prenom = prompt("Ton Prénom :");
-  if (!prenom) return;
-
-  const email = prompt("Ton adresse E-mail :");
-  if (!email) return;
-
-  const telephone = prompt("Ton numéro de Téléphone :");
-  if (!telephone) return;
-
-  const adresse = prompt("Ton Adresse postale :");
-  if (!adresse) return;
-
-  const ville = prompt("Ta Ville et Code Postal :");
-  if (!ville) return;
-
-  let orderDetails = window.cart.map(item => 
+  let orderDetails = cart.map(item => 
     `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
   ).join('\n');
 
-  let total = window.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+  let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
 
-  const messageBody = `
-NOUVELLE COMMANDE RAWZ
-
---- INFORMATIONS CLIENT ---
-Nom : ${nom}
-Prénom : ${prenom}
-E-mail : ${email}
-Téléphone : ${telephone}
-Adresse : ${adresse}
-Ville : ${ville}
-
---- DÉTAIL DU PANIER ---
-${orderDetails}
-
-TOTAL : ${total.toFixed(2)} €
-  `;
+  const clientEmail = prompt("Entre ton adresse e-mail pour confirmer la commande :");
+  if (!clientEmail) return;
 
   const data = {
-    email: email,
-    message: messageBody
+    email: clientEmail,
+    message: `NOUVELLE COMMANDE RAWZ :\n\n${orderDetails}\n\nTOTAL : ${total.toFixed(2)} €`
   };
 
   try {
@@ -330,10 +293,10 @@ TOTAL : ${total.toFixed(2)} €
     });
 
     if (response.ok) {
-      alert("Commande envoyée avec succès ! Tu recevras un récapitulatif rapidement.");
-      window.cart = [];
-      window.saveCart();
-      window.updateCartUI();
+      alert("Commande envoyée avec succès ! Un e-mail de confirmation t'a été envoyé.");
+      cart = [];
+      saveCart();
+      updateCartUI();
       closeCart();
     } else {
       alert("Erreur lors de l'envoi de la commande. Réessaie plus tard.");
