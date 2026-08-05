@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        const response = await fetch("https://formspree.io/f/xjybbzln", {
+        const response = await fetch("https://formspree.io/f/xgaweybe", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
