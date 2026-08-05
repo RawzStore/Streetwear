@@ -23,7 +23,7 @@ const products = [
     price: 17.99, 
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir/Blanc", "Noir/Rose", "Blanc/Rouge", "Rouge/Blanc"],
-    description: "Col en polyester élastique avec motif à rayures color-block et imprimé typographique (lettres et chiffres). Lavable en machine.",
+    description: "Col en polyester élastique avec motif à rayures color-block et imprimé typographique.",
     mainImage: "images/polo-noir-r-blanches.jpg",
     imagesByColor: {
       "Noir/Blanc": [
@@ -74,10 +74,11 @@ const products = [
   }
 ];
 
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
+// État global du panier
+window.cart = JSON.parse(localStorage.getItem('cart')) || [];
 let appliedDiscount = 0;
 
-// Éléments DOM généraux
+// Éléments DOM
 const cartDrawer = document.getElementById('cart-drawer');
 const cartOverlay = document.getElementById('cart-overlay');
 const cartToggleBtn = document.getElementById('cart-toggle-btn');
@@ -131,20 +132,19 @@ function renderProducts(items) {
   });
 }
 
-// Sauvegarde du panier
-function saveCart() {
-  localStorage.setItem('cart', JSON.stringify(cart));
-}
+// Fonctions de synchronisation et mise à jour du panier
+window.saveCart = function() {
+  localStorage.setItem('cart', JSON.stringify(window.cart));
+};
 
-// Mise à jour du panier
-function updateCartUI() {
+window.updateCartUI = function() {
   if (!cartItemsContainer) return;
 
   cartItemsContainer.innerHTML = '';
   let subtotal = 0;
   let count = 0;
 
-  cart.forEach(item => {
+  window.cart.forEach(item => {
     subtotal += item.price * item.quantity;
     count += item.quantity;
 
@@ -156,9 +156,9 @@ function updateCartUI() {
         <small>Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''}</small>
         <small>${item.price.toFixed(2)} €</small>
         <div class="qty-controls">
-          <button type="button" class="btn-qty btn-minus" data-key="${item.key}">-</button>
+          <button type="button" class="btn-qty-minus" data-key="${item.key}">-</button>
           <span>${item.quantity}</span>
-          <button type="button" class="btn-qty btn-plus" data-key="${item.key}">+</button>
+          <button type="button" class="btn-qty-plus" data-key="${item.key}">+</button>
         </div>
       </div>
       <button type="button" class="delete-btn" data-key="${item.key}">✕</button>
@@ -166,58 +166,48 @@ function updateCartUI() {
     cartItemsContainer.appendChild(itemEl);
   });
 
-  // Écouteurs d'événements pour les boutons de quantité et de suppression (solution optimale mobile/desktop)
-  document.querySelectorAll('.btn-minus').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      changeQuantity(btn.dataset.key, -1);
-    });
-  });
-
-  document.querySelectorAll('.btn-plus').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      changeQuantity(btn.dataset.key, 1);
-    });
-  });
-
-  document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      removeFromCart(btn.dataset.key);
-    });
-  });
-
   let finalTotal = subtotal * (1 - appliedDiscount);
   if (cartBadge) cartBadge.textContent = count;
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
+};
+
+// Écoute des événements sur le panier (Boutons +, - et Supprimer)
+if (cartItemsContainer) {
+  cartItemsContainer.addEventListener('click', (e) => {
+    const key = e.target.getAttribute('data-key');
+    if (!key) return;
+
+    if (e.target.classList.contains('btn-qty-plus')) {
+      window.changeQuantity(key, 1);
+    } else if (e.target.classList.contains('btn-qty-minus')) {
+      window.changeQuantity(key, -1);
+    } else if (e.target.classList.contains('delete-btn')) {
+      window.removeFromCart(key);
+    }
+  });
 }
 
-// Fonctions de modification
-function changeQuantity(cartItemKey, delta) {
-  const item = cart.find(i => i.key === cartItemKey);
+// Actions sur le panier
+window.changeQuantity = function(cartItemKey, delta) {
+  const item = window.cart.find(i => i.key === cartItemKey);
   if (!item) return;
 
   item.quantity += delta;
   if (item.quantity <= 0) {
-    cart = cart.filter(i => i.key !== cartItemKey);
+    window.cart = window.cart.filter(i => i.key !== cartItemKey);
   }
 
-  saveCart();
-  updateCartUI();
-}
+  window.saveCart();
+  window.updateCartUI();
+};
 
-function removeFromCart(cartItemKey) {
-  cart = cart.filter(item => item.key !== cartItemKey);
-  saveCart();
-  updateCartUI();
-}
+window.removeFromCart = function(cartItemKey) {
+  window.cart = window.cart.filter(item => item.key !== cartItemKey);
+  window.saveCart();
+  window.updateCartUI();
+};
 
-// Rendre accessible globalement au besoin
-window.changeQuantity = changeQuantity;
-window.removeFromCart = removeFromCart;
-
-// Ouverture & fermeture Panier
+// Drawer Panier (Ouverture/Fermeture)
 function openCart() {
   if (cartDrawer && cartOverlay) {
     cartDrawer.classList.add('open');
@@ -249,11 +239,11 @@ if (applyPromoBtn) {
       promoMsg.textContent = "Code invalide.";
       promoMsg.className = "promo-message error";
     }
-    updateCartUI();
+    window.updateCartUI();
   });
 }
 
-// Filtres et Recherche
+// Recherche & Filtres
 const searchInput = document.getElementById('search-input');
 const sortSelect = document.getElementById('sort-select');
 
@@ -289,84 +279,39 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 // Initialisation au chargement
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
-  updateCartUI();
-  injectCheckoutModal();
+  window.updateCartUI();
 });
 
-// Injection dynamique du formulaire de commande adapté au mobile
-function injectCheckoutModal() {
-  if (document.getElementById('checkout-modal')) return;
-
-  const modalHTML = `
-    <div id="checkout-modal" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Informations de livraison</h3>
-          <button type="button" id="close-modal-btn" class="close-btn">&times;</button>
-        </div>
-        <form id="checkout-form">
-          <div class="form-group">
-            <input type="text" id="cust-nom" placeholder="Nom" required>
-          </div>
-          <div class="form-group">
-            <input type="text" id="cust-prenom" placeholder="Prénom" required>
-          </div>
-          <div class="form-group">
-            <input type="email" id="cust-email" placeholder="Adresse e-mail" required>
-          </div>
-          <div class="form-group">
-            <input type="tel" id="cust-tel" placeholder="Téléphone" required>
-          </div>
-          <div class="form-group">
-            <input type="text" id="cust-adresse" placeholder="Adresse postale" required>
-          </div>
-          <div class="form-group">
-            <input type="text" id="cust-ville" placeholder="Ville et Code Postal" required>
-          </div>
-          <button type="submit" class="submit-order-btn">Confirmer la commande</button>
-        </form>
-      </div>
-    </div>
-  `;
-  document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-  const modal = document.getElementById('checkout-modal');
-  const closeModalBtn = document.getElementById('close-modal-btn');
-  const checkoutForm = document.getElementById('checkout-form');
-
-  closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
-
-  checkoutForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    await processOrder();
-  });
-}
-
-// Déclenchement de la commande
-function sendOrderEmail() {
-  if (cart.length === 0) {
+// Envoi de la commande par Formspree
+async function sendOrderEmail() {
+  if (window.cart.length === 0) {
     alert("Ton panier est vide !");
     return;
   }
-  const modal = document.getElementById('checkout-modal');
-  if (modal) modal.classList.add('active');
-}
-window.sendOrderEmail = sendOrderEmail;
 
-// Traitement et envoi de la commande à Formspree
-async function processOrder() {
-  const nom = document.getElementById('cust-nom').value.trim();
-  const prenom = document.getElementById('cust-prenom').value.trim();
-  const email = document.getElementById('cust-email').value.trim();
-  const telephone = document.getElementById('cust-tel').value.trim();
-  const adresse = document.getElementById('cust-adresse').value.trim();
-  const ville = document.getElementById('cust-ville').value.trim();
+  const nom = prompt("Ton Nom :");
+  if (!nom) return;
 
-  let orderDetails = cart.map(item => 
+  const prenom = prompt("Ton Prénom :");
+  if (!prenom) return;
+
+  const email = prompt("Ton adresse E-mail :");
+  if (!email) return;
+
+  const telephone = prompt("Ton numéro de Téléphone :");
+  if (!telephone) return;
+
+  const adresse = prompt("Ton Adresse postale :");
+  if (!adresse) return;
+
+  const ville = prompt("Ta Ville et Code Postal :");
+  if (!ville) return;
+
+  let orderDetails = window.cart.map(item => 
     `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
   ).join('\n');
 
-  let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+  let total = window.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
 
   const messageBody = `
 NOUVELLE COMMANDE RAWZ
@@ -390,9 +335,6 @@ TOTAL : ${total.toFixed(2)} €
     message: messageBody
   };
 
-  const submitBtn = document.querySelector('.submit-order-btn');
-  if (submitBtn) submitBtn.textContent = "Envoi en cours...";
-
   try {
     const response = await fetch("https://formspree.io/f/xjybbzln", {
       method: "POST",
@@ -405,18 +347,14 @@ TOTAL : ${total.toFixed(2)} €
 
     if (response.ok) {
       alert("Commande envoyée avec succès ! Tu recevras un récapitulatif rapidement.");
-      cart = [];
-      saveCart();
-      updateCartUI();
+      window.cart = [];
+      window.saveCart();
+      window.updateCartUI();
       closeCart();
-      document.getElementById('checkout-modal').classList.remove('active');
-      document.getElementById('checkout-form').reset();
     } else {
       alert("Erreur lors de l'envoi de la commande. Réessaie plus tard.");
     }
   } catch (error) {
     alert("Erreur réseau : impossible d'envoyer la commande.");
-  } finally {
-    if (submitBtn) submitBtn.textContent = "Confirmer la commande";
   }
 }
