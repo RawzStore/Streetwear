@@ -53,7 +53,7 @@ const products = [
     price: 18.99, 
     sizes: ["S", "M", "L", "XL"],
     colors: ["Militaire"],
-    description: "T-Shirt Tricoté couleur sable / orange / blanc",
+    description: "T-Shirt Tricoté couleur militaire",
     mainImage: "images/tshirt-tricoté.jpg",
     images: [
       "images/tshirt-tricoté.jpg",
