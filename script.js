@@ -49,11 +49,11 @@ const products = [
   { 
     id: 4, 
     name: "T-Shirt Tricoté", 
-    category: "tshirts", 
+    category: "t-shirt", 
     price: 18.99, 
     sizes: ["S", "M", "L", "XL"],
     colors: ["Militaire"],
-    description: "T-Shirt Tricoté couleur militaire",
+    description: "T-Shirt Tricoté couleur sable / orange / blanc",
     mainImage: "images/tshirt-tricoté.jpg",
     images: [
       "images/tshirt-tricoté.jpg",
