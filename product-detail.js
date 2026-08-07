@@ -30,21 +30,40 @@ document.addEventListener('DOMContentLoaded', () => {
   if (productPrice) productPrice.textContent = `${product.price.toFixed(2)} €`;
   if (productDescription) productDescription.textContent = product.description;
 
-  // 5. Effet de Zoom au survol
+  // 5. Effet de Zoom (Souris + Tactile Mobile)
   if (mainImgContainer && displayImg) {
-    mainImgContainer.addEventListener('mousemove', (e) => {
+    
+    // Fonction centrale pour calculer le zoom
+    const applyZoom = (clientX, clientY) => {
       const rect = mainImgContainer.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      const x = ((clientX - rect.left) / rect.width) * 100;
+      const y = ((clientY - rect.top) / rect.height) * 100;
 
       displayImg.style.transformOrigin = `${x}% ${y}%`;
       displayImg.style.transform = 'scale(2)';
-    });
+    };
 
-    mainImgContainer.addEventListener('mouseleave', () => {
+    const resetZoom = () => {
       displayImg.style.transform = 'scale(1)';
       displayImg.style.transformOrigin = 'center center';
-    });
+    };
+
+    // --- PC (Souris) ---
+    mainImgContainer.addEventListener('mousemove', (e) => applyZoom(e.clientX, e.clientY));
+    mainImgContainer.addEventListener('mouseleave', resetZoom);
+
+    // --- MOBILE (Tactile) ---
+    mainImgContainer.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        // Empêche le défilement de la page pendant qu'on glisse le doigt sur l'image
+        e.preventDefault(); 
+        const touch = e.touches[0];
+        applyZoom(touch.clientX, touch.clientY);
+      }
+    }, { passive: false });
+
+    mainImgContainer.addEventListener('touchend', resetZoom);
+    mainImgContainer.addEventListener('touchcancel', resetZoom);
   }
 
   // 6. Gestion de la Galerie d'images
