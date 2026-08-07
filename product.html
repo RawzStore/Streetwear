@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAWZ | Fiche Produit</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/jpg" href="logo.jpg">
+</head>
+<body>
+
+  <!-- En-tête / Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <img src="images/logo.png" alt="RAWZ Logo" class="logo-img">
+      </a>
+      <div class="nav-controls">
+        <a href="index.html" class="back-link">← Retour au catalogue</a>
+        <button id="theme-toggle-btn" class="theme-btn" title="Changer le thème">🌙</button>
+        <button id="cart-toggle-btn" class="cart-btn">
+          Panier <span id="cart-badge" class="badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenu Fiche Produit -->
+  <main class="product-page-container">
+    <!-- Galerie Photos (Gauche) -->
+    <div class="product-gallery">
+      <div class="main-image-container">
+        <img id="display-img" src="" alt="Image produit">
+      </div>
+      <div id="thumbnails-container" class="thumbnails-grid"></div>
+    </div>
+
+    <!-- Panneau Info & Options (Droite) -->
+    <div class="product-info-panel">
+      <h1 id="product-name"></h1>
+      <p id="product-price" class="price"></p>
+
+      <!-- Options Couleur -->
+      <div class="option-group">
+        <label for="color-select"><strong>Couleur :</strong></label>
+        <select id="color-select" class="custom-select"></select>
+      </div>
+
+      <!-- Options Taille -->
+      <div class="option-group">
+        <label for="size-select"><strong>Taille :</strong></label>
+        <select id="size-select" class="custom-select"></select>
+      </div>
+
+      <button id="add-to-cart-btn" class="add-cart-large-btn">Ajouter au panier</button>
+
+      <!-- Caractéristiques sous forme de liste -->
+      <ul class="product-features">
+        <li>Livraison offerte dès 80€ d'achat</li>
+        <li>Précommande désormais disponible</li>
+      </ul>
+
+      <!-- Accordéons dépliables -->
+      <div class="accordion-section">
+        <details class="accordion-item">
+          <summary class="accordion-header">
+            <span>Description</span>
+            <span class="chevron">❯</span>
+          </summary>
+          <div class="accordion-content">
+            <p id="product-description"></p>
+          </div>
+        </details>
+
+        <details class="accordion-item">
+          <summary class="accordion-header">
+            <span>Livraison et retour</span>
+            <span class="chevron">❯</span>
+          </summary>
+          <div class="accordion-content">
+            <p>Livraison standard à domicile ou en point relais. Suivi de colis disponible dès l'expédition.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </main>
+
+  <!-- Drawer Panier -->
+  <aside id="cart-drawer" class="cart-drawer">
+    <div class="cart-header">
+      <h2>Mon Panier</h2>
+      <button id="close-cart-btn" class="close-btn">&times;</button>
+    </div>
+    <div id="cart-items" class="cart-items-container"></div>
+    
+    <div class="cart-footer">
+      <div class="promo-box">
+        <input type="text" id="promo-input" placeholder="Code promo" class="promo-input">
+        <button id="apply-promo-btn" class="promo-btn">Appliquer</button>
+      </div>
+      <p id="promo-msg" class="promo-message"></p>
+
+      <div class="cart-total">
+        <span>Total :</span>
+        <span id="cart-total-price">0,00 €</span>
+      </div>
+      <!-- Modification ici : openCheckoutModal() au lieu de sendOrderEmail() -->
+      <button class="checkout-btn" onclick="openCheckoutModal()">
+        Commander maintenant
+      </button>
+    </div>
+  </aside>
+  <div id="cart-overlay" class="cart-overlay"></div>
+
+  <!-- MODALE FORMULAIRE DE COMMANDE -->
+  <div id="checkout-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button id="close-modal-btn" class="modal-close">&times;</button>
+      <h2>Informations de livraison</h2>
+      <form id="checkout-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-firstname">Prénom *</label>
+            <input type="text" id="client-firstname" required placeholder="Jean">
+          </div>
+          <div class="form-group">
+            <label for="client-lastname">Nom *</label>
+            <input type="text" id="client-lastname" required placeholder="Dupont">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-email">E-mail *</label>
+            <input type="email" id="client-email" required placeholder="jean.dupont@email.com">
+          </div>
+          <div class="form-group">
+            <label for="client-phone">Téléphone *</label>
+            <input type="tel" id="client-phone" required placeholder="06 12 34 56 78">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="client-address">Adresse *</label>
+          <input type="text" id="client-address" required placeholder="12 rue des Fleurs">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-zipcode">Code postal *</label>
+            <input type="text" id="client-zipcode" required placeholder="75001">
+          </div>
+          <div class="form-group">
+            <label for="client-city">Ville *</label>
+            <input type="text" id="client-city" required placeholder="Paris">
+          </div>
+        </div>
+        <button type="submit" class="submit-order-btn">Valider et envoyer la commande</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="product-detail.js"></script>
+  
+  <!-- Notification Toast -->
+  <div id="toast-notification" class="toast-notification">
+    <span class="toast-icon">✓</span>
+    <span>Produit ajouté au panier</span>
+  </div>
+</body>
+</html>
