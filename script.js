@@ -372,4 +372,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
+
+  // --- GESTION DES MODALES DU FOOTER (MENTIONS & RETOURS) ---
+  const mentionsModal = document.getElementById('mentions-modal');
+  const returnsModal = document.getElementById('returns-modal');
+
+  const openMentionsBtn = document.getElementById('open-mentions-btn');
+  const openReturnsBtn = document.getElementById('open-returns-btn');
+
+  const closeMentionsBtn = document.getElementById('close-mentions-btn');
+  const closeReturnsBtn = document.getElementById('close-returns-btn');
+
+  if (openMentionsBtn && mentionsModal) {
+    openMentionsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      mentionsModal.classList.add('active');
+    });
+  }
+
+  if (openReturnsBtn && returnsModal) {
+    openReturnsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      returnsModal.classList.add('active');
+    });
+  }
+
+  if (closeMentionsBtn && mentionsModal) {
+    closeMentionsBtn.addEventListener('click', () => mentionsModal.classList.remove('active'));
+  }
+
+  if (closeReturnsBtn && returnsModal) {
+    closeReturnsBtn.addEventListener('click', () => returnsModal.classList.remove('active'));
+  }
+
+  // Fermer les modales au clic sur l'arrière-plan
+  window.addEventListener('click', (e) => {
+    if (e.target === mentionsModal) mentionsModal.classList.remove('active');
+    if (e.target === returnsModal) returnsModal.classList.remove('active');
+  });
 });
