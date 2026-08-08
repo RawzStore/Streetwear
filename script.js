@@ -4,7 +4,7 @@ const products = [
     id: 1, 
     name: "Chemise à Carreaux", 
     category: "chemise", 
-    price: 19.99, 
+    price: 00.01, 
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir"],
     description: "Coupe ample à manches courtes, style vintage à carreaux brodés avec double poche.",
