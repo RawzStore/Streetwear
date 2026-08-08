@@ -320,13 +320,46 @@ function initPayPalButton() {
       let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       let total = (subtotal * (1 - appliedDiscount)).toFixed(2);
 
+      // Récupération des données du formulaire pour pré-remplissage PayPal
+      const firstname = document.getElementById('client-firstname').value.trim();
+      const lastname = document.getElementById('client-lastname').value.trim();
+      const email = document.getElementById('client-email').value.trim();
+      const phone = document.getElementById('client-phone').value.trim();
+      const address = document.getElementById('client-address').value.trim();
+      const zipcode = document.getElementById('client-zipcode').value.trim();
+      const city = document.getElementById('client-city').value.trim();
+
       return actions.order.create({
         purchase_units: [{
           amount: {
             value: total,
             currency_code: 'EUR'
+          },
+          shipping: {
+            name: {
+              full_name: `${firstname} ${lastname}`
+            },
+            address: {
+              address_line_1: address,
+              admin_area_2: city,
+              postal_code: zipcode,
+              country_code: 'FR'
+            }
           }
-        }]
+        }],
+        payer: {
+          name: {
+            given_name: firstname,
+            surname: lastname
+          },
+          email_address: email,
+          phone: {
+            phone_type: 'MOBILE',
+            phone_number: {
+              national_number: phone.replace(/\s+/g, '')
+            }
+          }
+        }
       });
     },
     onApprove: function(data, actions) {
