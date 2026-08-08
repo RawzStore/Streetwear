@@ -962,3 +962,94 @@ body.dark-theme .modal-content {
     font-size: 0.95rem;
   }
 }
+
+/* --- FOOTER --- */
+.site-footer {
+  background-color: #0a0a0a;
+  color: #ffffff;
+  padding: 40px 20px 20px 20px;
+  margin-top: 60px;
+  border-top: 1px solid #222;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+}
+
+.footer-brand h3 {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.footer-brand p {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.footer-socials h4, .footer-legal h4 {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+}
+
+.social-links a, .footer-legal a {
+  color: #bbb;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.social-links a:hover, .footer-legal a:hover {
+  color: #fff;
+}
+
+.footer-legal ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-legal li {
+  margin-bottom: 8px;
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 30px auto 0 auto;
+  padding-top: 20px;
+  border-top: 1px solid #1a1a1a;
+  text-align: center;
+  color: #555;
+  font-size: 0.8rem;
+}
+
+/* Modales Légales */
+.legal-modal-content {
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.legal-text h3 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+}
+
+.legal-text p {
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
