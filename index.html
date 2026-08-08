@@ -6,6 +6,8 @@
   <title>RAWZ | Store</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="images/logo.png">
+  <!-- SDK PayPal (Remplacer 'sb' par ton Client ID en production) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR"></script>
 </head>
 <body>
 
@@ -151,7 +153,9 @@
             <input type="text" id="client-city" required placeholder="Paris">
           </div>
         </div>
-        <button type="submit" class="submit-order-btn">Valider et envoyer la commande</button>
+        
+        <!-- Conteneur des boutons PayPal -->
+        <div id="paypal-button-container" style="margin-top: 20px;"></div>
       </form>
     </div>
   </div>
