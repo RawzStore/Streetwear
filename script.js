@@ -320,16 +320,17 @@ function initPayPalButton() {
       let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       let total = (subtotal * (1 - appliedDiscount)).toFixed(2);
 
-      // Récupération des données du formulaire pour pré-remplissage PayPal
+      // Récupération et nettoyage des valeurs
       const firstname = document.getElementById('client-firstname').value.trim();
       const lastname = document.getElementById('client-lastname').value.trim();
       const email = document.getElementById('client-email').value.trim();
-      const phone = document.getElementById('client-phone').value.trim();
+      const rawPhone = document.getElementById('client-phone').value.trim().replace(/\s+/g, '');
       const address = document.getElementById('client-address').value.trim();
       const zipcode = document.getElementById('client-zipcode').value.trim();
       const city = document.getElementById('client-city').value.trim();
 
       return actions.order.create({
+        intent: 'CAPTURE',
         purchase_units: [{
           amount: {
             value: total,
@@ -356,8 +357,14 @@ function initPayPalButton() {
           phone: {
             phone_type: 'MOBILE',
             phone_number: {
-              national_number: phone.replace(/\s+/g, '')
+              national_number: rawPhone.replace(/^\+33|^0/, '')
             }
+          },
+          address: {
+            address_line_1: address,
+            admin_area_2: city,
+            postal_code: zipcode,
+            country_code: 'FR'
           }
         }
       });
