@@ -6,8 +6,6 @@
   <title>RAWZ | Store</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="images/logo.png">
-  <!-- SDK PayPal (Remplacer 'sb' par ton Client ID en production) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR"></script>
 </head>
 <body>
 
@@ -154,8 +152,10 @@
           </div>
         </div>
         
-        <!-- Conteneur des boutons PayPal -->
-        <div id="paypal-button-container" style="margin-top: 20px;"></div>
+        <!-- Bouton d'envoi direct -->
+        <button type="submit" id="submit-order-btn" class="checkout-btn" style="margin-top: 20px; width: 100%;">
+          Valider et envoyer la commande
+        </button>
       </form>
     </div>
   </div>
