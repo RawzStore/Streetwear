@@ -1039,25 +1039,24 @@ body.dark-theme .modal-content {
   max-height: 80vh;
   overflow-y: auto;
   text-align: left;
-  background-color: #ffffff; /* Fond blanc propre */
-  color: #111111; /* Texte principal foncé */
+  background-color: #ffffff;
+  color: #222222;
 }
 
 .legal-text h3 {
   margin-top: 15px;
   margin-bottom: 5px;
   font-size: 1.1rem;
-  color: #000000; /* Titres bien noirs */
+  color: #111111;
 }
 
 .legal-text p {
-  color: #333333; /* Texte des paragraphes sombre et lisible */
+  color: #555555; /* Gris moyen/foncé, parfaitement lisible mais plus doux */
   font-size: 0.95rem;
   line-height: 1.5;
   margin-bottom: 10px;
 }
 
 .legal-text strong {
-  color: #000000; /* Balises <strong> bien foncées */
+  color: #222222;
 }
-
