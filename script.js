@@ -282,10 +282,115 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
+// INTÉGRATION BOUTONS PAYPAL
+function initPayPalButton() {
+  const paypalContainer = document.getElementById('paypal-button-container');
+  if (!paypalContainer || typeof paypal === 'undefined') return;
+
+  paypalContainer.innerHTML = '';
+
+  paypal.Buttons({
+    style: {
+      layout: 'vertical',
+      color:  'gold',
+      shape:  'rect',
+      label:  'paypal'
+    },
+    onInit: function(data, actions) {
+      actions.disable(); // Désactivé par défaut jusqu'à ce que les champs soient remplis
+
+      const form = document.getElementById('checkout-form');
+      if (form) {
+        form.addEventListener('input', () => {
+          if (form.checkValidity()) {
+            actions.enable();
+          } else {
+            actions.disable();
+          }
+        });
+      }
+    },
+    onClick: function() {
+      const form = document.getElementById('checkout-form');
+      if (form && !form.checkValidity()) {
+        alert("Merci de remplir tous les champs de livraison obligatoires avant de procéder au paiement.");
+      }
+    },
+    createOrder: function(data, actions) {
+      let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      let total = (subtotal * (1 - appliedDiscount)).toFixed(2);
+
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: total,
+            currency_code: 'EUR'
+          }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(async function(details) {
+        // Envoi des infos à Formspree après le paiement réussi
+        const firstname = document.getElementById('client-firstname').value.trim();
+        const lastname = document.getElementById('client-lastname').value.trim();
+        const email = document.getElementById('client-email').value.trim();
+        const phone = document.getElementById('client-phone').value.trim();
+        const address = document.getElementById('client-address').value.trim();
+        const zipcode = document.getElementById('client-zipcode').value.trim();
+        const city = document.getElementById('client-city').value.trim();
+
+        let orderDetails = cart.map(item => 
+          `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
+        ).join('\n');
+
+        let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+
+        const formData = {
+          Nom: lastname,
+          Prénom: firstname,
+          Email: email,
+          Téléphone: phone,
+          Adresse: address,
+          Code_postal: zipcode,
+          Ville: city,
+          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL PAYÉ : ${total.toFixed(2)} €`
+        };
+
+        try {
+          await fetch("https://formspree.io/f/xgaweybe", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify(formData)
+          });
+        } catch (e) {
+          console.error("Erreur de sauvegarde Formspree", e);
+        }
+
+        alert("Paiement réussi ! Merci " + details.payer.name.given_name + ", ta commande est bien validée.");
+        cart = [];
+        saveCart();
+        updateCartUI();
+        closeCheckoutModal();
+        closeCart();
+        document.getElementById('checkout-form').reset();
+      });
+    },
+    onError: function(err) {
+      console.error(err);
+      alert("Une erreur est survenue lors du paiement PayPal.");
+    }
+  }).render('#paypal-button-container');
+}
+
 // Initialisation au chargement
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
+  initPayPalButton();
 
   const burgerToggle = document.getElementById('burger-toggle');
   const closeMenuBtn = document.getElementById('close-menu');
@@ -310,63 +415,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const closeModalBtn = document.getElementById('close-modal-btn');
-  const checkoutForm = document.getElementById('checkout-form');
-  
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
-
-  if (checkoutForm) {
-    checkoutForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const firstname = document.getElementById('client-firstname').value.trim();
-      const lastname = document.getElementById('client-lastname').value.trim();
-      const email = document.getElementById('client-email').value.trim();
-      const phone = document.getElementById('client-phone').value.trim();
-      const address = document.getElementById('client-address').value.trim();
-      const zipcode = document.getElementById('client-zipcode').value.trim();
-      const city = document.getElementById('client-city').value.trim();
-
-      let orderDetails = cart.map(item => 
-        `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
-      ).join('\n');
-
-      let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
-
-      const data = {
-        Nom: lastname,
-        Prénom: firstname,
-        Email: email,
-        Téléphone: phone,
-        Adresse: address,
-        Code_postal: zipcode,
-        Ville: city,
-        Message: `NOUVELLE COMMANDE RAWZ :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL FINAL : ${total.toFixed(2)} €`
-      };
-
-      try {
-        const response = await fetch("https://formspree.io/f/xgaweybe", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-          alert("Commande envoyée avec succès !");
-          cart = [];
-          saveCart();
-          updateCartUI();
-          closeCheckoutModal();
-          closeCart();
-          checkoutForm.reset();
-        } else {
-          alert("Erreur lors de l'envoi de la commande. Réessaie plus tard.");
-        }
-      } catch (error) {
-        alert("Erreur réseau : impossible d'envoyer la commande.");
-      }
-    });
-  }
 });
