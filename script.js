@@ -240,37 +240,27 @@ function initPayPalButton() {
       shape:  'rect',
       label:  'paypal'
     },
-    onInit: function(data, actions) {
-      actions.disable();
-
-      const form = document.getElementById('checkout-form');
-      if (form) {
-        form.addEventListener('input', () => {
-          if (form.checkValidity()) {
-            actions.enable();
-          } else {
-            actions.disable();
-          }
-        });
-      }
-    },
-    onClick: function() {
+    onClick: function(data, actions) {
       const form = document.getElementById('checkout-form');
       if (form && !form.checkValidity()) {
-        alert("Merci de remplir tous les champs de livraison obligatoires avant de procéder au paiement.");
+        form.reportValidity();
+        return actions.reject();
       }
+      return actions.resolve();
     },
     createOrder: function(data, actions) {
       let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       let total = (subtotal * (1 - appliedDiscount)).toFixed(2);
 
-      const firstname = document.getElementById('client-firstname').value.trim();
-      const lastname = document.getElementById('client-lastname').value.trim();
-      const email = document.getElementById('client-email').value.trim();
-      const rawPhone = document.getElementById('client-phone').value.trim().replace(/\s+/g, '');
-      const address = document.getElementById('client-address').value.trim();
-      const zipcode = document.getElementById('client-zipcode').value.trim();
-      const city = document.getElementById('client-city').value.trim();
+      const firstname = document.getElementById('client-firstname')?.value.trim() || '';
+      const lastname = document.getElementById('client-lastname')?.value.trim() || '';
+      const email = document.getElementById('client-email')?.value.trim() || '';
+      const rawPhone = document.getElementById('client-phone')?.value.trim().replace(/\s+/g, '') || '';
+      const address = document.getElementById('client-address')?.value.trim() || '';
+      const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
+      const city = document.getElementById('client-city')?.value.trim() || '';
+
+      const formattedPhone = rawPhone.replace(/^(\+33|0)/, '');
 
       return actions.order.create({
         intent: 'CAPTURE',
@@ -297,12 +287,12 @@ function initPayPalButton() {
             surname: lastname
           },
           email_address: email,
-          phone: {
+          phone: formattedPhone ? {
             phone_type: 'MOBILE',
             phone_number: {
-              national_number: rawPhone.replace(/^\+33|^0/, '')
+              national_number: formattedPhone
             }
-          },
+          } : undefined,
           address: {
             address_line_1: address,
             admin_area_2: city,
@@ -314,13 +304,13 @@ function initPayPalButton() {
     },
     onApprove: function(data, actions) {
       return actions.order.capture().then(async function(details) {
-        const firstname = document.getElementById('client-firstname').value.trim();
-        const lastname = document.getElementById('client-lastname').value.trim();
-        const email = document.getElementById('client-email').value.trim();
-        const phone = document.getElementById('client-phone').value.trim();
-        const address = document.getElementById('client-address').value.trim();
-        const zipcode = document.getElementById('client-zipcode').value.trim();
-        const city = document.getElementById('client-city').value.trim();
+        const firstname = document.getElementById('client-firstname')?.value.trim() || '';
+        const lastname = document.getElementById('client-lastname')?.value.trim() || '';
+        const email = document.getElementById('client-email')?.value.trim() || '';
+        const phone = document.getElementById('client-phone')?.value.trim() || '';
+        const address = document.getElementById('client-address')?.value.trim() || '';
+        const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
+        const city = document.getElementById('client-city')?.value.trim() || '';
 
         let orderDetails = cart.map(item => 
           `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
@@ -358,7 +348,8 @@ function initPayPalButton() {
         updateCartUI();
         closeCheckoutModal();
         closeCart();
-        document.getElementById('checkout-form').reset();
+        const form = document.getElementById('checkout-form');
+        if (form) form.reset();
       });
     },
     onError: function(err) {
@@ -432,70 +423,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.value === 'price-asc') sorted.sort((a, b) => a.price - b.price);
       if (e.target.value === 'price-desc') sorted.sort((a, b) => b.price - a.price);
       renderProducts(sorted);
-    });
-  }
-
-  // SOUMISSION DIRECTE DU FORMULAIRE VIA FORMSPREE
-  const checkoutForm = document.getElementById('checkout-form');
-  if (checkoutForm) {
-    checkoutForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      if (cart.length === 0) {
-        alert("Ton panier est vide !");
-        return;
-      }
-
-      const firstname = document.getElementById('client-firstname').value.trim();
-      const lastname = document.getElementById('client-lastname').value.trim();
-      const email = document.getElementById('client-email').value.trim();
-      const phone = document.getElementById('client-phone').value.trim();
-      const address = document.getElementById('client-address').value.trim();
-      const zipcode = document.getElementById('client-zipcode').value.trim();
-      const city = document.getElementById('client-city').value.trim();
-
-      let orderDetails = cart.map(item => 
-        `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
-      ).join('\n');
-
-      let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
-
-      const formData = {
-        Nom: lastname,
-        Prénom: firstname,
-        Email: email,
-        Téléphone: phone,
-        Adresse: address,
-        Code_postal: zipcode,
-        Ville: city,
-        Message: `NOUVELLE COMMANDE DIRECTE :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL À PAYER : ${total.toFixed(2)} €`
-      };
-
-      try {
-        const response = await fetch("https://formspree.io/f/xgaweybe", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify(formData)
-        });
-
-        if (response.ok) {
-          alert("Commande validée ! Merci " + firstname + ", nous avons bien reçu tes informations.");
-          cart = [];
-          saveCart();
-          updateCartUI();
-          closeCheckoutModal();
-          closeCart();
-          checkoutForm.reset();
-        } else {
-          alert("Erreur lors de l'envoi de la commande. Merci de réessayer.");
-        }
-      } catch (err) {
-        console.error("Erreur de soumission", err);
-        alert("Erreur réseau. Vérifie ta connexion.");
-      }
     });
   }
 
