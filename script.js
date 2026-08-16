@@ -282,71 +282,153 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// Envoi direct par e-mail via Formspree
-const checkoutForm = document.getElementById('checkout-form');
+// INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
+function initPayPalButton() {
+  const paypalContainer = document.getElementById('paypal-button-container');
+  if (!paypalContainer || typeof paypal === 'undefined') return;
 
-if (checkoutForm) {
-  checkoutForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  paypalContainer.innerHTML = '';
 
-    const firstname = document.getElementById('client-firstname').value.trim();
-    const lastname = document.getElementById('client-lastname').value.trim();
-    const email = document.getElementById('client-email').value.trim();
-    const phone = document.getElementById('client-phone').value.trim();
-    const address = document.getElementById('client-address').value.trim();
-    const zipcode = document.getElementById('client-zipcode').value.trim();
-    const city = document.getElementById('client-city').value.trim();
+  paypal.Buttons({
+    style: {
+      layout: 'vertical',
+      color:  'gold',
+      shape:  'rect',
+      label:  'paypal'
+    },
+    onInit: function(data, actions) {
+      actions.disable();
 
-    let orderDetails = cart.map(item => 
-      `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
-    ).join('\n');
+      const form = document.getElementById('checkout-form');
+      if (form) {
+        form.addEventListener('input', () => {
+          if (form.checkValidity()) {
+            actions.enable();
+          } else {
+            actions.disable();
+          }
+        });
+      }
+    },
+    onClick: function() {
+      const form = document.getElementById('checkout-form');
+      if (form && !form.checkValidity()) {
+        alert("Merci de remplir tous les champs de livraison obligatoires avant de procéder au paiement.");
+      }
+    },
+    createOrder: function(data, actions) {
+      let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      let total = (subtotal * (1 - appliedDiscount)).toFixed(2);
 
-    let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+      const firstname = document.getElementById('client-firstname').value.trim();
+      const lastname = document.getElementById('client-lastname').value.trim();
+      const email = document.getElementById('client-email').value.trim();
+      const rawPhone = document.getElementById('client-phone').value.trim().replace(/\s+/g, '');
+      const address = document.getElementById('client-address').value.trim();
+      const zipcode = document.getElementById('client-zipcode').value.trim();
+      const city = document.getElementById('client-city').value.trim();
 
-    const formData = {
-      Nom: lastname,
-      Prénom: firstname,
-      Email: email,
-      Téléphone: phone,
-      Adresse: address,
-      Code_postal: zipcode,
-      Ville: city,
-      Message: `NOUVELLE COMMANDE REÇUE SUR LE SITE :\n\nCLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL À PAYER : ${total.toFixed(2)} €`
-    };
-
-    try {
-      const response = await fetch("https://formspree.io/f/xgaweybe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(formData)
+      return actions.order.create({
+        intent: 'CAPTURE',
+        purchase_units: [{
+          amount: {
+            value: total,
+            currency_code: 'EUR'
+          },
+          shipping: {
+            name: {
+              full_name: `${firstname} ${lastname}`
+            },
+            address: {
+              address_line_1: address,
+              admin_area_2: city,
+              postal_code: zipcode,
+              country_code: 'FR'
+            }
+          }
+        }],
+        payer: {
+          name: {
+            given_name: firstname,
+            surname: lastname
+          },
+          email_address: email,
+          phone: {
+            phone_type: 'MOBILE',
+            phone_number: {
+              national_number: rawPhone.replace(/^\+33|^0/, '')
+            }
+          },
+          address: {
+            address_line_1: address,
+            admin_area_2: city,
+            postal_code: zipcode,
+            country_code: 'FR'
+          }
+        }
       });
+    },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(async function(details) {
+        const firstname = document.getElementById('client-firstname').value.trim();
+        const lastname = document.getElementById('client-lastname').value.trim();
+        const email = document.getElementById('client-email').value.trim();
+        const phone = document.getElementById('client-phone').value.trim();
+        const address = document.getElementById('client-address').value.trim();
+        const zipcode = document.getElementById('client-zipcode').value.trim();
+        const city = document.getElementById('client-city').value.trim();
 
-      if (response.ok) {
-        alert("Merci " + firstname + " ! Ta commande a bien été transmise. Nous te recontacterons par e-mail pour le paiement et l'expédition.");
-        
+        let orderDetails = cart.map(item => 
+          `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
+        ).join('\n');
+
+        let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+
+        const formData = {
+          Nom: lastname,
+          Prénom: firstname,
+          Email: email,
+          Téléphone: phone,
+          Adresse: address,
+          Code_postal: zipcode,
+          Ville: city,
+          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL PAYÉ : ${total.toFixed(2)} €`
+        };
+
+        try {
+          await fetch("https://formspree.io/f/xgaweybe", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify(formData)
+          });
+        } catch (e) {
+          console.error("Erreur de sauvegarde Formspree", e);
+        }
+
+        alert("Paiement réussi ! Merci " + details.payer.name.given_name + ", ta commande est bien validée.");
         cart = [];
         saveCart();
         updateCartUI();
         closeCheckoutModal();
         closeCart();
-        checkoutForm.reset();
-      } else {
-        alert("Une erreur est survenue lors de l'envoi de la commande. Réessaie dans quelques instants.");
-      }
-    } catch (error) {
-      console.error("Erreur d'envoi :", error);
-      alert("Impossible de contacter le serveur. Vérifie ta connexion.");
+        document.getElementById('checkout-form').reset();
+      });
+    },
+    onError: function(err) {
+      console.error(err);
+      alert("Une erreur est survenue lors du paiement PayPal.");
     }
-  });
+  }).render('#paypal-button-container');
 }
 
 // Initialisation au chargement
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
+  initPayPalButton();
 
   const burgerToggle = document.getElementById('burger-toggle');
   const closeMenuBtn = document.getElementById('close-menu');
@@ -373,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
-  // --- GESTION DES MODALES DU FOOTER (MENTIONS & RETOURS) ---
+  // GESTION DES MODALES DU FOOTER (MENTIONS & RETOURS)
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
 
