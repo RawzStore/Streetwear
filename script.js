@@ -453,6 +453,82 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
+  // GESTION DU FORMULAIRE DE COMMANDE PAR CB (AVEC ANIMATION DE CHARGEMENT)
+  const checkoutForm = document.getElementById('checkout-form');
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const submitBtn = checkoutForm.querySelector('.submit-order-btn');
+      if (!submitBtn) return;
+
+      const originalBtnText = submitBtn.innerHTML;
+
+      // 1. État de chargement immédiat
+      submitBtn.disabled = true;
+      submitBtn.classList.add('btn-loading');
+      submitBtn.innerHTML = `<span class="spinner"></span> Traitement en cours...`;
+
+      // Recueil des informations du formulaire
+      const firstname = document.getElementById('client-firstname')?.value.trim() || '';
+      const lastname = document.getElementById('client-lastname')?.value.trim() || '';
+      const email = document.getElementById('client-email')?.value.trim() || '';
+      const phone = document.getElementById('client-phone')?.value.trim() || '';
+      const address = document.getElementById('client-address')?.value.trim() || '';
+      const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
+      const city = document.getElementById('client-city')?.value.trim() || '';
+
+      let orderDetails = cart.map(item => 
+        `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
+      ).join('\n');
+
+      let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+
+      const formData = {
+        Nom: lastname,
+        Prénom: firstname,
+        Email: email,
+        Téléphone: phone,
+        Adresse: address,
+        Code_postal: zipcode,
+        Ville: city,
+        Message: `COMMANDE PAR CARTE BANCAIRE :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL COMMANDE : ${total.toFixed(2)} €`
+      };
+
+      try {
+        // Envoi asynchrone des données
+        const response = await fetch("https://formspree.io/f/xgaweybe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          alert("Commande enregistrée avec succès ! Merci pour ton achat.");
+          cart = [];
+          saveCart();
+          updateCartUI();
+          closeCheckoutModal();
+          closeCart();
+          checkoutForm.reset();
+        } else {
+          alert("Une erreur est survenue lors de la validation de la commande. Reessaye.");
+        }
+      } catch (err) {
+        console.error("Erreur d'envoi du formulaire :", err);
+        alert("Impossible de contacter le serveur. Vérifie ta connexion internet.");
+      } finally {
+        // 2. Réinitialisation du bouton après réponse
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('btn-loading');
+        submitBtn.innerHTML = originalBtnText;
+      }
+    });
+  }
+
   // GESTION DES MODALES DU FOOTER
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
