@@ -600,23 +600,28 @@ document.addEventListener('click', (e) => {
 
   const item = header.parentElement;
   const content = item.querySelector('.accordion-content');
-  const icon = header.querySelector('span');
+  const icon = header.querySelector('span:last-child') || header.querySelector('span');
+
+  // Ferme les autres accordéons
+  document.querySelectorAll('.accordion-item').forEach(otherItem => {
+    if (otherItem !== item) {
+      otherItem.classList.remove('active');
+      const otherContent = otherItem.querySelector('.accordion-content');
+      const otherIcon = otherItem.querySelector('.accordion-header span:last-child') || otherItem.querySelector('.accordion-header span');
+      if (otherContent) otherContent.style.maxHeight = null;
+      if (otherIcon) otherIcon.textContent = '+';
+    }
+  });
 
   const isOpen = item.classList.contains('active');
 
   if (isOpen) {
     item.classList.remove('active');
-    if (content) {
-      content.style.maxHeight = null;
-      content.style.opacity = "0";
-    }
+    if (content) content.style.maxHeight = null;
     if (icon) icon.textContent = '+';
   } else {
     item.classList.add('active');
-    if (content) {
-      content.style.maxHeight = (content.scrollHeight + 50) + 'px';
-      content.style.opacity = "1";
-    }
+    if (content) content.style.maxHeight = `${content.scrollHeight}px`;
     if (icon) icon.textContent = '-';
   }
 });
