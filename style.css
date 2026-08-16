@@ -963,13 +963,13 @@ body.dark-theme .modal-content {
   }
 }
 
-/* --- FOOTER --- */
+/* --- FOOTER RAWZ STYLES --- */
 .site-footer {
-  background-color: #0a0a0a;
+  background-color: #0c0c0c;
   color: #ffffff;
-  padding: 40px 20px 20px 20px;
-  margin-top: 60px;
-  border-top: 1px solid #222;
+  padding: 50px 20px 20px;
+  border-top: 1px solid #222222;
+  font-family: inherit;
 }
 
 .footer-container {
@@ -977,86 +977,119 @@ body.dark-theme .modal-content {
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
+  gap: 35px;
 }
 
-.footer-brand h3 {
+.footer-col h3 {
   font-size: 1.5rem;
   letter-spacing: 2px;
   margin-bottom: 10px;
+  font-weight: 800;
 }
 
-.footer-brand p {
-  color: #888;
-  font-size: 0.9rem;
-}
-
-.footer-socials h4, .footer-legal h4 {
-  font-size: 1rem;
-  margin-bottom: 15px;
+.footer-col h4 {
+  font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  color: #888888;
+  margin-bottom: 15px;
 }
 
-.social-links {
-  display: flex;
-  gap: 15px;
-}
-
-.social-links a, .footer-legal a {
-  color: #bbb;
-  text-decoration: none;
+.footer-col p {
   font-size: 0.9rem;
-  transition: color 0.2s;
+  color: #aaaaaa;
+  line-height: 1.5;
 }
 
-.social-links a:hover, .footer-legal a:hover {
-  color: #fff;
-}
-
-.footer-legal ul {
+.footer-col ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-.footer-legal li {
-  margin-bottom: 8px;
-}
-
-.footer-bottom {
-  max-width: 1200px;
-  margin: 30px auto 0 auto;
-  padding-top: 20px;
-  border-top: 1px solid #1a1a1a;
-  text-align: center;
-  color: #555;
-  font-size: 0.8rem;
-}
-
-/* Modales Légales */
-.legal-modal-content {
-  max-width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
-  text-align: left;
-  background-color: #ffffff;
-  color: #222222;
-}
-
-.legal-text h3 {
-  margin-top: 15px;
-  margin-bottom: 5px;
-  font-size: 1.1rem;
-  color: #111111;
-}
-
-.legal-text p {
-  color: #555555; /* Gris moyen/foncé, parfaitement lisible mais plus doux */
-  font-size: 0.95rem;
-  line-height: 1.5;
+.footer-col ul li {
   margin-bottom: 10px;
 }
 
-.legal-text strong {
-  color: #222222;
+.footer-col a {
+  color: #cccccc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.footer-col a:hover {
+  color: #ffffff;
+}
+
+/* Badges de paiement */
+.payment-badges {
+  margin-top: 15px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge-item {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+/* Champ Newsletter */
+.newsletter-form {
+  display: flex;
+  margin-top: 12px;
+}
+
+.newsletter-form input {
+  background: #181818;
+  border: 1px solid #333333;
+  padding: 10px 12px;
+  color: #ffffff;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+  width: 100%;
+  font-size: 0.85rem;
+}
+
+.newsletter-form input:focus {
+  border-color: #555555;
+}
+
+.newsletter-form button {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 0 16px;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.2s;
+}
+
+.newsletter-form button:hover {
+  opacity: 0.85;
+}
+
+/* Bas du Footer */
+.footer-bottom {
+  max-width: 1200px;
+  margin: 40px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid #1c1c1c;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #666666;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.secure-tag {
+  color: #888888;
 }
