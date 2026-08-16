@@ -1190,3 +1190,49 @@ body.dark-theme .submit-order-btn .spinner {
     grid-column: span 2;
   }
 }
+
+/* ACCORDÉONS PRODUIT */
+.accordion-item {
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 10px;
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+
+.accordion-content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  padding: 0 5px;
+}
+
+.accordion-content p {
+  padding-bottom: 15px;
+  margin: 0;
+  line-height: 1.5;
+  color: #555;
+}
+
+/* Thème Sombre */
+body.dark-theme .accordion-item {
+  border-bottom-color: #333;
+}
+
+body.dark-theme .accordion-content p {
+  color: #ccc;
+}
+
