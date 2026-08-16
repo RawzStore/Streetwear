@@ -64,38 +64,38 @@
   </aside>
 
   <!-- FICHE PRODUIT -->
-  <main class="product-page-container">
-    <a href="index.html" class="back-link">&larr; Retour au catalogue</a>
+  <main class="product-page-container" style="max-width: 1000px; margin: 20px auto; padding: 0 15px;">
+    <a href="index.html" class="back-link" style="display: block; margin-bottom: 20px; color: #000; text-decoration: underline; font-weight: 600;">&larr; Retour au catalogue</a>
     
-    <div class="product-detail-grid">
+    <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
       
-      <!-- Galerie -->
+      <!-- Galerie avec grande image visible -->
       <div class="product-gallery">
-        <div class="main-image-container">
-          <img id="display-img" src="" alt="Produit">
+        <div class="main-image-container" style="width: 100%; border-radius: 8px; overflow: hidden; background: #f5f5f5; margin-bottom: 15px;">
+          <img id="display-img" src="" alt="Produit" style="width: 100%; height: auto; display: block; object-fit: cover;">
         </div>
-        <div id="thumbnails-container" class="thumbnails-flex"></div>
+        <div id="thumbnails-container" class="thumbnails-flex" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
       </div>
 
       <!-- Informations -->
       <div class="product-info-col">
-        <h1 id="product-name">Nom du produit</h1>
-        <p id="product-price" class="product-price">0,00 €</p>
-        <p id="product-description" class="product-description"></p>
+        <h1 id="product-name" style="font-size: 1.8rem; margin: 10px 0 5px 0; color: #111;">Nom du produit</h1>
+        <p id="product-price" class="product-price" style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px; color: #111;">0,00 €</p>
+        <p id="product-description" class="product-description" style="color: #666; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;"></p>
 
         <!-- Couleurs -->
-        <div class="option-group">
-          <label for="color-select">Couleur :</label>
-          <select id="color-select"></select>
+        <div class="option-group" style="margin-bottom: 15px;">
+          <label for="color-select" style="display: block; font-weight: 600; margin-bottom: 5px;">Couleur :</label>
+          <select id="color-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; font-size: 0.95rem;"></select>
         </div>
 
         <!-- Tailles -->
-        <div class="option-group">
-          <label for="size-select">Taille :</label>
-          <select id="size-select"></select>
+        <div class="option-group" style="margin-bottom: 20px;">
+          <label for="size-select" style="display: block; font-weight: 600; margin-bottom: 5px;">Taille :</label>
+          <select id="size-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; font-size: 0.95rem;"></select>
         </div>
 
-        <button id="add-to-cart-btn" class="add-to-cart-btn">Ajouter au panier</button>
+        <button id="add-to-cart-btn" class="checkout-btn" style="width: 100%; padding: 16px; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;">Ajouter au panier</button>
       </div>
 
     </div>
