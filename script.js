@@ -429,7 +429,7 @@ function initProductPage() {
     updateGallery(product.images);
   }
 
-  // Ajouter au panier (SANS ouvrir le tiroir panier)
+  // Ajouter au panier
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedSize = sizeSelect ? sizeSelect.value : product.sizes[0];
@@ -456,24 +456,24 @@ function initProductPage() {
     });
   }
 
-  // Initialisation directe des accordéons (Description & Livraison)
+  // Initialisation des accordéons (Description & Livraison)
   const accordionHeaders = document.querySelectorAll('.accordion-header');
   accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
       const item = header.parentElement;
       const content = item.querySelector('.accordion-content');
-      const icon = header.querySelector('span:last-child') || header.querySelector('span');
+      const icon = header.querySelector('i') || header.querySelector('span:last-child');
 
       const isOpen = item.classList.contains('active');
 
       if (isOpen) {
         item.classList.remove('active');
         if (content) content.style.maxHeight = null;
-        if (icon) icon.textContent = '+';
+        if (icon && icon.tagName === 'I') icon.style.transform = 'rotate(0deg)';
       } else {
         item.classList.add('active');
         if (content) content.style.maxHeight = `${content.scrollHeight}px`;
-        if (icon) icon.textContent = '-';
+        if (icon && icon.tagName === 'I') icon.style.transform = 'rotate(180deg)';
       }
     });
   });
