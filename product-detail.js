@@ -3,13 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = parseInt(urlParams.get('id'), 10);
 
+  // Sécurité : vérifier que la base de données existe
+  if (typeof products === 'undefined') {
+    console.error("Le tableau 'products' n'est pas accessible.");
+    return;
+  }
+
   // 2. Chercher le produit dans le tableau 'products'
   const product = products.find(p => p.id === productId);
 
   if (!product) {
     const mainContainer = document.querySelector('.product-page-container');
     if (mainContainer) {
-      mainContainer.innerHTML = '<h2>Produit introuvable.</h2><a href="index.html">Retour à la boutique</a>';
+      mainContainer.innerHTML = `
+        <div style="text-align:center; padding: 50px 20px; width:100%;">
+          <h2>Produit introuvable.</h2>
+          <a href="index.html" class="checkout-btn" style="display:inline-block; margin-top:15px; text-decoration:none;">Retour à la boutique</a>
+        </div>
+      `;
     }
     return;
   }
@@ -28,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 4. Contenu texte
   if (productName) productName.textContent = product.name;
   if (productPrice) productPrice.textContent = `${product.price.toFixed(2)} €`;
-  if (productDescription) productDescription.textContent = product.description;
+  if (productDescription) productDescription.textContent = product.description || '';
 
   // 5. Effet de Zoom (Souris + Tactile Mobile)
   if (mainImgContainer && displayImg) {
@@ -55,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MOBILE (Tactile) ---
     mainImgContainer.addEventListener('touchmove', (e) => {
       if (e.touches.length > 0) {
-        // Empêche le défilement de la page pendant qu'on glisse le doigt sur l'image
         e.preventDefault(); 
         const touch = e.touches[0];
         applyZoom(touch.clientX, touch.clientY);
@@ -115,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     colorSelect.addEventListener('change', (e) => {
       updateGallery(getImagesForColor(e.target.value));
     });
-  } else if (colorSelect) {
+  } else if (colorSelect && colorSelect.parentElement) {
     colorSelect.parentElement.style.display = 'none';
   }
 
@@ -128,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
       option.textContent = size;
       sizeSelect.appendChild(option);
     });
-  } else if (sizeSelect) {
+  } else if (sizeSelect && sizeSelect.parentElement) {
     sizeSelect.parentElement.style.display = 'none';
   }
 
@@ -162,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (typeof saveCart === 'function') saveCart();
       if (typeof updateCartUI === 'function') updateCartUI();
+      if (typeof openCart === 'function') openCart();
 
       showToast();
     });
