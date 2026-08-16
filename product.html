@@ -15,6 +15,50 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <script src="https://www.paypal.com/sdk/js?client-id=TON_CLIENT_ID&currency=EUR" defer></script>
+
+  <style>
+    /* Style spécifique aux accordéons déroulants */
+    .accordion-section {
+      margin-top: 25px;
+      border-top: 1px solid #e5e5e5;
+    }
+    .accordion-item {
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .accordion-header {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 15px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111;
+      cursor: pointer;
+      text-align: left;
+    }
+    .accordion-header i {
+      transition: transform 0.3s ease;
+      font-size: 0.8rem;
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.5;
+    }
+    .accordion-item.active .accordion-content {
+      max-height: 300px;
+      padding-bottom: 15px;
+    }
+    .accordion-item.active .accordion-header i {
+      transform: rotate(180deg);
+    }
+  </style>
 </head>
 <body>
 
@@ -69,7 +113,7 @@
     
     <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
       
-      <!-- Galerie avec grande image visible -->
+      <!-- Galerie -->
       <div class="product-gallery">
         <div class="main-image-container" style="width: 100%; border-radius: 8px; overflow: hidden; background: #f5f5f5; margin-bottom: 15px;">
           <img id="display-img" src="" alt="Produit" style="width: 100%; height: auto; display: block; object-fit: cover;">
@@ -81,7 +125,6 @@
       <div class="product-info-col">
         <h1 id="product-name" style="font-size: 1.8rem; margin: 10px 0 5px 0; color: #111;">Nom du produit</h1>
         <p id="product-price" class="product-price" style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px; color: #111;">0,00 €</p>
-        <p id="product-description" class="product-description" style="color: #666; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;"></p>
 
         <!-- Couleurs -->
         <div class="option-group" style="margin-bottom: 15px;">
@@ -96,6 +139,35 @@
         </div>
 
         <button id="add-to-cart-btn" class="checkout-btn" style="width: 100%; padding: 16px; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;">Ajouter au panier</button>
+
+        <!-- ACCORDÉONS DÉROULANTS -->
+        <div class="accordion-section">
+          
+          <!-- Accordéon Description -->
+          <div class="accordion-item">
+            <button class="accordion-header">
+              <span>Description produit</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="accordion-content">
+              <p id="product-description"></p>
+            </div>
+          </div>
+
+          <!-- Accordéon Livraison & Retours -->
+          <div class="accordion-item">
+            <button class="accordion-header">
+              <span>Livraison & Retours</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="accordion-content">
+              <p>📦 <strong>Livraison :</strong> Expédié sous 48h à 72h. Livraison offerte dès 80€ d'achat.</p>
+              <p style="margin-top: 8px;">🔄 <strong>Retours :</strong> Satisfait ou remboursé sous 14 jours après réception de la commande.</p>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
@@ -181,5 +253,18 @@
 
   <script src="script.js"></script>
   <script src="product-detail.js"></script>
+  
+  <!-- SCRIPT INTERACTIF DES ACCORDÉONS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const accordionHeaders = document.querySelectorAll('.accordion-header');
+      accordionHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+          const item = header.parentElement;
+          item.classList.toggle('active');
+        });
+      });
+    });
+  </script>
 </body>
 </html>
