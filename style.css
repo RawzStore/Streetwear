@@ -963,7 +963,7 @@ body.dark-theme .modal-content {
   }
 }
 
-/* --- FOOTER RAWZ STYLES --- */
+/* --- FOOTER RAWZ (4 COLONNES) --- */
 .site-footer {
   background-color: #0c0c0c;
   color: #ffffff;
@@ -976,7 +976,7 @@ body.dark-theme .modal-content {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 35px;
 }
 
@@ -1022,27 +1022,11 @@ body.dark-theme .modal-content {
   color: #ffffff;
 }
 
-/* Badges de paiement */
-.payment-badges {
-  margin-top: 15px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.badge-item {
-  background: #1a1a1a;
-  border: 1px solid #333;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  color: #aaa;
-}
-
-/* Champ Newsletter */
+/* Newsletter */
 .newsletter-form {
   display: flex;
-  margin-top: 12px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .newsletter-form input {
@@ -1056,10 +1040,6 @@ body.dark-theme .modal-content {
   font-size: 0.85rem;
 }
 
-.newsletter-form input:focus {
-  border-color: #555555;
-}
-
 .newsletter-form button {
   background: #ffffff;
   color: #000000;
@@ -1068,14 +1048,38 @@ body.dark-theme .modal-content {
   border-radius: 0 4px 4px 0;
   cursor: pointer;
   font-weight: bold;
-  transition: opacity 0.2s;
 }
 
-.newsletter-form button:hover {
-  opacity: 0.85;
+/* Bloc Paiement PayPal & Carte */
+.payment-box {
+  margin-top: 15px;
 }
 
-/* Bas du Footer */
+.payment-title {
+  display: block;
+  font-size: 0.75rem;
+  color: #777777;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.payment-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge-item {
+  background: #161616;
+  border: 1px solid #2a2a2a;
+  padding: 5px 9px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #dddddd;
+}
+
+/* Bas de page */
 .footer-bottom {
   max-width: 1200px;
   margin: 40px auto 0;
@@ -1093,3 +1097,4 @@ body.dark-theme .modal-content {
 .secure-tag {
   color: #888888;
 }
+
