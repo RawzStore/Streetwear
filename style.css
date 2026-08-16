@@ -622,7 +622,8 @@ body.dark-theme .back-link:hover {
   transform-origin: center center;
 }
 
-.thumbnails-grid {
+.thumbnails-grid,
+.thumbnails-flex {
   display: flex;
   gap: 10px;
 }
@@ -723,8 +724,9 @@ body.dark-theme .back-link:hover {
   font-size: 0.8rem;
 }
 
-.accordion-item[open] .chevron {
-  transform: rotate(90deg);
+.accordion-item[open] .chevron,
+.accordion-item.active .accordion-header i {
+  transform: rotate(180deg);
 }
 
 .accordion-content {
@@ -737,43 +739,30 @@ body.dark-theme .back-link:hover {
 /* ==========================================
    8. NOTIFICATIONS, MODALES & BOUTON CB
    ========================================== */
+.toast,
 .toast-notification {
   position: fixed;
   bottom: -60px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-  padding: 12px 20px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
+  background-color: var(--accent-color);
+  color: var(--accent-text);
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 0.9rem;
   font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: bottom 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
   opacity: 0;
-  z-index: 2000;
+  transition: bottom 0.4s ease, opacity 0.4s ease;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
+.toast.show,
 .toast-notification.show {
   bottom: 30px;
   opacity: 1;
-}
-
-.toast-icon {
-  background-color: #28a745;
-  color: #ffffff;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: bold;
 }
 
 .modal,
@@ -876,7 +865,6 @@ body.dark-theme .back-link:hover {
   opacity: 0.9;
 }
 
-/* BOUTON CB EN CHARGEMENT */
 .submit-order-btn.btn-loading,
 .submit-order-btn:disabled {
   opacity: 0.75;
@@ -884,7 +872,6 @@ body.dark-theme .back-link:hover {
   pointer-events: none;
 }
 
-/* SPINNER POUR LE BOUTON CB */
 .submit-order-btn .spinner {
   width: 18px;
   height: 18px;
@@ -1157,7 +1144,8 @@ body.dark-theme .submit-order-btn .spinner {
     padding: 8px;
   }
 
-  .thumbnails-grid {
+  .thumbnails-grid,
+  .thumbnails-flex {
     gap: 8px;
   }
 
