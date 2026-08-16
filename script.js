@@ -65,25 +65,10 @@ const products = [
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let appliedDiscount = 0;
 
-// Éléments DOM généraux
-const cartDrawer = document.getElementById('cart-drawer');
-const cartOverlay = document.getElementById('cart-overlay');
-const cartToggleBtn = document.getElementById('cart-toggle-btn');
-const closeCartBtn = document.getElementById('close-cart-btn');
-const cartBadge = document.getElementById('cart-badge');
-const cartItemsContainer = document.getElementById('cart-items');
-const cartTotalPrice = document.getElementById('cart-total-price');
-
-const promoInput = document.getElementById('promo-input');
-const applyPromoBtn = document.getElementById('apply-promo-btn');
-const promoMsg = document.getElementById('promo-msg');
-const themeToggleBtn = document.getElementById('theme-toggle-btn');
-
-const menuDrawer = document.getElementById('menu-drawer');
-const menuOverlay = document.getElementById('menu-overlay');
-
 // Fonctions Menu Burger
 function openMenu() {
+  const menuDrawer = document.getElementById('menu-drawer');
+  const menuOverlay = document.getElementById('menu-overlay');
   if (menuDrawer && menuOverlay) {
     menuDrawer.classList.add('open');
     menuOverlay.classList.add('active');
@@ -91,20 +76,12 @@ function openMenu() {
 }
 
 function closeMenu() {
+  const menuDrawer = document.getElementById('menu-drawer');
+  const menuOverlay = document.getElementById('menu-overlay');
   if (menuDrawer && menuOverlay) {
     menuDrawer.classList.remove('open');
     menuOverlay.classList.remove('active');
   }
-}
-
-// Mode sombre
-if (themeToggleBtn) {
-  themeToggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark-theme');
-    document.documentElement.classList.toggle('dark-theme');
-    const isDark = document.body.classList.contains('dark-theme');
-    themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
-  });
 }
 
 // Rendu du catalogue sur index.html
@@ -161,6 +138,10 @@ function saveCart() {
 }
 
 function updateCartUI() {
+  const cartItemsContainer = document.getElementById('cart-items');
+  const cartBadge = document.getElementById('cart-badge');
+  const cartTotalPrice = document.getElementById('cart-total-price');
+
   if (!cartItemsContainer) return;
 
   cartItemsContainer.innerHTML = '';
@@ -213,6 +194,8 @@ function removeFromCart(cartItemKey) {
 
 // Ouverture & fermeture Panier
 function openCart() {
+  const cartDrawer = document.getElementById('cart-drawer');
+  const cartOverlay = document.getElementById('cart-overlay');
   if (cartDrawer && cartOverlay) {
     cartDrawer.classList.add('open');
     cartOverlay.classList.add('active');
@@ -220,51 +203,12 @@ function openCart() {
 }
 
 function closeCart() {
+  const cartDrawer = document.getElementById('cart-drawer');
+  const cartOverlay = document.getElementById('cart-overlay');
   if (cartDrawer && cartOverlay) {
     cartDrawer.classList.remove('open');
     cartOverlay.classList.remove('active');
   }
-}
-
-if (cartToggleBtn) cartToggleBtn.addEventListener('click', openCart);
-if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
-if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
-
-// Appliquer le Code Promo
-if (applyPromoBtn) {
-  applyPromoBtn.addEventListener('click', () => {
-    const code = promoInput.value.trim().toUpperCase();
-    if (code === "RAWZ10") {
-      appliedDiscount = 0.10;
-      promoMsg.textContent = "Code RAWZ10 appliqué (-10%) !";
-      promoMsg.className = "promo-message success";
-    } else {
-      appliedDiscount = 0;
-      promoMsg.textContent = "Code invalide.";
-      promoMsg.className = "promo-message error";
-    }
-    updateCartUI();
-  });
-}
-
-// Filtres et Recherche
-const searchInput = document.getElementById('search-input');
-const sortSelect = document.getElementById('sort-select');
-
-if (searchInput) {
-  searchInput.addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase();
-    renderProducts(products.filter(p => p.name.toLowerCase().includes(term)));
-  });
-}
-
-if (sortSelect) {
-  sortSelect.addEventListener('change', (e) => {
-    let sorted = [...products];
-    if (e.target.value === 'price-asc') sorted.sort((a, b) => a.price - b.price);
-    if (e.target.value === 'price-desc') sorted.sort((a, b) => b.price - a.price);
-    renderProducts(sorted);
-  });
 }
 
 // Modale Checkout
@@ -430,8 +374,135 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   initPayPalButton();
 
+  // Mode sombre
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      document.documentElement.classList.toggle('dark-theme');
+      const isDark = document.body.classList.contains('dark-theme');
+      themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
+    });
+  }
+
+  // Événements Panier
+  const cartToggleBtn = document.getElementById('cart-toggle-btn');
+  const closeCartBtn = document.getElementById('close-cart-btn');
+  const cartOverlay = document.getElementById('cart-overlay');
+
+  if (cartToggleBtn) cartToggleBtn.addEventListener('click', openCart);
+  if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
+  if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+
+  // Appliquer le Code Promo
+  const applyPromoBtn = document.getElementById('apply-promo-btn');
+  const promoInput = document.getElementById('promo-input');
+  const promoMsg = document.getElementById('promo-msg');
+
+  if (applyPromoBtn) {
+    applyPromoBtn.addEventListener('click', () => {
+      const code = promoInput.value.trim().toUpperCase();
+      if (code === "RAWZ10") {
+        appliedDiscount = 0.10;
+        promoMsg.textContent = "Code RAWZ10 appliqué (-10%) !";
+        promoMsg.className = "promo-message success";
+      } else {
+        appliedDiscount = 0;
+        promoMsg.textContent = "Code invalide.";
+        promoMsg.className = "promo-message error";
+      }
+      updateCartUI();
+    });
+  }
+
+  // Filtres et Recherche
+  const searchInput = document.getElementById('search-input');
+  const sortSelect = document.getElementById('sort-select');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      renderProducts(products.filter(p => p.name.toLowerCase().includes(term)));
+    });
+  }
+
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      let sorted = [...products];
+      if (e.target.value === 'price-asc') sorted.sort((a, b) => a.price - b.price);
+      if (e.target.value === 'price-desc') sorted.sort((a, b) => b.price - a.price);
+      renderProducts(sorted);
+    });
+  }
+
+  // SOUMISSION DIRECTE DU FORMULAIRE VIA FORMSPREE
+  const checkoutForm = document.getElementById('checkout-form');
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (cart.length === 0) {
+        alert("Ton panier est vide !");
+        return;
+      }
+
+      const firstname = document.getElementById('client-firstname').value.trim();
+      const lastname = document.getElementById('client-lastname').value.trim();
+      const email = document.getElementById('client-email').value.trim();
+      const phone = document.getElementById('client-phone').value.trim();
+      const address = document.getElementById('client-address').value.trim();
+      const zipcode = document.getElementById('client-zipcode').value.trim();
+      const city = document.getElementById('client-city').value.trim();
+
+      let orderDetails = cart.map(item => 
+        `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
+      ).join('\n');
+
+      let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+
+      const formData = {
+        Nom: lastname,
+        Prénom: firstname,
+        Email: email,
+        Téléphone: phone,
+        Adresse: address,
+        Code_postal: zipcode,
+        Ville: city,
+        Message: `NOUVELLE COMMANDE DIRECTE :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL À PAYER : ${total.toFixed(2)} €`
+      };
+
+      try {
+        const response = await fetch("https://formspree.io/f/xgaweybe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          alert("Commande validée ! Merci " + firstname + ", nous avons bien reçu tes informations.");
+          cart = [];
+          saveCart();
+          updateCartUI();
+          closeCheckoutModal();
+          closeCart();
+          checkoutForm.reset();
+        } else {
+          alert("Erreur lors de l'envoi de la commande. Merci de réessayer.");
+        }
+      } catch (err) {
+        console.error("Erreur de soumission", err);
+        alert("Erreur réseau. Vérifie ta connexion.");
+      }
+    });
+  }
+
+  // Burger Menu
   const burgerToggle = document.getElementById('burger-toggle');
   const closeMenuBtn = document.getElementById('close-menu');
+  const menuOverlay = document.getElementById('menu-overlay');
 
   if (burgerToggle) burgerToggle.addEventListener('click', openMenu);
   if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
@@ -455,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
-  // GESTION DES MODALES DU FOOTER (MENTIONS & RETOURS)
+  // GESTION DES MODALES DU FOOTER
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
 
@@ -487,7 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closeReturnsBtn.addEventListener('click', () => returnsModal.classList.remove('active'));
   }
 
-  // Fermer les modales au clic sur l'arrière-plan
   window.addEventListener('click', (e) => {
     if (e.target === mentionsModal) mentionsModal.classList.remove('active');
     if (e.target === returnsModal) returnsModal.classList.remove('active');
