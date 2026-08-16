@@ -14,7 +14,7 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- SDK PayPal (Remplace TON_CLIENT_ID si tu l'avais configuré) -->
+  <!-- SDK PayPal -->
   <script src="https://www.paypal.com/sdk/js?client-id=TON_CLIENT_ID&currency=EUR" defer></script>
 
   <style>
@@ -88,6 +88,7 @@
   <!-- BANNIÈRE D'ANNONCE -->
   <div class="marquee-banner">
     <div class="marquee-content">
+      <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
       <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
       <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
     </div>
@@ -221,54 +222,57 @@
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
 
-  <!-- MODALE DE COMMANDE & FORMULAIRE PAYPAL -->
-  <div id="checkout-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="max-width: 500px; margin: 40px auto; background: #fff; padding: 25px; border-radius: 8px; position: relative;">
-      <button onclick="closeCheckoutModal()" class="close-btn" style="position: absolute; top: 15px; right: 15px; font-size: 1.5rem; background: none; border: none; cursor: pointer;">&times;</button>
-      <h2>Validation de la commande</h2>
-      
-      <form id="shipping-form" style="margin-top: 20px;">
-        <div style="margin-bottom: 12px;">
-          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Nom complet *</label>
-          <input type="text" id="ship-name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-        
-        <div style="margin-bottom: 12px;">
-          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Adresse e-mail *</label>
-          <input type="email" id="ship-email" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-
-        <div style="margin-bottom: 12px;">
-          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Adresse postale *</label>
-          <input type="text" id="ship-address" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        </div>
-
-        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-          <div style="flex: 1;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Code postal *</label>
-            <input type="text" id="ship-zip" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+  <!-- MODALE FORMULAIRE DE COMMANDE + PAYPAL -->
+  <div id="checkout-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button id="close-modal-btn" class="modal-close">&times;</button>
+      <h2>Informations de livraison</h2>
+      <form id="checkout-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-firstname">Prénom *</label>
+            <input type="text" id="client-firstname" name="prenom" required placeholder="Jean">
           </div>
-          <div style="flex: 1;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Ville *</label>
-            <input type="text" id="ship-city" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          <div class="form-group">
+            <label for="client-lastname">Nom *</label>
+            <input type="text" id="client-lastname" name="nom" required placeholder="Dupont">
           </div>
         </div>
-
-        <div style="margin-bottom: 20px;">
-          <label style="font-size: 0.85rem; color: #555;">
-            <input type="checkbox" id="accept-cgu" required> J'accepte les <a href="cgu.html" target="_blank">Conditions Générales de Vente (CGU)</a>.
-          </label>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-email">E-mail *</label>
+            <input type="email" id="client-email" name="email" required placeholder="jean.dupont@email.com">
+          </div>
+          <div class="form-group">
+            <label for="client-phone">Téléphone *</label>
+            <input type="tel" id="client-phone" name="telephone" required placeholder="06 12 34 56 78">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="client-address">Adresse *</label>
+          <input type="text" id="client-address" name="adresse" required placeholder="12 rue des Fleurs">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-zipcode">Code postal *</label>
+            <input type="text" id="client-zipcode" name="code_postal" required placeholder="75001">
+          </div>
+          <div class="form-group">
+            <label for="client-city">Ville *</label>
+            <input type="text" id="client-city" name="ville" required placeholder="Paris">
+          </div>
         </div>
 
-        <!-- Emplacement du bouton PayPal -->
-        <div id="paypal-button-container" style="margin-top: 15px;"></div>
+        <!-- Conteneur dynamique où PayPal injectera les boutons PayPal + CB -->
+        <div id="paypal-button-container" style="margin-top: 20px;"></div>
       </form>
     </div>
   </div>
 
-  <!-- FOOTER -->
+  <!-- FOOTER RAWZ -->
   <footer class="site-footer">
     <div class="footer-container">
+      
       <div class="footer-col footer-brand">
         <h3>RAWZ</h3>
         <p>Streetwear épuré & drops limités.</p>
@@ -301,7 +305,7 @@
       </div>
 
       <div class="footer-col footer-payments">
-        <div class="payment-box">
+        <div class="payment-box" style="margin-top: 0;">
           <span class="payment-title">Paiements sécurisés</span>
           <div class="payment-badges">
             <span class="badge-item"><i class="fa-brands fa-paypal"></i> PayPal</span>
@@ -309,6 +313,7 @@
           </div>
         </div>
       </div>
+
     </div>
 
     <div class="footer-bottom">
@@ -316,6 +321,36 @@
       <p class="secure-tag"><i class="fa-solid fa-lock"></i> Transactions 100% sécurisées via PayPal</p>
     </div>
   </footer>
+
+  <!-- MODALE MENTIONS LÉGALES -->
+  <div id="mentions-modal" class="modal-overlay">
+    <div class="modal-content legal-modal-content">
+      <button id="close-mentions-btn" class="modal-close">&times;</button>
+      <h2>Mentions Légales</h2>
+      <div class="legal-text">
+        <p><strong>Éditeur du site :</strong> RAWZ Store</p>
+        <p><strong>Hébergement :</strong> GitHub Pages / Vercel</p>
+        <p><strong>Contact :</strong> Pour toute question relative à votre commande, contactez-nous via nos réseaux sociaux ou par e-mail à l'adresse rawz.store.instinct@gmail.com</p>
+        <p><strong>Données personnelles :</strong> Les informations recueillies dans le formulaire de commande servent uniquement au traitement et à l'expédition des articles. Elles ne sont ni vendues ni cédées à des tiers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE RETOURS & LIVRAISON -->
+  <div id="returns-modal" class="modal-overlay">
+    <div class="modal-content legal-modal-content">
+      <button id="close-returns-btn" class="modal-close">&times;</button>
+      <h2>Livraison & Retours</h2>
+      <div class="legal-text">
+        <h3>Livraison</h3>
+        <p>Livraison offerte dès 80 € d'achat.</p>
+
+        <h3>Retours & Échanges</h3>
+        <p>Vous disposez d'un délai de 14 jours après réception de votre commande pour demander un retour ou un échange.</p>
+        <p>Les articles doivent être retournés neufs, non portés, non lavés et dans leur emballage d'origine. Les frais de retour restent à la charge du client, sauf en cas d'erreur de notre part sur l'article envoyé.</p>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
   <script src="product-detail.js"></script>
@@ -330,16 +365,6 @@
         });
       });
     });
-
-    function openCheckoutModal() {
-      const modal = document.getElementById('checkout-modal');
-      if (modal) modal.style.display = 'block';
-    }
-
-    function closeCheckoutModal() {
-      const modal = document.getElementById('checkout-modal');
-      if (modal) modal.style.display = 'none';
-    }
   </script>
 </body>
 </html>
