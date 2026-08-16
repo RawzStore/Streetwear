@@ -16,117 +16,6 @@
   
   <!-- SDK PayPal -->
   <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
-
-  <style>
-    .accordion-section {
-      margin-top: 25px;
-      border-top: 1px solid var(--border-color, #eee);
-    }
-    .accordion-item {
-      border-bottom: 1px solid var(--border-color, #eee);
-    }
-    .accordion-header {
-      width: 100%;
-      background: none;
-      border: none;
-      padding: 16px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: inherit;
-      cursor: pointer;
-      text-align: left;
-    }
-    .accordion-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      font-size: 0.9rem;
-      color: inherit;
-      opacity: 0.8;
-      line-height: 1.6;
-    }
-    .accordion-item.active .accordion-content {
-      padding-bottom: 16px;
-    }
-
-    /* ZOOM INTERACTIF AMÉLIORÉ */
-    .main-image-container {
-      position: relative;
-      width: 100%;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #f5f5f5;
-      margin-bottom: 15px;
-      cursor: zoom-in;
-      touch-action: none;
-    }
-    .main-image-container img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: cover;
-      transform-origin: center center;
-      transition: transform 0.15s ease-out;
-    }
-
-    /* BOUTON RETOUR CATALOGUE */
-    .back-link {
-      display: inline-block !important;
-      margin-bottom: 20px;
-      text-decoration: none;
-      font-weight: 600;
-      color: inherit;
-      transition: opacity 0.2s ease;
-    }
-    .back-link:hover {
-      opacity: 0.7;
-    }
-
-    /* LAYOUT ADAPTATIF PC / DESKTOP */
-    @media (min-width: 768px) {
-      .product-detail-grid {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 40px !important;
-        align-items: start;
-      }
-      .product-gallery {
-        position: sticky;
-        top: 90px;
-      }
-      .back-link {
-        font-size: 0.9rem;
-        margin-bottom: 15px;
-      }
-    }
-
-    /* TOAST NOTIFICATION */
-    .toast {
-      position: fixed;
-      bottom: -60px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #111;
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      z-index: 9999;
-      opacity: 0;
-      transition: bottom 0.4s ease, opacity 0.4s ease;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    .toast.show {
-      bottom: 30px;
-      opacity: 1;
-    }
-  </style>
 </head>
 <body>
 
@@ -177,37 +66,37 @@
   </aside>
 
   <!-- FICHE PRODUIT -->
-  <main class="product-page-container" style="max-width: 1000px; margin: 20px auto; padding: 0 15px;">
+  <main class="product-page-container">
     <a href="index.html" class="back-link">&larr; Retour au catalogue</a>
     
-    <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
+    <div class="product-detail-grid">
       
       <!-- Galerie avec Zoom -->
       <div class="product-gallery">
         <div class="main-image-container" id="zoom-container">
           <img id="main-product-img" src="" alt="Produit">
         </div>
-        <div id="thumbnails-container" class="thumbnails-flex" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
+        <div id="thumbnails-container" class="thumbnails-flex"></div>
       </div>
 
       <!-- Informations -->
       <div class="product-info-col">
-        <h1 id="product-title" style="font-size: 1.8rem; margin: 10px 0 5px 0;">Nom du produit</h1>
-        <p id="product-price" class="product-price" style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px;">0,00 €</p>
+        <h1 id="product-title">Nom du produit</h1>
+        <p id="product-price" class="product-price">0,00 €</p>
 
         <!-- Couleurs -->
-        <div class="option-group" style="margin-bottom: 15px;">
-          <label for="color-select" style="display: block; font-weight: 600; margin-bottom: 5px;">Couleur :</label>
-          <select id="color-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.95rem;"></select>
+        <div class="option-group">
+          <label for="color-select">Couleur :</label>
+          <select id="color-select" class="custom-select"></select>
         </div>
 
         <!-- Tailles -->
-        <div class="option-group" style="margin-bottom: 20px;">
-          <label for="size-select" style="display: block; font-weight: 600; margin-bottom: 5px;">Taille :</label>
-          <select id="size-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.95rem;"></select>
+        <div class="option-group">
+          <label for="size-select">Taille :</label>
+          <select id="size-select" class="custom-select"></select>
         </div>
 
-        <button id="add-to-cart-btn" class="checkout-btn" style="width: 100%; padding: 16px; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;">Ajouter au panier</button>
+        <button id="add-to-cart-btn" class="add-cart-large-btn">Ajouter au panier</button>
 
         <!-- ACCORDÉONS DÉROULANTS -->
         <div class="accordion-section">
@@ -215,7 +104,7 @@
           <div class="accordion-item">
             <button class="accordion-header">
               <span>Description produit</span>
-              <span>+</span>
+              <i class="fa-solid fa-chevron-down"></i>
             </button>
             <div class="accordion-content">
               <p id="product-description"></p>
@@ -225,7 +114,7 @@
           <div class="accordion-item">
             <button class="accordion-header">
               <span>Livraison & Retours</span>
-              <span>+</span>
+              <i class="fa-solid fa-chevron-down"></i>
             </button>
             <div class="accordion-content">
               <p>📦 <strong>Livraison :</strong> Livraison offerte dès 80€ d'achat.</p>
@@ -308,7 +197,7 @@
           </div>
         </div>
 
-        <div id="paypal-button-container" style="margin-top: 20px;"></div>
+        <div id="paypal-button-container"></div>
       </form>
     </div>
   </div>
@@ -340,7 +229,7 @@
       </div>
 
       <div class="footer-col footer-payments">
-        <div class="payment-box" style="margin-top: 0;">
+        <div class="payment-box">
           <span class="payment-title">Paiements sécurisés</span>
           <div class="payment-badges">
             <span class="badge-item"><i class="fa-brands fa-paypal"></i> PayPal</span>
@@ -399,7 +288,7 @@
         });
       }
 
-      // Logique Zoom dynamique au survol / touch
+      // Zoom dynamique au survol / touch
       const zoomContainer = document.getElementById('zoom-container');
       const zoomImg = document.getElementById('main-product-img');
 
