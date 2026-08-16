@@ -8,6 +8,8 @@
   <link rel="icon" type="image/png" href="images/logo.png">
   <!-- FontAwesome pour les icônes officielles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- SDK PayPal chargé en arrière-plan -->
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
 </head>
 <body>
 
@@ -43,7 +45,7 @@
     </div>
   </header>
 
-    <!-- MENU LATÉRAL -->
+  <!-- MENU LATÉRAL -->
   <div class="menu-overlay" id="menu-overlay"></div>
   <aside class="menu-drawer" id="menu-drawer">
     <div class="menu-header">
@@ -55,9 +57,10 @@
       <li><a href="#catalog" class="menu-filter-link" data-category="chemise">Chemises</a></li>
       <li><a href="#catalog" class="menu-filter-link" data-category="polo">Polos</a></li>
       <li><a href="#catalog" class="menu-filter-link" data-category="t-shirt">T-shirts</a></li>
+      <li><a href="https://instagram.com/rawzstore" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> Instagram</a></li>
+      <li><a href="https://www.tiktok.com/@rawz.store" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i> TikTok</a></li>
     </ul>
   </aside>
-
 
   <!-- Section Hero -->
   <section class="hero-banner">
@@ -114,7 +117,7 @@
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
 
-  <!-- MODALE FORMULAIRE DE COMMANDE -->
+  <!-- MODALE FORMULAIRE DE COMMANDE + PAYPAL -->
   <div id="checkout-modal" class="modal-overlay">
     <div class="modal-content">
       <button id="close-modal-btn" class="modal-close">&times;</button>
@@ -123,42 +126,40 @@
         <div class="form-row">
           <div class="form-group">
             <label for="client-firstname">Prénom *</label>
-            <input type="text" id="client-firstname" required placeholder="Jean">
+            <input type="text" id="client-firstname" name="prenom" required placeholder="Jean">
           </div>
           <div class="form-group">
             <label for="client-lastname">Nom *</label>
-            <input type="text" id="client-lastname" required placeholder="Dupont">
+            <input type="text" id="client-lastname" name="nom" required placeholder="Dupont">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label for="client-email">E-mail *</label>
-            <input type="email" id="client-email" required placeholder="jean.dupont@email.com">
+            <input type="email" id="client-email" name="email" required placeholder="jean.dupont@email.com">
           </div>
           <div class="form-group">
             <label for="client-phone">Téléphone *</label>
-            <input type="tel" id="client-phone" required placeholder="06 12 34 56 78">
+            <input type="tel" id="client-phone" name="telephone" required placeholder="06 12 34 56 78">
           </div>
         </div>
         <div class="form-group">
           <label for="client-address">Adresse *</label>
-          <input type="text" id="client-address" required placeholder="12 rue des Fleurs">
+          <input type="text" id="client-address" name="adresse" required placeholder="12 rue des Fleurs">
         </div>
         <div class="form-row">
           <div class="form-group">
             <label for="client-zipcode">Code postal *</label>
-            <input type="text" id="client-zipcode" required placeholder="75001">
+            <input type="text" id="client-zipcode" name="code_postal" required placeholder="75001">
           </div>
           <div class="form-group">
             <label for="client-city">Ville *</label>
-            <input type="text" id="client-city" required placeholder="Paris">
+            <input type="text" id="client-city" name="ville" required placeholder="Paris">
           </div>
         </div>
-        
-        <!-- Bouton d'envoi direct -->
-        <button type="submit" id="submit-order-btn" class="checkout-btn" style="margin-top: 20px; width: 100%;">
-          Valider et envoyer la commande
-        </button>
+
+        <!-- Conteneur dynamique où PayPal injectera les boutons PayPal + CB -->
+        <div id="paypal-button-container" style="margin-top: 20px;"></div>
       </form>
     </div>
   </div>
@@ -174,22 +175,21 @@
       </div>
 
       <!-- Colonne 2 : Réseaux sociaux -->
-<div class="footer-col footer-socials">
-  <h4>Nous suivre</h4>
-  <ul class="social-links">
-    <li>
-      <a href="https://instagram.com/rawzstore" target="_blank" rel="noopener">
-        <i class="fa-brands fa-instagram"></i> Instagram
-      </a>
-    </li>
-    <li>
-      <a href="https://www.tiktok.com/@rawz.store" target="_blank" rel="noopener">
-        <i class="fa-brands fa-tiktok"></i> TikTok
-      </a>
-    </li>
-  </ul>
-</div>
-
+      <div class="footer-col footer-socials">
+        <h4>Nous suivre</h4>
+        <ul class="social-links">
+          <li>
+            <a href="https://instagram.com/rawzstore" target="_blank" rel="noopener">
+              <i class="fa-brands fa-instagram"></i> Instagram
+            </a>
+          </li>
+          <li>
+            <a href="https://www.tiktok.com/@rawz.store" target="_blank" rel="noopener">
+              <i class="fa-brands fa-tiktok"></i> TikTok
+            </a>
+          </li>
+        </ul>
+      </div>
 
       <!-- Colonne 3 : Informations & Contact -->
       <div class="footer-col footer-legal">
@@ -252,8 +252,5 @@
   </div>
 
   <script src="script.js"></script>
-  
-  <!-- Vercel Analytics -->
-  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
