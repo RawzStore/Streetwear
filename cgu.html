@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CGU - RAWZ Store</title>
-
+  <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="images/logo.png">
   <style>
-    body {
+    /* Styles isolés spécifiquement pour la page CGU */
+    body.cgu-page {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       line-height: 1.6;
       color: #333;
@@ -15,7 +16,7 @@
       margin: 0;
       padding: 0;
     }
-    .container {
+    .cgu-container {
       max-width: 800px;
       margin: 40px auto;
       background: #fff;
@@ -23,32 +24,33 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-    h1 {
+    .cgu-container h1 {
       font-size: 1.8rem;
       border-bottom: 2px solid #111;
       padding-bottom: 10px;
       margin-top: 0;
       color: #111;
     }
-    h2 {
+    .cgu-container h2 {
       font-size: 1.2rem;
       margin-top: 25px;
       color: #222;
     }
-    p, ul {
+    .cgu-container p, 
+    .cgu-container ul {
       font-size: 0.95rem;
       color: #444;
     }
-    ul {
+    .cgu-container ul {
       padding-left: 20px;
     }
-    .date {
+    .cgu-container .date {
       font-style: italic;
       color: #666;
       font-size: 0.85rem;
       margin-bottom: 25px;
     }
-    .back-link {
+    .cgu-container .back-link {
       display: inline-block;
       margin-bottom: 20px;
       color: #000;
@@ -58,9 +60,9 @@
     }
   </style>
 </head>
-<body>
+<body class="cgu-page">
 
-  <div class="container">
+  <div class="cgu-container">
     <a href="index.html" class="back-link">&larr; Retour à la boutique</a>
 
     <h1>CONDITIONS GÉNÉRALES D'UTILISATION (CGU)</h1>
@@ -84,7 +86,7 @@
 
     <h2>ARTICLE 4 : Propriété intellectuelle</h2>
     <p>Les marques, logos, visuels, photographies, textes et créations de vêtements présents sur le site (notamment la marque RAWZ et la collection Rawz Instinct) font l'objet d'une protection par le Code de la propriété intellectuelle et le droit d'auteur.</p>
-    <p>L'Utilisateur doit solliciter l'autorisation préalable du site pour toute reproduction, publication ou copie des différents contenus. Il s'engage à une utilisation des contenus du site dans un cadre strictly privé ; toute utilisation à des fins commerciales ou publicitaires est strictement interdite.</p>
+    <p>L'Utilisateur doit solliciter l'autorisation préalable du site pour toute reproduction, publication ou copie des différents contenus. Il s'engage à une utilisation des contenus du site dans un cadre strictement privé ; toute utilisation à des fins commerciales ou publicitaires est strictement interdite.</p>
 
     <h2>ARTICLE 5 : Données personnelles & Cookies</h2>
     <p>Le site assure à l'Utilisateur une collecte et un traitement d'informations personnelles dans le respect de la vie privée, conformément à la loi n°78-17 du 6 janvier 1978 relative à l'informatique, aux fichiers et aux libertés, ainsi qu'au Règlement Général sur la Protection des Données (RGPD).</p>
