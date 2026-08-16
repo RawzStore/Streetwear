@@ -64,13 +64,45 @@
   </aside>
 
   <!-- CONTENU FICHE PRODUIT -->
-  <main class="product-detail-container" style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+  <main class="product-page-container" style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
     <a href="index.html" class="back-link" style="display: inline-block; margin-bottom: 20px; color: #000; text-decoration: underline;">&larr; Retour au catalogue</a>
     
-    <div id="product-detail-content" class="product-detail-grid">
-      <!-- Injecté dynamiquement via script.js -->
+    <div class="product-detail-grid" style="display: flex; gap: 40px; flex-wrap: wrap;">
+      
+      <!-- Galerie d'images -->
+      <div class="product-gallery" style="flex: 1; min-width: 300px;">
+        <div class="main-image-container" style="overflow: hidden; cursor: zoom-in; position: relative;">
+          <img id="display-img" src="" alt="Produit" style="width: 100%; display: block; transition: transform 0.1s ease;">
+        </div>
+        <div id="thumbnails-container" class="thumbnails-flex" style="display: flex; gap: 10px; margin-top: 15px;"></div>
+      </div>
+
+      <!-- Informations produit -->
+      <div class="product-info-col" style="flex: 1; min-width: 300px;">
+        <h1 id="product-name">Nom du produit</h1>
+        <p id="product-price" style="font-size: 1.5rem; font-weight: bold; margin: 15px 0;">0,00 €</p>
+        <p id="product-description" style="margin-bottom: 20px; color: #555; line-height: 1.5;"></p>
+
+        <!-- Sélecteur de couleur -->
+        <div class="option-group" style="margin-bottom: 15px;">
+          <label for="color-select">Couleur :</label>
+          <select id="color-select" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;"></select>
+        </div>
+
+        <!-- Sélecteur de taille -->
+        <div class="option-group" style="margin-bottom: 20px;">
+          <label for="size-select">Taille :</label>
+          <select id="size-select" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;"></select>
+        </div>
+
+        <button id="add-to-cart-btn" class="checkout-btn" style="width: 100%; padding: 15px; font-weight: bold; cursor: pointer;">Ajouter au panier</button>
+      </div>
+
     </div>
   </main>
+
+  <!-- Notification Toast -->
+  <div id="toast-notification" class="toast">Article ajouté au panier !</div>
 
   <!-- Drawer Panier -->
   <aside id="cart-drawer" class="cart-drawer">
@@ -149,9 +181,8 @@
     </div>
   </footer>
 
-    <script src="script.js"></script>
-  
-
-
+  <!-- SCRIPTS : On charge d'abord la base de données (script.js) puis la logique produit (product-detail.js) -->
+  <script src="script.js"></script>
+  <script src="product-detail.js"></script>
 </body>
 </html>
