@@ -705,6 +705,9 @@ body.dark-theme .back-link:hover {
 }
 
 .accordion-header {
+  width: 100%;
+  background: none;
+  border: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -712,28 +715,30 @@ body.dark-theme .back-link:hover {
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
-  list-style: none;
+  color: var(--text-color);
+  text-align: left;
 }
 
-.accordion-header::-webkit-details-marker {
-  display: none;
-}
-
-.accordion-header .chevron {
+.accordion-header span,
+.accordion-header i {
+  font-size: 1.2rem;
   transition: transform 0.3s ease;
-  font-size: 0.8rem;
-}
-
-.accordion-item[open] .chevron,
-.accordion-item.active .accordion-header i {
-  transform: rotate(180deg);
 }
 
 .accordion-content {
-  padding-bottom: 16px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0;
   color: var(--gray-text);
   font-size: 0.95rem;
   line-height: 1.5;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+.accordion-item.active .accordion-content {
+  opacity: 1;
+  padding-bottom: 16px;
 }
 
 /* ==========================================
