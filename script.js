@@ -229,7 +229,7 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// INTÉGRATION ET INITIALISATION BOUTONS PAYPAL (PAYPAL + CB SÉCURISÉ)
+// INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
 function initPayPalButton() {
   const paypalContainer = document.getElementById('paypal-button-container');
   if (!paypalContainer || typeof paypal === 'undefined') return;
@@ -362,11 +362,104 @@ function initPayPalButton() {
   }).render('#paypal-button-container');
 }
 
+// LOGIQUE SPÉCIFIQUE À LA PAGE PRODUIT (product.html)
+function initProductPage() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = parseInt(urlParams.get('id'));
+  const product = products.find(p => p.id === productId);
+
+  if (!product) return;
+
+  const titleEl = document.getElementById('product-title');
+  const priceEl = document.getElementById('product-price');
+  const descEl = document.getElementById('product-description');
+  const mainImgEl = document.getElementById('main-product-img');
+  const thumbsContainer = document.getElementById('thumbnails-container');
+  const sizeSelect = document.getElementById('size-select');
+  const colorSelect = document.getElementById('color-select');
+  const addToCartBtn = document.getElementById('add-to-cart-btn');
+
+  if (titleEl) titleEl.textContent = product.name;
+  if (priceEl) priceEl.textContent = `${product.price.toFixed(2)} €`;
+  if (descEl) descEl.textContent = product.description;
+  if (mainImgEl) mainImgEl.src = product.mainImage;
+
+  // Tailles
+  if (sizeSelect && product.sizes) {
+    sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
+  }
+
+  // Couleurs & Galerie dynamique
+  const updateGallery = (imageList) => {
+    if (!thumbsContainer || !mainImgEl || !imageList) return;
+    thumbsContainer.innerHTML = '';
+    mainImgEl.src = imageList[0];
+
+    imageList.forEach((imgSrc, index) => {
+      const thumb = document.createElement('img');
+      thumb.src = imgSrc;
+      thumb.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+      thumb.addEventListener('click', () => {
+        mainImgEl.src = imgSrc;
+        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      });
+      thumbsContainer.appendChild(thumb);
+    });
+  };
+
+  if (colorSelect && product.colors) {
+    colorSelect.innerHTML = product.colors.map(c => `<option value="${c}">${c}</option>`).join('');
+    
+    if (product.imagesByColor) {
+      updateGallery(product.imagesByColor[product.colors[0]]);
+      colorSelect.addEventListener('change', (e) => {
+        const selectedColor = e.target.value;
+        if (product.imagesByColor[selectedColor]) {
+          updateGallery(product.imagesByColor[selectedColor]);
+        }
+      });
+    } else if (product.images) {
+      updateGallery(product.images);
+    }
+  } else if (product.images) {
+    updateGallery(product.images);
+  }
+
+  // Ajouter au panier
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener('click', () => {
+      const selectedSize = sizeSelect ? sizeSelect.value : product.sizes[0];
+      const selectedColor = colorSelect ? colorSelect.value : (product.colors ? product.colors[0] : null);
+      const cartKey = `${product.id}-${selectedSize}-${selectedColor || 'default'}`;
+
+      const existingItem = cart.find(i => i.key === cartKey);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          key: cartKey,
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          selectedSize: selectedSize,
+          selectedColor: selectedColor,
+          quantity: 1
+        });
+      }
+
+      saveCart();
+      updateCartUI();
+      openCart();
+    });
+  }
+}
+
 // Initialisation au chargement
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
-  initPayPalButton();
+  initProductPage();
 
   // Mode sombre
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
@@ -383,10 +476,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartToggleBtn = document.getElementById('cart-toggle-btn');
   const closeCartBtn = document.getElementById('close-cart-btn');
   const cartOverlay = document.getElementById('cart-overlay');
+  const checkoutBtn = document.getElementById('checkout-btn');
 
   if (cartToggleBtn) cartToggleBtn.addEventListener('click', openCart);
   if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+  if (checkoutBtn) checkoutBtn.addEventListener('click', openCheckoutModal);
 
   // Appliquer le Code Promo
   const applyPromoBtn = document.getElementById('apply-promo-btn');
@@ -406,6 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
         promoMsg.className = "promo-message error";
       }
       updateCartUI();
+      initPayPalButton();
     });
   }
 
@@ -456,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
-  // GESTION DES MODALES DU FOOTER
+  // Modales du Footer
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
 
