@@ -6,6 +6,8 @@
   <title>RAWZ | Fiche Produit</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="images/logo.png">
+  <!-- FontAwesome pour les icônes officielles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
@@ -160,7 +162,7 @@
     </div>
   </div>
 
-    <!-- FOOTER RAWZ -->
+  <!-- FOOTER RAWZ -->
   <footer class="site-footer">
     <div class="footer-container">
       
@@ -176,7 +178,7 @@
         <ul class="social-links">
           <li>
             <a href="https://instagram.com/rawz.store.instinct" target="_blank" rel="noopener">
-              Instagram ↗
+              <i class="fa-brands fa-instagram"></i> Instagram
             </a>
           </li>
         </ul>
@@ -198,14 +200,16 @@
         <p>Sois prévenu(e) en avant-première lors des prochains drops.</p>
         <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Merci ! Tu es bien inscrit(e) aux accès VIP.');">
           <input type="email" placeholder="Ton e-mail..." required />
-          <button type="submit" aria-label="S'inscrire">→</button>
+          <button type="submit" aria-label="S'inscrire">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
         </form>
 
         <div class="payment-box">
           <span class="payment-title">Paiements sécurisés :</span>
           <div class="payment-badges">
-            <span class="badge-item">🅿️ PayPal</span>
-            <span class="badge-item">💳 Carte (via PayPal)</span>
+            <span class="badge-item"><i class="fa-brands fa-paypal"></i> PayPal</span>
+            <span class="badge-item"><i class="fa-regular fa-credit-card"></i> Carte bancaire</span>
           </div>
         </div>
       </div>
@@ -215,10 +219,9 @@
     <!-- Bas de page -->
     <div class="footer-bottom">
       <p>&copy; 2026 RAWZ Store. Tous droits réservés.</p>
-      <p class="secure-tag">🔒 Transactions 100% sécurisées via PayPal</p>
+      <p class="secure-tag"><i class="fa-solid fa-lock"></i> Transactions 100% sécurisées via PayPal</p>
     </div>
   </footer>
-
 
   <!-- MODALE MENTIONS LÉGALES -->
   <div id="mentions-modal" class="modal-overlay">
