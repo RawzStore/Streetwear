@@ -20,10 +20,10 @@
   <style>
     .accordion-section {
       margin-top: 25px;
-      border-top: 1px solid #eee;
+      border-top: 1px solid var(--border-color, #eee);
     }
     .accordion-item {
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border-color, #eee);
     }
     .accordion-header {
       width: 100%;
@@ -35,28 +35,21 @@
       align-items: center;
       font-size: 0.95rem;
       font-weight: 600;
-      color: #111;
+      color: inherit; /* S'adapte au mode clair et sombre */
       cursor: pointer;
       text-align: left;
-    }
-    .accordion-header i {
-      transition: transform 0.3s ease;
-      font-size: 0.8rem;
     }
     .accordion-content {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.3s ease, padding 0.3s ease;
+      transition: max-height 0.3s ease;
       font-size: 0.9rem;
-      color: #555;
+      color: inherit;
+      opacity: 0.8;
       line-height: 1.6;
     }
     .accordion-item.active .accordion-content {
-      max-height: 500px;
       padding-bottom: 16px;
-    }
-    .accordion-item.active .accordion-header i {
-      transform: rotate(180deg);
     }
 
     .toast {
@@ -133,33 +126,33 @@
 
   <!-- FICHE PRODUIT -->
   <main class="product-page-container" style="max-width: 1000px; margin: 20px auto; padding: 0 15px;">
-    <a href="index.html" class="back-link" style="display: block; margin-bottom: 20px; color: #000; text-decoration: underline; font-weight: 600;">&larr; Retour au catalogue</a>
+    <a href="index.html" class="back-link" style="display: block; margin-bottom: 20px; text-decoration: underline; font-weight: 600;">&larr; Retour au catalogue</a>
     
     <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
       
       <!-- Galerie -->
       <div class="product-gallery">
         <div class="main-image-container" style="width: 100%; border-radius: 8px; overflow: hidden; background: #f5f5f5; margin-bottom: 15px;">
-          <img id="display-img" src="" alt="Produit" style="width: 100%; height: auto; display: block; object-fit: cover;">
+          <img id="main-product-img" src="" alt="Produit" style="width: 100%; height: auto; display: block; object-fit: cover;">
         </div>
         <div id="thumbnails-container" class="thumbnails-flex" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
       </div>
 
       <!-- Informations -->
       <div class="product-info-col">
-        <h1 id="product-name" style="font-size: 1.8rem; margin: 10px 0 5px 0; color: #111;">Nom du produit</h1>
-        <p id="product-price" class="product-price" style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px; color: #111;">0,00 €</p>
+        <h1 id="product-title" style="font-size: 1.8rem; margin: 10px 0 5px 0;">Nom du produit</h1>
+        <p id="product-price" class="product-price" style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px;">0,00 €</p>
 
         <!-- Couleurs -->
         <div class="option-group" style="margin-bottom: 15px;">
           <label for="color-select" style="display: block; font-weight: 600; margin-bottom: 5px;">Couleur :</label>
-          <select id="color-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; font-size: 0.95rem;"></select>
+          <select id="color-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.95rem;"></select>
         </div>
 
         <!-- Tailles -->
         <div class="option-group" style="margin-bottom: 20px;">
           <label for="size-select" style="display: block; font-weight: 600; margin-bottom: 5px;">Taille :</label>
-          <select id="size-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9; font-size: 0.95rem;"></select>
+          <select id="size-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.95rem;"></select>
         </div>
 
         <button id="add-to-cart-btn" class="checkout-btn" style="width: 100%; padding: 16px; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;">Ajouter au panier</button>
@@ -170,7 +163,7 @@
           <div class="accordion-item">
             <button class="accordion-header">
               <span>Description produit</span>
-              <i class="fa-solid fa-chevron-down"></i>
+              <span>+</span>
             </button>
             <div class="accordion-content">
               <p id="product-description"></p>
@@ -180,7 +173,7 @@
           <div class="accordion-item">
             <button class="accordion-header">
               <span>Livraison & Retours</span>
-              <i class="fa-solid fa-chevron-down"></i>
+              <span>+</span>
             </button>
             <div class="accordion-content">
               <p>📦 <strong>Livraison :</strong> Expédié sous 48h à 72h. Livraison offerte dès 80€ d'achat.</p>
@@ -263,7 +256,6 @@
           </div>
         </div>
 
-        <!-- Conteneur dynamique où PayPal injectera les boutons PayPal + CB -->
         <div id="paypal-button-container" style="margin-top: 20px;"></div>
       </form>
     </div>
@@ -322,7 +314,7 @@
     </div>
   </footer>
 
-  <!-- MODALE MENTIONS LÉGALES -->
+  <!-- MODALES LEGALES -->
   <div id="mentions-modal" class="modal-overlay">
     <div class="modal-content legal-modal-content">
       <button id="close-mentions-btn" class="modal-close">&times;</button>
@@ -330,13 +322,11 @@
       <div class="legal-text">
         <p><strong>Éditeur du site :</strong> RAWZ Store</p>
         <p><strong>Hébergement :</strong> GitHub Pages / Vercel</p>
-        <p><strong>Contact :</strong> Pour toute question relative à votre commande, contactez-nous via nos réseaux sociaux ou par e-mail à l'adresse rawz.store.instinct@gmail.com</p>
-        <p><strong>Données personnelles :</strong> Les informations recueillies dans le formulaire de commande servent uniquement au traitement et à l'expédition des articles. Elles ne sont ni vendues ni cédées à des tiers.</p>
+        <p><strong>Contact :</strong> rawz.store.instinct@gmail.com</p>
       </div>
     </div>
   </div>
 
-  <!-- MODALE RETOURS & LIVRAISON -->
   <div id="returns-modal" class="modal-overlay">
     <div class="modal-content legal-modal-content">
       <button id="close-returns-btn" class="modal-close">&times;</button>
@@ -344,27 +334,13 @@
       <div class="legal-text">
         <h3>Livraison</h3>
         <p>Livraison offerte dès 80 € d'achat.</p>
-
         <h3>Retours & Échanges</h3>
-        <p>Vous disposez d'un délai de 14 jours après réception de votre commande pour demander un retour ou un échange.</p>
-        <p>Les articles doivent être retournés neufs, non portés, non lavés et dans leur emballage d'origine. Les frais de retour restent à la charge du client, sauf en cas d'erreur de notre part sur l'article envoyé.</p>
+        <p>Vous disposez d'un délai de 14 jours après réception pour effectuer un retour.</p>
       </div>
     </div>
   </div>
 
+  <!-- Un seul script JavaScript chargé -->
   <script src="script.js"></script>
-  <script src="product-detail.js"></script>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const accordionHeaders = document.querySelectorAll('.accordion-header');
-      accordionHeaders.forEach(header => {
-        header.addEventListener('click', () => {
-          const item = header.parentElement;
-          item.classList.toggle('active');
-        });
-      });
-    });
-  </script>
 </body>
 </html>
