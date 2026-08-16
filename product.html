@@ -3,263 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RAWZ | Fiche Produit</title>
+  <title>CGU - RAWZ</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="images/logo.png">
-  <!-- FontAwesome pour les icônes officielles -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- SDK PayPal chargé en arrière-plan -->
-  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #fafafa;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    h1 {
+      font-size: 1.8rem;
+      border-bottom: 2px solid #111;
+      padding-bottom: 10px;
+      margin-top: 0;
+      color: #111;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 25px;
+      color: #222;
+    }
+    p, ul {
+      font-size: 0.95rem;
+      color: #444;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    .date {
+      font-style: italic;
+      color: #666;
+      font-size: 0.85rem;
+      margin-bottom: 25px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #000;
+      text-decoration: underline;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- En-tête / Navigation -->
-  <header class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="brand-logo">
-        <img src="images/logo.png" alt="RAWZ Logo" class="logo-img">
-      </a>
-      <div class="nav-controls">
-        <a href="index.html" class="back-link">← Retour au catalogue</a>
-        <button id="theme-toggle-btn" class="theme-btn" title="Changer le thème">🌙</button>
-        <button id="cart-toggle-btn" class="cart-btn">
-          Panier <span id="cart-badge" class="badge">0</span>
-        </button>
-      </div>
-    </div>
-  </header>
+  <div class="container">
+    <a href="index.html" class="back-link">&larr; Retour à la boutique</a>
 
-  <!-- Contenu Fiche Produit -->
-  <main class="product-page-container">
-    <!-- Galerie Photos (Gauche) -->
-    <div class="product-gallery">
-      <div class="main-image-container">
-        <img id="display-img" src="" alt="Image produit">
-      </div>
-      <div id="thumbnails-container" class="thumbnails-grid"></div>
-    </div>
+    <h1>CONDITIONS GÉNÉRALES D'UTILISATION (CGU)</h1>
+    <p class="date">En vigueur au 09/08/2026</p>
 
-    <!-- Panneau Info & Options (Droite) -->
-    <div class="product-info-panel">
-      <h1 id="product-name"></h1>
-      <p id="product-price" class="price"></p>
+    <p>Les présentes Conditions Générales d'Utilisation (dites « CGU ») ont pour objet l'encadrement juridique des modalités de mise à disposition du site et des services par RAWZ et de définir les conditions d'accès et d'utilisation des services par « l'Utilisateur ».</p>
 
-      <!-- Options Couleur -->
-      <div class="option-group">
-        <label for="color-select"><strong>Couleur :</strong></label>
-        <select id="color-select" class="custom-select"></select>
-      </div>
+    <h2>ARTICLE 1 : Mentions légales</h2>
+    <p>L'édition du site est assurée par l'entreprise RAWZ (en cours de création), dont le siège social est situé en France (Bretagne).</p>
+    <p><strong>Directeur de la publication :</strong> RAWZ</p>
+    <p><strong>Adresse e-mail de contact :</strong> <a href="mailto:rawz.store.instinct@gmail.com">rawz.store.instinct@gmail.com</a></p>
+    <p><strong>Hébergeur du site :</strong> Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis.</p>
 
-      <!-- Options Taille -->
-      <div class="option-group">
-        <label for="size-select"><strong>Taille :</strong></label>
-        <select id="size-select" class="custom-select"></select>
-      </div>
+    <h2>ARTICLE 2 : Accès au site</h2>
+    <p>Le site RAWZ propose un service de vente en ligne de vêtements et articles de prêt-à-porter issus de ses collections, notamment la collection Rawz Instinct.</p>
+    <p>Le site est accessible gratuitement en tout lieu à tout Utilisateur ayant un accès à Internet. Tous les frais supportés par l'Utilisateur pour accéder au service (matériel informatique, logiciels, connexion Internet, etc.) sont à sa charge.</p>
 
-      <button id="add-to-cart-btn" class="add-cart-large-btn">Ajouter au panier</button>
+    <h2>ARTICLE 3 : Gestion du site et modération</h2>
+    <p>L'Éditeur met en œuvre des solutions techniques pour permettre l'accès au site 24 heures sur 24, 7 jours sur 7. Il pourra néanmoins à tout moment suspendre, limiter ou interrompre l'accès au site afin de procéder à des mises à jour ou des modifications de son contenu.</p>
+    <p>L'Éditeur se réserve le droit de restreindre ou de bloquer l'accès au site à tout Utilisateur qui ne respecterait pas les présentes CGU ou qui adopterait un comportement malveillant ou perturbateur.</p>
 
-      <!-- Caractéristiques -->
-      <ul class="product-features">
-        <li>Livraison offerte dès 80€ d'achat</li>
-        <li>Précommande désormais disponible</li>
-      </ul>
+    <h2>ARTICLE 4 : Propriété intellectuelle</h2>
+    <p>Les marques, logos, visuels, photographies, textes et créations de vêtements présents sur le site (notamment la marque RAWZ et la collection Rawz Instinct) font l'objet d'une protection par le Code de la propriété intellectuelle et le droit d'auteur.</p>
+    <p>L'Utilisateur doit solliciter l'autorisation préalable du site pour toute reproduction, publication ou copie des différents contenus. Il s'engage à une utilisation des contenus du site dans un cadre strictement privé ; toute utilisation à des fins commerciales ou publicitaires est strictement interdite.</p>
 
-      <!-- Accordéons -->
-      <div class="accordion-section">
-        <details class="accordion-item">
-          <summary class="accordion-header">
-            <span>Description</span>
-            <span class="chevron">❯</span>
-          </summary>
-          <div class="accordion-content">
-            <p id="product-description"></p>
-          </div>
-        </details>
+    <h2>ARTICLE 5 : Données personnelles & Cookies</h2>
+    <p>Le site assure à l'Utilisateur une collecte et un traitement d'informations personnelles dans le respect de la vie privée, conformément à la loi n°78-17 du 6 janvier 1978 relative à l'informatique, aux fichiers et aux libertés, ainsi qu'au Règlement Général sur la Protection des Données (RGPD).</p>
+    <p><strong>Données collectées :</strong> Les données personnelles récoltées sur le site sont uniquement destinées au traitement des commandes, à la livraison et au service client.</p>
+    <p><strong>Cookies et outils de mesure :</strong> Le site peut utiliser des outils d'analyse technique et de suivi d'observabilité internes destinés uniquement au bon fonctionnement, à la sécurité et à la performance du site. Aucun cookie publicitaire de tiers n'est revendu à des fins commerciales.</p>
+    <p>L'Utilisateur dispose d'un droit d'accès, de rectification, de suppression et d'opposition de ses données personnelles. L'Utilisateur exerce ce droit via l'adresse e-mail : <a href="mailto:rawz.store.instinct@gmail.com">rawz.store.instinct@gmail.com</a>.</p>
 
-        <details class="accordion-item">
-          <summary class="accordion-header">
-            <span>Livraison et retour</span>
-            <span class="chevron">❯</span>
-          </summary>
-          <div class="accordion-content">
-            <p>Livraison standard à domicile ou en point relais. Suivi de colis disponible dès l'expédition.</p>
-          </div>
-        </details>
-      </div>
-    </div>
-  </main>
+    <h2>ARTICLE 6 : Responsabilité</h2>
+    <p>Les sources des informations diffusées sur le site RAWZ sont réputées fiables, mais le site ne garantit pas qu'il soit exempt de défauts, d'erreurs ou d'omissions.</p>
+    <p>Le site ne peut être tenu pour responsable des virus qui pourraient infecter l'ordinateur ou tout matériel informatique de l'Internaute, suite à une utilisation, à l'accès ou au téléchargement provenant de ce site.</p>
+    <p>La responsabilité du site ne peut être engagée en cas de force majeure ou du fait imprévisible et insurmontable d'un tiers.</p>
 
-  <!-- Drawer Panier -->
-  <aside id="cart-drawer" class="cart-drawer">
-    <div class="cart-header">
-      <h2>Mon Panier</h2>
-      <button id="close-cart-btn" class="close-btn">&times;</button>
-    </div>
-    <div id="cart-items" class="cart-items-container"></div>
-    
-    <div class="cart-footer">
-      <div class="promo-box">
-        <input type="text" id="promo-input" placeholder="Code promo" class="promo-input">
-        <button id="apply-promo-btn" class="promo-btn">Appliquer</button>
-      </div>
-      <p id="promo-msg" class="promo-message"></p>
+    <h2>ARTICLE 7 : Liens hypertexte</h2>
+    <p>Des liens hypertextes peuvent être présents sur le site. L'Utilisateur est informé qu'en cliquant sur ces liens, il sortira du site RAWZ. Ce dernier n'a pas de contrôle sur les pages web sur lesquelles aboutissent ces liens et ne saurait, en aucun cas, être responsable de leur contenu.</p>
 
-      <div class="cart-total">
-        <span>Total :</span>
-        <span id="cart-total-price">0,00 €</span>
-      </div>
-      <button type="button" class="checkout-btn" onclick="openCheckoutModal()">
-        Commander
-      </button>
-    </div>
-  </aside>
-  <div id="cart-overlay" class="cart-overlay"></div>
-
-  <!-- MODALE FORMULAIRE DE COMMANDE + PAYPAL -->
-  <div id="checkout-modal" class="modal-overlay">
-    <div class="modal-content">
-      <button id="close-modal-btn" class="modal-close">&times;</button>
-      <h2>Informations de livraison</h2>
-      <form id="checkout-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="client-firstname">Prénom *</label>
-            <input type="text" id="client-firstname" name="prenom" required placeholder="Jean">
-          </div>
-          <div class="form-group">
-            <label for="client-lastname">Nom *</label>
-            <input type="text" id="client-lastname" name="nom" required placeholder="Dupont">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="client-email">E-mail *</label>
-            <input type="email" id="client-email" name="email" required placeholder="jean.dupont@email.com">
-          </div>
-          <div class="form-group">
-            <label for="client-phone">Téléphone *</label>
-            <input type="tel" id="client-phone" name="telephone" required placeholder="06 12 34 56 78">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="client-address">Adresse *</label>
-          <input type="text" id="client-address" name="adresse" required placeholder="12 rue des Fleurs">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="client-zipcode">Code postal *</label>
-            <input type="text" id="client-zipcode" name="code_postal" required placeholder="75001">
-          </div>
-          <div class="form-group">
-            <label for="client-city">Ville *</label>
-            <input type="text" id="client-city" name="ville" required placeholder="Paris">
-          </div>
-        </div>
-        
-        <!-- Conteneur PayPal -->
-        <div id="paypal-button-container" style="margin-top: 20px;"></div>
-      </form>
-    </div>
+    <h2>ARTICLE 8 : Droit applicable et juridiction compétente</h2>
+    <p>La législation française s'applique au présent contrat. En cas d'absence de résolution amiable d'un litige né entre les parties, les tribunaux français seront seuls compétents pour en connaître.</p>
   </div>
 
-  <!-- FOOTER RAWZ -->
-  <footer class="site-footer">
-    <div class="footer-container">
-      
-      <!-- Colonne 1 : Marque & Description -->
-      <div class="footer-col footer-brand">
-        <h3>RAWZ</h3>
-        <p>Streetwear épuré & drops limités.</p>
-      </div>
-
-      <!-- Colonne 2 : Réseaux sociaux -->
-      <div class="footer-col footer-socials">
-        <h4>Nous suivre</h4>
-        <ul class="social-links">
-          <li>
-            <a href="https://instagram.com/rawzstore" target="_blank" rel="noopener">
-              <i class="fa-brands fa-instagram"></i> Instagram
-            </a>
-          </li>
-          <li>
-            <a href="https://www.tiktok.com/@rawz.store" target="_blank" rel="noopener">
-              <i class="fa-brands fa-tiktok"></i> TikTok
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Colonne 3 : Informations & Contact -->
-      <div class="footer-col footer-legal">
-        <h4>Informations</h4>
-        <ul>
-          <li><a href="#" id="open-mentions-btn">Mentions Légales</a></li>
-          <li><a href="#" id="open-returns-btn">Livraison & Retours</a></li>
-          <li><a href="mailto:rawz.store.instinct@gmail.com">Contact Support</a></li>
-        </ul>
-      </div>
-
-      <!-- Colonne 4 : Paiements sécurisés -->
-      <div class="footer-col footer-payments">
-        <div class="payment-box" style="margin-top: 0;">
-          <span class="payment-title">Paiements sécurisés</span>
-          <div class="payment-badges">
-            <span class="badge-item"><i class="fa-brands fa-paypal"></i> PayPal</span>
-            <span class="badge-item"><i class="fa-regular fa-credit-card"></i> Carte bancaire</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Bas de page -->
-    <div class="footer-bottom">
-      <p>&copy; 2026 RAWZ Store. Tous droits réservés.</p>
-      <p class="secure-tag"><i class="fa-solid fa-lock"></i> Transactions 100% sécurisées via PayPal</p>
-    </div>
-  </footer>
-
-  <!-- MODALE MENTIONS LÉGALES -->
-  <div id="mentions-modal" class="modal-overlay">
-    <div class="modal-content legal-modal-content">
-      <button id="close-mentions-btn" class="modal-close">&times;</button>
-      <h2>Mentions Légales</h2>
-      <div class="legal-text">
-        <p><strong>Éditeur du site :</strong> RAWZ Store</p>
-        <p><strong>Hébergement :</strong> GitHub Pages / Vercel</p>
-        <p><strong>Contact :</strong> Pour toute question relative à votre commande, contactez-nous via nos réseaux sociaux ou par e-mail à l'adresse rawz.store.instinct@gmail.com</p>
-        <p><strong>Données personnelles :</strong> Les informations recueillies dans le formulaire de commande servent uniquement au traitement et à l'expédition des articles. Elles ne sont ni vendues ni cédées à des tiers.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODALE RETOURS & LIVRAISON -->
-  <div id="returns-modal" class="modal-overlay">
-    <div class="modal-content legal-modal-content">
-      <button id="close-returns-btn" class="modal-close">&times;</button>
-      <h2>Livraison & Retours</h2>
-      <div class="legal-text">
-        <h3>Livraison</h3>
-        <p>Livraison offerte dès 80 € d'achat.</p>
-
-        <h3>Retours & Échanges</h3>
-        <p>Vous disposez d'un délai de 14 jours après réception de votre commande pour demander un retour ou un échange.</p>
-        <p>Les articles doivent être retournés neufs, non portés, non lavés et dans leur emballage d'origine. Les frais de retour restent à la charge du client, sauf en cas d'erreur de notre part sur l'article envoyé.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Notification Toast -->
-  <div id="toast-notification" class="toast-notification">
-    <span class="toast-icon">✓</span>
-    <span>Produit ajouté au panier</span>
-  </div>
-
-  <!-- Scripts JS -->
-  <script src="script.js"></script>
-  <script src="product-detail.js"></script>
-
-  <!-- Vercel Analytics -->
-  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
