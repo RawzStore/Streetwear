@@ -14,10 +14,10 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
+  <!-- SDK PayPal (Remplace TON_CLIENT_ID si tu l'avais configuré) -->
   <script src="https://www.paypal.com/sdk/js?client-id=TON_CLIENT_ID&currency=EUR" defer></script>
 
   <style>
-    /* Correctif Accordéons */
     .accordion-section {
       margin-top: 25px;
       border-top: 1px solid #eee;
@@ -59,7 +59,6 @@
       transform: rotate(180deg);
     }
 
-    /* Correctif Toast Notification */
     .toast {
       position: fixed;
       bottom: -60px;
@@ -86,7 +85,7 @@
 </head>
 <body>
 
-  <!-- BANNIÈRE D'ANNONCE DÉFILANTE -->
+  <!-- BANNIÈRE D'ANNONCE -->
   <div class="marquee-banner">
     <div class="marquee-content">
       <span>🔥 LIVRAISON OFFERTE DÈS 80€ &nbsp;———&nbsp; NOUVELLE COLLECTION RAWZ ÉTÉ 2026 &nbsp;———&nbsp; DROPS LIMITÉS &nbsp;———&nbsp;</span>
@@ -195,7 +194,7 @@
     </div>
   </main>
 
-  <!-- TOAST NOTIFICATION (Masquée par défaut) -->
+  <!-- TOAST NOTIFICATION -->
   <div id="toast-notification" class="toast">Article ajouté au panier !</div>
 
   <!-- PANIER LATÉRAL -->
@@ -221,6 +220,51 @@
     </div>
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
+
+  <!-- MODALE DE COMMANDE & FORMULAIRE PAYPAL -->
+  <div id="checkout-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 500px; margin: 40px auto; background: #fff; padding: 25px; border-radius: 8px; position: relative;">
+      <button onclick="closeCheckoutModal()" class="close-btn" style="position: absolute; top: 15px; right: 15px; font-size: 1.5rem; background: none; border: none; cursor: pointer;">&times;</button>
+      <h2>Validation de la commande</h2>
+      
+      <form id="shipping-form" style="margin-top: 20px;">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Nom complet *</label>
+          <input type="text" id="ship-name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Adresse e-mail *</label>
+          <input type="email" id="ship-email" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Adresse postale *</label>
+          <input type="text" id="ship-address" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Code postal *</label>
+            <input type="text" id="ship-zip" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Ville *</label>
+            <input type="text" id="ship-city" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 0.85rem; color: #555;">
+            <input type="checkbox" id="accept-cgu" required> J'accepte les <a href="cgu.html" target="_blank">Conditions Générales de Vente (CGU)</a>.
+          </label>
+        </div>
+
+        <!-- Emplacement du bouton PayPal -->
+        <div id="paypal-button-container" style="margin-top: 15px;"></div>
+      </form>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer class="site-footer">
@@ -286,6 +330,16 @@
         });
       });
     });
+
+    function openCheckoutModal() {
+      const modal = document.getElementById('checkout-modal');
+      if (modal) modal.style.display = 'block';
+    }
+
+    function closeCheckoutModal() {
+      const modal = document.getElementById('checkout-modal');
+      if (modal) modal.style.display = 'none';
+    }
   </script>
 </body>
 </html>
