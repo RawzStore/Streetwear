@@ -429,7 +429,7 @@ function initProductPage() {
     updateGallery(product.images);
   }
 
-  // Ajouter au panier
+  // Ajouter au panier (SANS ouvrir le tiroir panier)
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedSize = sizeSelect ? sizeSelect.value : product.sizes[0];
@@ -453,9 +453,30 @@ function initProductPage() {
 
       saveCart();
       updateCartUI();
-      openCart();
     });
   }
+
+  // Initialisation directe des accordéons (Description & Livraison)
+  const accordionHeaders = document.querySelectorAll('.accordion-header');
+  accordionHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+      const item = header.parentElement;
+      const content = item.querySelector('.accordion-content');
+      const icon = header.querySelector('span:last-child') || header.querySelector('span');
+
+      const isOpen = item.classList.contains('active');
+
+      if (isOpen) {
+        item.classList.remove('active');
+        if (content) content.style.maxHeight = null;
+        if (icon) icon.textContent = '+';
+      } else {
+        item.classList.add('active');
+        if (content) content.style.maxHeight = `${content.scrollHeight}px`;
+        if (icon) icon.textContent = '-';
+      }
+    });
+  });
 }
 
 // Initialisation au chargement
@@ -591,37 +612,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === mentionsModal) mentionsModal.classList.remove('active');
     if (e.target === returnsModal) returnsModal.classList.remove('active');
   });
-});
-
-// GESTION ROBUSTE DES ACCORDÉONS DÉROULANTS (Description & Livraison)
-document.addEventListener('click', (e) => {
-  const header = e.target.closest('.accordion-header');
-  if (!header) return;
-
-  const item = header.parentElement;
-  const content = item.querySelector('.accordion-content');
-  const icon = header.querySelector('span:last-child') || header.querySelector('span');
-
-  // Ferme les autres accordéons
-  document.querySelectorAll('.accordion-item').forEach(otherItem => {
-    if (otherItem !== item) {
-      otherItem.classList.remove('active');
-      const otherContent = otherItem.querySelector('.accordion-content');
-      const otherIcon = otherItem.querySelector('.accordion-header span:last-child') || otherItem.querySelector('.accordion-header span');
-      if (otherContent) otherContent.style.maxHeight = null;
-      if (otherIcon) otherIcon.textContent = '+';
-    }
-  });
-
-  const isOpen = item.classList.contains('active');
-
-  if (isOpen) {
-    item.classList.remove('active');
-    if (content) content.style.maxHeight = null;
-    if (icon) icon.textContent = '+';
-  } else {
-    item.classList.add('active');
-    if (content) content.style.maxHeight = `${content.scrollHeight}px`;
-    if (icon) icon.textContent = '-';
-  }
 });
