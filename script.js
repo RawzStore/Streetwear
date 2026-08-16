@@ -87,7 +87,7 @@ function closeMenu() {
 // Rendu du catalogue sur index.html
 function renderProducts(items) {
   const productGrid = document.getElementById('product-grid');
-  if (!productGrid) return;
+  if (!productGrid) return; // Sécurité si on est sur une autre page que l'index
   
   productGrid.innerHTML = '';
   if (items.length === 0) {
@@ -366,8 +366,9 @@ function initPayPalButton() {
 function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = parseInt(urlParams.get('id'));
-  const product = products.find(p => p.id === productId);
+  if (isNaN(productId)) return;
 
+  const product = products.find(p => p.id === productId);
   if (!product) return;
 
   const titleEl = document.getElementById('product-title');
