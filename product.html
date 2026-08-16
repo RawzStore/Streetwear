@@ -17,19 +17,19 @@
   <script src="https://www.paypal.com/sdk/js?client-id=TON_CLIENT_ID&currency=EUR" defer></script>
 
   <style>
-    /* Style spécifique aux accordéons déroulants */
+    /* Correctif Accordéons */
     .accordion-section {
       margin-top: 25px;
-      border-top: 1px solid #e5e5e5;
+      border-top: 1px solid #eee;
     }
     .accordion-item {
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1px solid #eee;
     }
     .accordion-header {
       width: 100%;
       background: none;
       border: none;
-      padding: 15px 0;
+      padding: 16px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -49,14 +49,38 @@
       transition: max-height 0.3s ease, padding 0.3s ease;
       font-size: 0.9rem;
       color: #555;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     .accordion-item.active .accordion-content {
-      max-height: 300px;
-      padding-bottom: 15px;
+      max-height: 500px;
+      padding-bottom: 16px;
     }
     .accordion-item.active .accordion-header i {
       transform: rotate(180deg);
+    }
+
+    /* Correctif Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #111;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 9999;
+      opacity: 0;
+      transition: bottom 0.4s ease, opacity 0.4s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      bottom: 30px;
+      opacity: 1;
     }
   </style>
 </head>
@@ -143,7 +167,6 @@
         <!-- ACCORDÉONS DÉROULANTS -->
         <div class="accordion-section">
           
-          <!-- Accordéon Description -->
           <div class="accordion-item">
             <button class="accordion-header">
               <span>Description produit</span>
@@ -154,7 +177,6 @@
             </div>
           </div>
 
-          <!-- Accordéon Livraison & Retours -->
           <div class="accordion-item">
             <button class="accordion-header">
               <span>Livraison & Retours</span>
@@ -173,7 +195,7 @@
     </div>
   </main>
 
-  <!-- Toast Notification -->
+  <!-- TOAST NOTIFICATION (Masquée par défaut) -->
   <div id="toast-notification" class="toast">Article ajouté au panier !</div>
 
   <!-- PANIER LATÉRAL -->
@@ -254,7 +276,6 @@
   <script src="script.js"></script>
   <script src="product-detail.js"></script>
   
-  <!-- SCRIPT INTERACTIF DES ACCORDÉONS -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const accordionHeaders = document.querySelectorAll('.accordion-header');
