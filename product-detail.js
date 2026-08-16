@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const initialColor = colorSelect ? colorSelect.value : null;
   updateGallery(getImagesForColor(initialColor));
 
-  // 10. Ajout au panier avec notification Toast
+  // 10. Ajout au panier avec notification Toast (sans ouverture du drawer)
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedColor = colorSelect ? colorSelect.value : '';
@@ -172,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (typeof saveCart === 'function') saveCart();
       if (typeof updateCartUI === 'function') updateCartUI();
-      if (typeof openCart === 'function') openCart();
 
       showToast();
     });
