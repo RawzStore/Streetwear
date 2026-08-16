@@ -72,6 +72,19 @@
       transition: transform 0.15s ease-out;
     }
 
+    /* BOUTON RETOUR CATALOGUE */
+    .back-link {
+      display: inline-block !important;
+      margin-bottom: 20px;
+      text-decoration: none;
+      font-weight: 600;
+      color: inherit;
+      transition: opacity 0.2s ease;
+    }
+    .back-link:hover {
+      opacity: 0.7;
+    }
+
     /* LAYOUT ADAPTATIF PC / DESKTOP */
     @media (min-width: 768px) {
       .product-detail-grid {
@@ -83,6 +96,10 @@
       .product-gallery {
         position: sticky;
         top: 90px;
+      }
+      .back-link {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
       }
     }
 
@@ -161,7 +178,7 @@
 
   <!-- FICHE PRODUIT -->
   <main class="product-page-container" style="max-width: 1000px; margin: 20px auto; padding: 0 15px;">
-    <a href="index.html" class="back-link" style="display: block; margin-bottom: 20px; text-decoration: underline; font-weight: 600;">&larr; Retour au catalogue</a>
+    <a href="index.html" class="back-link">&larr; Retour au catalogue</a>
     
     <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
       
@@ -211,7 +228,7 @@
               <span>+</span>
             </button>
             <div class="accordion-content">
-              <p>📦 <strong>Livraison :</strong>Livraison offerte dès 80€ d'achat.</p>
+              <p>📦 <strong>Livraison :</strong> Livraison offerte dès 80€ d'achat.</p>
               <p style="margin-top: 8px;">🔄 <strong>Retours :</strong> Satisfait ou remboursé sous 14 jours après réception de la commande.</p>
             </div>
           </div>
