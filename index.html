@@ -163,28 +163,55 @@
   <!-- FOOTER RAWZ -->
   <footer class="site-footer">
     <div class="footer-container">
-      <div class="footer-brand">
+      
+      <!-- Colonne 1 : Marque & Paiement -->
+      <div class="footer-col footer-brand">
         <h3>RAWZ</h3>
         <p>Streetwear épuré & drops limités.</p>
-      </div>
-
-      <div class="footer-socials">
-        <h4>Nous suivre</h4>
-        <div class="social-links">
-          <a href="https://instagram.com/rawz.store.instinct" target="_blank" rel="noopener">Instagram</a>
+        <div class="payment-badges">
+          <span class="badge-item">💳 Visa</span>
+          <span class="badge-item">💳 Mastercard</span>
+          <span class="badge-item"> Pay</span>
         </div>
       </div>
 
-      <div class="footer-legal">
+      <!-- Colonne 2 : Réseaux -->
+      <div class="footer-col footer-socials">
+        <h4>Nous suivre</h4>
+        <ul class="social-links">
+          <li>
+            <a href="https://instagram.com/rawz.store.instinct" target="_blank" rel="noopener">
+              Instagram ↗
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Colonne 3 : Infos & Support -->
+      <div class="footer-col footer-legal">
         <h4>Informations</h4>
         <ul>
           <li><a href="#" id="open-mentions-btn">Mentions Légales</a></li>
-          <li><a href="#" id="open-returns-btn">Politique de retour & Livraison</a></li>
+          <li><a href="#" id="open-returns-btn">Livraison & Retours</a></li>
+          <li><a href="mailto:rawz.store.instinct@gmail.com">Contact Support</a></li>
         </ul>
       </div>
+
+      <!-- Colonne 4 : Newsletter Drop VIP -->
+      <div class="footer-col footer-newsletter">
+        <h4>Accès VIP</h4>
+        <p>Sois prévenu(e) en avant-première lors des prochains drops.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Merci ! Tu es bien inscrit(e) aux accès VIP.');">
+          <input type="email" placeholder="Ton e-mail..." required />
+          <button type="submit" aria-label="S'inscrire">→</button>
+        </form>
+      </div>
+
     </div>
+
     <div class="footer-bottom">
       <p>&copy; 2026 RAWZ Store. Tous droits réservés.</p>
+      <p class="secure-tag">🔒 Paiement 100% sécurisé</p>
     </div>
   </footer>
 
@@ -219,6 +246,7 @@
   </div>
 
   <script src="script.js"></script>
+  
   <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </body>
