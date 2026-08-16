@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://rawz-store.vercel.app/sitemap.xml
