@@ -72,6 +72,20 @@
       transition: transform 0.15s ease-out;
     }
 
+    /* LAYOUT ADAPTATIF PC / DESKTOP */
+    @media (min-width: 768px) {
+      .product-detail-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 40px !important;
+        align-items: start;
+      }
+      .product-gallery {
+        position: sticky;
+        top: 90px;
+      }
+    }
+
     /* TOAST NOTIFICATION */
     .toast {
       position: fixed;
@@ -151,7 +165,7 @@
     
     <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
       
-      <!-- Galerie avec Zoom amélioré -->
+      <!-- Galerie avec Zoom -->
       <div class="product-gallery">
         <div class="main-image-container" id="zoom-container">
           <img id="main-product-img" src="" alt="Produit">
@@ -197,7 +211,7 @@
               <span>+</span>
             </button>
             <div class="accordion-content">
-              <p>📦 <strong>Livraison :</strong>Livraison offerte dès 80€ d'achat.</p>
+              <p>📦 <strong>Livraison :</strong> Expédié sous 48h à 72h. Livraison offerte dès 80€ d'achat.</p>
               <p style="margin-top: 8px;">🔄 <strong>Retours :</strong> Satisfait ou remboursé sous 14 jours après réception de la commande.</p>
             </div>
           </div>
