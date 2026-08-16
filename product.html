@@ -35,7 +35,7 @@
       align-items: center;
       font-size: 0.95rem;
       font-weight: 600;
-      color: inherit; /* S'adapte au mode clair et sombre */
+      color: inherit;
       cursor: pointer;
       text-align: left;
     }
@@ -52,6 +52,27 @@
       padding-bottom: 16px;
     }
 
+    /* ZOOM IMAGE PRODUIT */
+    .main-image-container {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f5f5f5;
+      margin-bottom: 15px;
+      cursor: zoom-in;
+    }
+    .main-image-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .main-image-container:hover img {
+      transform: scale(1.15);
+    }
+
+    /* TOAST NOTIFICATION */
     .toast {
       position: fixed;
       bottom: -60px;
@@ -130,10 +151,10 @@
     
     <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
       
-      <!-- Galerie -->
+      <!-- Galerie avec Zoom -->
       <div class="product-gallery">
-        <div class="main-image-container" style="width: 100%; border-radius: 8px; overflow: hidden; background: #f5f5f5; margin-bottom: 15px;">
-          <img id="main-product-img" src="" alt="Produit" style="width: 100%; height: auto; display: block; object-fit: cover;">
+        <div class="main-image-container">
+          <img id="main-product-img" src="" alt="Produit">
         </div>
         <div id="thumbnails-container" class="thumbnails-flex" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
       </div>
@@ -176,7 +197,7 @@
               <span>+</span>
             </button>
             <div class="accordion-content">
-              <p>📦 <strong>Livraison :</strong>Livraison offerte dès 80€ d'achat.</p>
+              <p>📦 <strong>Livraison :</strong> Expédié sous 48h à 72h. Livraison offerte dès 80€ d'achat.</p>
               <p style="margin-top: 8px;">🔄 <strong>Retours :</strong> Satisfait ou remboursé sous 14 jours après réception de la commande.</p>
             </div>
           </div>
@@ -264,7 +285,6 @@
   <!-- FOOTER RAWZ -->
   <footer class="site-footer">
     <div class="footer-container">
-      
       <div class="footer-col footer-brand">
         <h3>RAWZ</h3>
         <p>Streetwear épuré & drops limités.</p>
@@ -273,16 +293,8 @@
       <div class="footer-col footer-socials">
         <h4>Nous suivre</h4>
         <ul class="social-links">
-          <li>
-            <a href="https://instagram.com/rawzstore" target="_blank" rel="noopener">
-              <i class="fa-brands fa-instagram"></i> Instagram
-            </a>
-          </li>
-          <li>
-            <a href="https://www.tiktok.com/@rawz.store" target="_blank" rel="noopener">
-              <i class="fa-brands fa-tiktok"></i> TikTok
-            </a>
-          </li>
+          <li><a href="https://instagram.com/rawzstore" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> Instagram</a></li>
+          <li><a href="https://www.tiktok.com/@rawz.store" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i> TikTok</a></li>
         </ul>
       </div>
 
@@ -305,7 +317,6 @@
           </div>
         </div>
       </div>
-
     </div>
 
     <div class="footer-bottom">
@@ -340,7 +351,23 @@
     </div>
   </div>
 
-  <!-- Un seul script JavaScript chargé -->
   <script src="script.js"></script>
+  
+  <script>
+    // Écouteur pour déclencher la notification Toast lors de l'ajout au panier
+    document.addEventListener('DOMContentLoaded', () => {
+      const addBtn = document.getElementById('add-to-cart-btn');
+      const toast = document.getElementById('toast-notification');
+
+      if (addBtn && toast) {
+        addBtn.addEventListener('click', () => {
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+          }, 2500);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
