@@ -218,7 +218,10 @@ function openCheckoutModal() {
     return;
   }
   const modal = document.getElementById('checkout-modal');
-  if (modal) modal.classList.add('active');
+  if (modal) {
+    modal.classList.add('active');
+    initPayPalButton();
+  }
 }
 
 function closeCheckoutModal() {
