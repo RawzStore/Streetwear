@@ -52,24 +52,24 @@
       padding-bottom: 16px;
     }
 
-    /* ZOOM IMAGE PRODUIT */
+    /* ZOOM INTERACTIF AMÉLIORÉ */
     .main-image-container {
+      position: relative;
       width: 100%;
       border-radius: 8px;
       overflow: hidden;
       background: #f5f5f5;
       margin-bottom: 15px;
       cursor: zoom-in;
+      touch-action: none;
     }
     .main-image-container img {
       width: 100%;
       height: auto;
       display: block;
       object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-    .main-image-container:hover img {
-      transform: scale(1.15);
+      transform-origin: center center;
+      transition: transform 0.15s ease-out;
     }
 
     /* TOAST NOTIFICATION */
@@ -151,9 +151,9 @@
     
     <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
       
-      <!-- Galerie avec Zoom -->
+      <!-- Galerie avec Zoom amélioré -->
       <div class="product-gallery">
-        <div class="main-image-container">
+        <div class="main-image-container" id="zoom-container">
           <img id="main-product-img" src="" alt="Produit">
         </div>
         <div id="thumbnails-container" class="thumbnails-flex" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
@@ -197,7 +197,7 @@
               <span>+</span>
             </button>
             <div class="accordion-content">
-              <p>📦 <strong>Livraison :</strong> Expédié sous 48h à 72h. Livraison offerte dès 80€ d'achat.</p>
+              <p>📦 <strong>Livraison :</strong>Livraison offerte dès 80€ d'achat.</p>
               <p style="margin-top: 8px;">🔄 <strong>Retours :</strong> Satisfait ou remboursé sous 14 jours après réception de la commande.</p>
             </div>
           </div>
@@ -354,8 +354,8 @@
   <script src="script.js"></script>
   
   <script>
-    // Écouteur pour déclencher la notification Toast lors de l'ajout au panier
     document.addEventListener('DOMContentLoaded', () => {
+      // Toast notification
       const addBtn = document.getElementById('add-to-cart-btn');
       const toast = document.getElementById('toast-notification');
 
@@ -366,6 +366,35 @@
             toast.classList.remove('show');
           }, 2500);
         });
+      }
+
+      // Logique Zoom dynamique au survol / touch
+      const zoomContainer = document.getElementById('zoom-container');
+      const zoomImg = document.getElementById('main-product-img');
+
+      if (zoomContainer && zoomImg) {
+        const handleZoom = (e) => {
+          const rect = zoomContainer.getBoundingClientRect();
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+          const x = ((clientX - rect.left) / rect.width) * 100;
+          const y = ((clientY - rect.top) / rect.height) * 100;
+
+          zoomImg.style.transformOrigin = `${x}% ${y}%`;
+          zoomImg.style.transform = 'scale(2.2)';
+        };
+
+        const resetZoom = () => {
+          zoomImg.style.transform = 'scale(1)';
+          zoomImg.style.transformOrigin = 'center center';
+        };
+
+        zoomContainer.addEventListener('mousemove', handleZoom);
+        zoomContainer.addEventListener('mouseleave', resetZoom);
+
+        zoomContainer.addEventListener('touchmove', handleZoom, { passive: true });
+        zoomContainer.addEventListener('touchend', resetZoom);
       }
     });
   </script>
