@@ -593,24 +593,30 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// GESTION DES ACCORDÉONS DÉROULANTS (Description & Livraison)
+// GESTION ROBUSTE DES ACCORDÉONS DÉROULANTS (Description & Livraison)
 document.addEventListener('click', (e) => {
   const header = e.target.closest('.accordion-header');
   if (!header) return;
 
   const item = header.parentElement;
   const content = item.querySelector('.accordion-content');
-  const icon = header.querySelector('span') || header.querySelector('i');
+  const icon = header.querySelector('span');
 
   const isOpen = item.classList.contains('active');
 
   if (isOpen) {
     item.classList.remove('active');
-    if (content) content.style.maxHeight = null;
-    if (icon && icon.tagName === 'SPAN') icon.textContent = '+';
+    if (content) {
+      content.style.maxHeight = null;
+      content.style.opacity = "0";
+    }
+    if (icon) icon.textContent = '+';
   } else {
     item.classList.add('active');
-    if (content) content.style.maxHeight = content.scrollHeight + 'px';
-    if (icon && icon.tagName === 'SPAN') icon.textContent = '-';
+    if (content) {
+      content.style.maxHeight = (content.scrollHeight + 50) + 'px';
+      content.style.opacity = "1";
+    }
+    if (icon) icon.textContent = '-';
   }
 });
