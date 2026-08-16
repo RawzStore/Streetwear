@@ -87,7 +87,7 @@ function closeMenu() {
 // Rendu du catalogue sur index.html
 function renderProducts(items) {
   const productGrid = document.getElementById('product-grid');
-  if (!productGrid) return; // Sécurité si on est sur une autre page que l'index
+  if (!productGrid) return;
   
   productGrid.innerHTML = '';
   if (items.length === 0) {
@@ -220,7 +220,9 @@ function openCheckoutModal() {
   const modal = document.getElementById('checkout-modal');
   if (modal) {
     modal.classList.add('active');
-    initPayPalButton();
+    setTimeout(() => {
+      initPayPalButton();
+    }, 100);
   }
 }
 
@@ -589,4 +591,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === mentionsModal) mentionsModal.classList.remove('active');
     if (e.target === returnsModal) returnsModal.classList.remove('active');
   });
+});
+
+// GESTION DES ACCORDÉONS DÉROULANTS (Description & Livraison)
+document.addEventListener('click', (e) => {
+  const header = e.target.closest('.accordion-header');
+  if (!header) return;
+
+  const item = header.parentElement;
+  const content = item.querySelector('.accordion-content');
+  const icon = header.querySelector('span') || header.querySelector('i');
+
+  const isOpen = item.classList.contains('active');
+
+  if (isOpen) {
+    item.classList.remove('active');
+    if (content) content.style.maxHeight = null;
+    if (icon && icon.tagName === 'SPAN') icon.textContent = '+';
+  } else {
+    item.classList.add('active');
+    if (content) content.style.maxHeight = content.scrollHeight + 'px';
+    if (icon && icon.tagName === 'SPAN') icon.textContent = '-';
+  }
 });
