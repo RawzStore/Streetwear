@@ -1,5 +1,5 @@
 /* ==========================================
-   1. REGLES GENERALES, VARIABLES & RESET
+   1. RÈGLES GÉNÉRALES, VARIABLES & RESET
    ========================================== */
 * {
   box-sizing: border-box;
@@ -17,6 +17,8 @@
   --gray-light: #f9f9f9;
   --gray-text: #666666;
   --input-bg: #ffffff;
+  --success-color: #2b9348;
+  --danger-color: #e63946;
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -164,7 +166,7 @@ body.dark-theme .back-link:hover {
 
 .cart-btn .badge,
 #cart-badge {
-  background: #e63946;
+  background: var(--danger-color);
   color: #ffffff;
   padding: 2px 6px;
   border-radius: 10px;
@@ -321,8 +323,8 @@ body.dark-theme .back-link:hover {
 }
 
 .qty-controls button {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border: 1px solid var(--border-color);
   background: var(--input-bg);
   color: var(--text-color);
@@ -334,7 +336,7 @@ body.dark-theme .back-link:hover {
 .delete-btn {
   background: none;
   border: none;
-  color: #e63946;
+  color: var(--danger-color);
   cursor: pointer;
   font-size: 1rem;
 }
@@ -379,8 +381,8 @@ body.dark-theme .back-link:hover {
   font-weight: bold;
 }
 
-.promo-message.success { color: #2b9348; }
-.promo-message.error { color: #e63946; }
+.promo-message.success { color: var(--success-color); }
+.promo-message.error { color: var(--danger-color); }
 
 .total-row,
 .cart-total {
@@ -394,7 +396,7 @@ body.dark-theme .back-link:hover {
 .checkout-btn {
   width: 100%;
   padding: 12px;
-  background: #2b9348;
+  background: var(--success-color);
   color: #ffffff;
   border: none;
   border-radius: 6px;
@@ -472,7 +474,7 @@ body.dark-theme .back-link:hover {
 }
 
 /* ==========================================
-   6. CONTROLES, CATALOGUE & GRILLE PRODUITS
+   6. CONTRÔLES, CATALOGUE & GRILLE PRODUITS
    ========================================== */
 .main-container,
 .catalog-container {
@@ -586,7 +588,7 @@ body.dark-theme .back-link:hover {
 }
 
 /* ==========================================
-   7. PAGE PRODUIT DETAILLEE & ACCORDEONS
+   7. PAGE PRODUIT DÉTAILLÉE & ACCORDÉONS
    ========================================== */
 .product-page-container {
   max-width: 1100px;
@@ -733,7 +735,7 @@ body.dark-theme .back-link:hover {
 }
 
 /* ==========================================
-   8. NOTIFICATIONS & MODALES
+   8. NOTIFICATIONS, MODALES & BOUTON CB
    ========================================== */
 .toast-notification {
   position: fixed;
@@ -853,6 +855,7 @@ body.dark-theme .back-link:hover {
 
 .submit-order-btn {
   margin-top: 10px;
+  width: 100%;
   padding: 14px;
   background-color: var(--accent-color);
   color: var(--bg-color);
@@ -862,11 +865,45 @@ body.dark-theme .back-link:hover {
   font-size: 1rem;
   text-transform: uppercase;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .submit-order-btn:hover {
   opacity: 0.9;
+}
+
+/* BOUTON CB EN CHARGEMENT */
+.submit-order-btn.btn-loading,
+.submit-order-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* SPINNER POUR LE BOUTON CB */
+.submit-order-btn .spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+body.dark-theme .submit-order-btn .spinner {
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top: 2px solid #000000;
+}
+
+@keyframes btn-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 #paypal-button-container {
