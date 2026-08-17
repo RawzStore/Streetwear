@@ -14,7 +14,7 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- SDK PayPal -->
+  <!-- SDK PayPal (Remplace TON_CLIENT_ID_PAYPAL par ton vrai ID PayPal Business plus tard) -->
   <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
 
   <style>
@@ -272,7 +272,7 @@
     <div class="modal-content">
       <button id="close-modal-btn" class="modal-close">&times;</button>
       <h2>Informations de livraison</h2>
-      <form id="checkout-form">
+      <form id="checkout-form" onsubmit="return false;">
         <div class="form-row">
           <div class="form-group">
             <label for="client-firstname">Prénom *</label>
