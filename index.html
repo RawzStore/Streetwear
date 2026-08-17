@@ -10,7 +10,7 @@
   <meta name="keywords" content="Rawz, RawzStore, Rawz Store, streetwear, vêtements, marque streetwear">
   <link rel="canonical" href="https://rawz-store.vercel.app/">
 
-  <!-- Balise de vérification Google Search Console (à remplacer avec ton code quand tu l'auras) -->
+  <!-- Balise de vérification Google Search Console -->
   <meta name="google-site-verification" content="x4IAizdKwtfFJNKTFF2NZYgDel0EQioif6UaMWmYXTM" />
 
   <link rel="stylesheet" href="style.css">
@@ -19,7 +19,7 @@
   <!-- FontAwesome pour les icônes officielles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- SDK PayPal chargé en arrière-plan (Remplace TON_CLIENT_ID par ton ID Sandbox ou Production) -->
+  <!-- SDK PayPal chargé en arrière-plan -->
   <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
 </head>
 <body>
@@ -123,6 +123,7 @@
         <span>Total :</span>
         <span id="cart-total-price">0,00 €</span>
       </div>
+      <!-- Intitulé légal obligatoire pour l'engagement de paiement -->
       <button onclick="openCheckoutModal()" class="checkout-btn">Payer la commande</button>
     </div>
   </aside>
@@ -207,7 +208,7 @@
         <h4>Informations</h4>
         <ul>
           <li><a href="#" id="open-mentions-btn">Mentions Légales</a></li>
-          <li><a href="cgu.html">Conditions Générales (CGU)</a></li>
+          <li><a href="cgu.html">CGV / CGU</a></li>
           <li><a href="#" id="open-returns-btn">Livraison & Retours</a></li>
           <li><a href="mailto:rawz.store.instinct@gmail.com">Contact Support</a></li>
         </ul>
@@ -239,10 +240,12 @@
       <button id="close-mentions-btn" class="modal-close">&times;</button>
       <h2>Mentions Légales</h2>
       <div class="legal-text">
-        <p><strong>Éditeur du site :</strong> RAWZ Store</p>
-        <p><strong>Hébergement :</strong> Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis).</p>
-        <p><strong>Contact :</strong> Pour toute question relative à votre commande, contactez-nous via nos réseaux sociaux ou par e-mail à l'adresse rawz.store.instinct@gmail.com</p>
-        <p><strong>Données personnelles :</strong> Les informations recueillies dans le formulaire de commande servent uniquement au traitement et à l'expédition des articles. Elles ne sont ni vendues ni cédées à des tiers.</p>
+        <p><strong>Éditeur du site :</strong> Enterprise RAWZ ( Ewen Longet )</p>
+        <p><strong>Numéro SIRET :</strong> En cours d'attribution</p>
+        <p><strong>Siège social :</strong> Bretagne, France</p>
+        <p><strong>Hébergement :</strong> Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis</p>
+        <p><strong>Contact :</strong> rawz.store.instinct@gmail.com</p>
+        <p><strong>Données personnelles :</strong> Les informations recueillies dans le formulaire de commande servent uniquement au traitement et à l'expédition des articles. Elles ne sont ni vendues ni cédées à des tiers, conformément au RGPD.</p>
       </div>
     </div>
   </div>
