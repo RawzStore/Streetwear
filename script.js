@@ -1,4 +1,3 @@
-
 // Base de données : 4 articles complets
 const products = [
   { 
@@ -325,11 +324,17 @@ function initPayPalButton() {
           Adresse: address,
           Code_postal: zipcode,
           Ville: city,
+          Transaction_ID: details.id,
           Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL PAYÉ : ${total.toFixed(2)} €`
         };
 
+        const paypalBtnContainer = document.getElementById('paypal-button-container');
+        if (paypalBtnContainer) {
+          paypalBtnContainer.innerHTML = '<p style="text-align:center; padding:15px; font-weight:bold;">Validation de la commande en cours...</p>';
+        }
+
         try {
-          await fetch("https://formspree.io/f/xgaweybe", {
+          const response = await fetch("https://formspree.io/f/xgaweybe", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -337,18 +342,25 @@ function initPayPalButton() {
             },
             body: JSON.stringify(formData)
           });
+
+          if (response.ok) {
+            alert(`Merci ${details.payer.name.given_name} ! Ta commande a été validée avec succès.`);
+          } else {
+            alert(`Paiement PayPal réussi (ID: ${details.id}), mais une erreur est survenue lors de l'enregistrement.`);
+          }
         } catch (e) {
           console.error("Erreur de sauvegarde Formspree", e);
-        }
+          alert(`Paiement réussi (ID: ${details.id}), mais la confirmation n'a pas pu être envoyée automatiquement.`);
+        } finally {
+          cart = [];
+          saveCart();
+          updateCartUI();
+          closeCheckoutModal();
+          closeCart();
 
-        alert("Paiement réussi ! Merci " + details.payer.name.given_name + ", ta commande est bien validée.");
-        cart = [];
-        saveCart();
-        updateCartUI();
-        closeCheckoutModal();
-        closeCart();
-        const form = document.getElementById('checkout-form');
-        if (form) form.reset();
+          const form = document.getElementById('checkout-form');
+          if (form) form.reset();
+        }
       });
     },
     onError: function(err) {
