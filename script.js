@@ -62,7 +62,7 @@ const products = [
   }
 ];
 
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let cart = JSON.parse(localStorage.getItem('rawz_cart')) || [];
 let appliedDiscount = 0;
 
 // Fonctions Menu Burger
@@ -134,7 +134,7 @@ function filterByCategory(category) {
 
 // Logique du Panier
 function saveCart() {
-  localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem('rawz_cart', JSON.stringify(cart));
 }
 
 function updateCartUI() {
@@ -275,9 +275,7 @@ function initPayPalButton() {
             currency_code: 'EUR'
           },
           shipping: {
-            name: {
-              full_name: `${firstname} ${lastname}`
-            },
+            name: { full_name: `${firstname} ${lastname}` },
             address: {
               address_line_1: address,
               admin_area_2: city,
@@ -287,16 +285,11 @@ function initPayPalButton() {
           }
         }],
         payer: {
-          name: {
-            given_name: firstname,
-            surname: lastname
-          },
+          name: { given_name: firstname, surname: lastname },
           email_address: email,
           phone: formattedPhone ? {
             phone_type: 'MOBILE',
-            phone_number: {
-              national_number: formattedPhone
-            }
+            phone_number: { national_number: formattedPhone }
           } : undefined,
           address: {
             address_line_1: address,
