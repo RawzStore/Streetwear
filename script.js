@@ -173,6 +173,8 @@ function updateCartUI() {
   let finalTotal = subtotal * (1 - appliedDiscount);
   if (cartBadge) cartBadge.textContent = count;
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
+
+  updateCheckoutSummary();
 }
 
 function changeQuantity(cartItemKey, delta) {
@@ -220,6 +222,7 @@ function openCheckoutModal() {
   const modal = document.getElementById('checkout-modal');
   if (modal) {
     modal.classList.add('active');
+    updateCheckoutSummary();
     setTimeout(() => {
       initPayPalButton();
     }, 100);
@@ -231,12 +234,55 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// Obtenir les frais de livraison selon l'option sélectionnée
-function getShippingCost() {
+// Calculer et afficher le récapitulatif du prix en temps réel
+function updateCheckoutSummary() {
+  let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  let discountedSubtotal = subtotal * (1 - appliedDiscount);
+
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
-  if (selectedMode === 'Mondial Relay') return 4.50;
-  if (selectedMode === 'Colissimo Domicile') return 6.90;
-  return 0.00; // Remise en main propre
+  let shippingCost = 0.00;
+
+  if (selectedMode === 'Mondial Relay') {
+    shippingCost = 4.50;
+  } else if (selectedMode === 'Colissimo Domicile') {
+    shippingCost = 6.90;
+  } else if (selectedMode === 'Remise en main propre') {
+    shippingCost = 0.00;
+  }
+
+  // Offrir la livraison si sous-total >= 80€ (hors remise en main propre qui est déjà à 0€)
+  if (discountedSubtotal >= 80 && selectedMode !== 'Remise en main propre') {
+    shippingCost = 0.00;
+  }
+
+  const finalTotal = discountedSubtotal + shippingCost;
+
+  const subtotalEl = document.getElementById('summary-subtotal');
+  const shippingEl = document.getElementById('summary-shipping');
+  const totalEl = document.getElementById('summary-total');
+
+  if (subtotalEl) subtotalEl.textContent = `${discountedSubtotal.toFixed(2).replace('.', ',')} €`;
+  if (shippingEl) {
+    if (shippingCost === 0 && selectedMode !== 'Remise en main propre') {
+      shippingEl.textContent = 'Offerte (dès 80€)';
+    } else if (shippingCost === 0 && selectedMode === 'Remise en main propre') {
+      shippingEl.textContent = 'Gratuit';
+    } else {
+      shippingEl.textContent = `${shippingCost.toFixed(2).replace('.', ',')} €`;
+    }
+  }
+  if (totalEl) totalEl.textContent = `${finalTotal.toFixed(2).replace('.', ',')} €`;
+
+  return {
+    subtotal: discountedSubtotal,
+    shippingCost: shippingCost,
+    total: finalTotal
+  };
+}
+
+// Obtenir la valeur brute des frais de livraison pour PayPal/Formspree
+function getShippingCost() {
+  return updateCheckoutSummary().shippingCost;
 }
 
 // INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
@@ -262,10 +308,8 @@ function initPayPalButton() {
       return actions.resolve();
     },
     createOrder: function(data, actions) {
-      let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      let discountedSubtotal = subtotal * (1 - appliedDiscount);
-      let shippingCost = getShippingCost();
-      let total = (discountedSubtotal + shippingCost).toFixed(2);
+      const summary = updateCheckoutSummary();
+      const total = summary.total.toFixed(2);
 
       const firstname = document.getElementById('client-firstname')?.value.trim() || '';
       const lastname = document.getElementById('client-lastname')?.value.trim() || '';
@@ -325,9 +369,7 @@ function initPayPalButton() {
           `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
         ).join('\n');
 
-        let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
-        let shippingCost = getShippingCost();
-        let total = subtotal + shippingCost;
+        const summary = updateCheckoutSummary();
 
         const formData = {
           Nom: lastname,
@@ -339,7 +381,7 @@ function initPayPalButton() {
           Ville: city,
           Mode_de_livraison: deliveryMode,
           Transaction_ID: details.id,
-          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${total.toFixed(2)} €`
+          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${summary.shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${summary.total.toFixed(2)} €`
         };
 
         const paypalBtnContainer = document.getElementById('paypal-button-container');
@@ -505,9 +547,10 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   initProductPage();
 
-  // Écoute des changements de mode de livraison pour recharger PayPal avec le bon montant
+  // Écoute des changements de mode de livraison pour récalculer et recharger PayPal
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
+      updateCheckoutSummary();
       initPayPalButton();
     });
   });
