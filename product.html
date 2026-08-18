@@ -293,6 +293,27 @@
             <input type="tel" id="client-phone" name="telephone" required placeholder="06 12 34 56 78">
           </div>
         </div>
+
+        <!-- Choix du mode de livraison -->
+        <div class="shipping-options" style="margin-top: 15px; margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 8px;"><strong>Mode de livraison / Retrait :</strong></label>
+          
+          <div style="margin-bottom: 6px;">
+            <input type="radio" id="relais" name="mode_de_livraison" value="Mondial Relay" checked>
+            <label for="relais">Mondial Relay (Point Relais) - 4,50 €</label>
+          </div>
+
+          <div style="margin-bottom: 6px;">
+            <input type="radio" id="colissimo" name="mode_de_livraison" value="Colissimo Domicile">
+            <label for="colissimo">Colissimo (Livraison à domicile) - 6,90 €</label>
+          </div>
+
+          <div>
+            <input type="radio" id="main_propre" name="mode_de_livraison" value="Remise en main propre">
+            <label for="main_propre">Remise en main propre (Gratuit)</label>
+          </div>
+        </div>
+
         <div class="form-group">
           <label for="client-address">Adresse *</label>
           <input type="text" id="client-address" name="adresse" required placeholder="12 rue des Fleurs">
