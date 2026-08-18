@@ -226,7 +226,7 @@ function closeCart() {
   }
 }
 
-// Modale Paiement
+// Modale Checkout
 function openCheckoutModal() {
   if (cart.length === 0) {
     alert("Ton panier est vide !");
@@ -235,8 +235,11 @@ function openCheckoutModal() {
   const modal = document.getElementById('checkout-modal');
   if (modal) {
     modal.classList.add('active');
-    handleDeliveryModeChange();
-    initPayPalButton();
+    // Delai pour que la modale soit affichée à l'écran avant le calcul de taille du Widget
+    setTimeout(() => {
+      handleDeliveryModeChange();
+      initPayPalButton();
+    }, 200);
   }
 }
 
@@ -245,14 +248,16 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// Widget Mondial Relay
+// GESTION DU WIDGET MONDIAL RELAY
 function handleDeliveryModeChange() {
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
   const mrContainer = document.getElementById('zone-carte-relais');
 
   if (selectedMode === 'Mondial Relay') {
     if (mrContainer) mrContainer.style.display = 'block';
-    initMondialRelayWidget();
+    setTimeout(() => {
+      initMondialRelayWidget();
+    }, 150);
   } else {
     if (mrContainer) mrContainer.style.display = 'none';
   }
@@ -266,7 +271,7 @@ function initMondialRelayWidget() {
   if (typeof jQuery !== 'undefined' && jQuery.fn.MR_Target) {
     jQuery("#Zone_Widget").MR_Target({
       Target: "#Target_Widget",
-      Brand: "BDTEST  ",
+      Brand: "BDTEST  ", // 8 caractères exacts
       Country: "FR",
       PostCode: zipcode,
       City: city,
@@ -287,6 +292,8 @@ function initMondialRelayWidget() {
         }
       }
     });
+  } else {
+    console.error("jQuery ou la librairie Mondial Relay n'est pas chargée.");
   }
 }
 
@@ -473,16 +480,16 @@ function initProductPage() {
   if (titleEl) titleEl.textContent = product.name;
   if (priceEl) priceEl.textContent = `${product.price.toFixed(2)} €`;
   if (descEl) descEl.textContent = product.description;
-  if (mainImgEl) mainImgEl.src = product.mainImage;
 
   if (sizeSelect && product.sizes) {
     sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
   }
 
   const updateGallery = (imageList) => {
-    if (!thumbsContainer || !mainImgEl || !imageList) return;
-    thumbsContainer.innerHTML = '';
+    if (!thumbsContainer || !mainImgEl || !imageList || imageList.length === 0) return;
+    
     mainImgEl.src = imageList[0];
+    thumbsContainer.innerHTML = '';
 
     imageList.forEach((imgSrc, index) => {
       const thumb = document.createElement('img');
@@ -501,7 +508,9 @@ function initProductPage() {
     colorSelect.innerHTML = product.colors.map(c => `<option value="${c}">${c}</option>`).join('');
     
     if (product.imagesByColor) {
-      updateGallery(product.imagesByColor[product.colors[0]]);
+      const defaultColor = product.colors[0];
+      updateGallery(product.imagesByColor[defaultColor] || [product.mainImage]);
+
       colorSelect.addEventListener('change', (e) => {
         const selectedColor = e.target.value;
         if (product.imagesByColor[selectedColor]) {
@@ -510,14 +519,18 @@ function initProductPage() {
       });
     } else if (product.images) {
       updateGallery(product.images);
+    } else {
+      updateGallery([product.mainImage]);
     }
   } else if (product.images) {
     updateGallery(product.images);
+  } else {
+    updateGallery([product.mainImage]);
   }
 
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
-      const selectedSize = sizeSelect ? sizeSelect.value : product.sizes[0];
+      const selectedSize = sizeSelect ? sizeSelect.value : (product.sizes ? product.sizes[0] : 'Unique');
       const selectedColor = colorSelect ? colorSelect.value : (product.colors ? product.colors[0] : null);
       const cartKey = `${product.id}-${selectedSize}-${selectedColor || 'default'}`;
 
@@ -559,7 +572,7 @@ function initProductPage() {
   });
 }
 
-// Initialisation globale
+// Initialisation globale au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
