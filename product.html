@@ -273,6 +273,7 @@
       <button id="close-modal-btn" class="modal-close">&times;</button>
       <h2>Informations de livraison</h2>
       <form id="checkout-form" onsubmit="return false;">
+        <!-- 1. Informations client -->
         <div class="form-row">
           <div class="form-group">
             <label for="client-firstname">Prénom *</label>
@@ -294,8 +295,24 @@
           </div>
         </div>
 
-        <!-- Choix du mode de livraison -->
-        <div class="shipping-options" style="margin-top: 15px; margin-bottom: 15px;">
+        <!-- 2. Adresse de livraison -->
+        <div class="form-group">
+          <label for="client-address">Adresse *</label>
+          <input type="text" id="client-address" name="adresse" required placeholder="12 rue des Fleurs">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client-zipcode">Code postal *</label>
+            <input type="text" id="client-zipcode" name="code_postal" required placeholder="75001">
+          </div>
+          <div class="form-group">
+            <label for="client-city">Ville *</label>
+            <input type="text" id="client-city" name="ville" required placeholder="Paris">
+          </div>
+        </div>
+
+        <!-- 3. Mode de livraison (déplacé ici, juste avant le récapitulatif) -->
+        <div class="shipping-options" style="margin-top: 20px; margin-bottom: 15px;">
           <label style="display: block; margin-bottom: 8px;"><strong>Mode de livraison / Retrait :</strong></label>
           
           <div style="margin-bottom: 6px;">
@@ -314,23 +331,8 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="client-address">Adresse *</label>
-          <input type="text" id="client-address" name="adresse" required placeholder="12 rue des Fleurs">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="client-zipcode">Code postal *</label>
-            <input type="text" id="client-zipcode" name="code_postal" required placeholder="75001">
-          </div>
-          <div class="form-group">
-            <label for="client-city">Ville *</label>
-            <input type="text" id="client-city" name="ville" required placeholder="Paris">
-          </div>
-        </div>
-
-        <!-- RÉCAPITULATIF DU PRIX EN TEMPS RÉEL -->
-        <div class="checkout-summary" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee;">
+        <!-- 4. RÉCAPITULATIF DU PRIX EN TEMPS RÉEL -->
+        <div class="checkout-summary" style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; color: #555;">
             <span>Sous-total produits :</span>
             <span id="summary-subtotal">0,00 €</span>
@@ -346,7 +348,7 @@
           </div>
         </div>
 
-        <!-- Conteneur dynamique PayPal -->
+        <!-- 5. Conteneur dynamique PayPal -->
         <div id="paypal-button-container" style="margin-top: 20px;"></div>
       </form>
     </div>
