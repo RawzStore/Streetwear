@@ -258,7 +258,7 @@ function closeCheckoutModal() {
 // GESTION DU WIDGET ET DE L'AFFICHAGE MONDIAL RELAY
 function handleDeliveryModeChange() {
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
-  const mrContainer = document.getElementById('mondial-relay-container');
+  const mrContainer = document.getElementById('zone-carte-relais');
 
   if (selectedMode === 'Mondial Relay') {
     if (mrContainer) mrContainer.style.display = 'block';
@@ -284,7 +284,16 @@ function initMondialRelayWidget() {
       NbResults: "5",
       OnSelect: function(data) {
         selectedRelayInfo = data;
-        const displayDiv = document.getElementById('selected-relay-display');
+
+        // Remplissage des champs masqués pour le formulaire
+        if (document.getElementById('selected-relais-id')) document.getElementById('selected-relais-id').value = data.ID;
+        if (document.getElementById('selected-relais-nom')) document.getElementById('selected-relais-nom').value = data.Nom;
+        if (document.getElementById('selected-relais-adresse')) document.getElementById('selected-relais-adresse').value = data.Adresse1;
+        if (document.getElementById('selected-relais-cp')) document.getElementById('selected-relais-cp').value = data.CP;
+        if (document.getElementById('selected-relais-ville')) document.getElementById('selected-relais-ville').value = data.Ville;
+
+        // Affichage texte de confirmation
+        const displayDiv = document.getElementById('relais-choisi-text');
         if (displayDiv) {
           displayDiv.innerHTML = `<strong>Point Relais Sélectionné :</strong><br>${data.Nom} - ${data.Adresse1}, ${data.CP} ${data.Ville} (ID: ${data.ID})`;
         }
