@@ -196,13 +196,24 @@
           </div>
         </div>
 
-        <!-- CONTENEUR DU WIDGET MONDIAL RELAY -->
+        <!-- CONTENEUR DU WIDGET MONDIAL RELAY (Mise à jour) -->
         <div id="zone-mondial-relay" style="margin-top: 15px; display: block;">
           <label style="display: block; margin-bottom: 8px; font-weight: bold;">Choisis ton Point Relais :</label>
-          <div id="Target_Widget"></div>
-          <input type="hidden" id="relay-id" name="Relay_ID">
-          <input type="hidden" id="relay-name" name="Relay_Nom">
-          <input type="hidden" id="relay-address" name="Relay_Adresse">
+          
+          <button type="button" id="open-mr-widget-btn" class="cta-btn" style="padding: 8px 16px; font-size: 0.9rem; margin-bottom: 12px; width: 100%;">
+            Rechercher / Afficher les relais
+          </button>
+
+          <div id="Zone_Widget"></div>
+
+          <div id="mr-selected-info" style="display: none; margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 6px; font-size: 0.9rem; color: #333;">
+            <strong>Relais sélectionné :</strong>
+            <p id="mr-relay-details" style="margin: 5px 0 0 0;"></p>
+          </div>
+
+          <input type="hidden" id="mr-relay-id" name="mr_relay_id">
+          <input type="hidden" id="mr-relay-name" name="mr_relay_name">
+          <input type="hidden" id="mr-relay-address" name="mr_relay_address">
         </div>
 
         <!-- 4. RÉCAPITULATIF DU PRIX EN TEMPS RÉEL -->
