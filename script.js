@@ -172,7 +172,7 @@ function updateCartUI() {
 
   let finalTotal = subtotal * (1 - appliedDiscount);
   if (cartBadge) cartBadge.textContent = count;
-  if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
+  if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2).replace('.', ',')} €`;
 
   updateCheckoutSummary();
 }
@@ -250,7 +250,7 @@ function updateCheckoutSummary() {
     shippingCost = 0.00;
   }
 
-  // Offrir la livraison si sous-total >= 80€ (hors remise en main propre qui est déjà à 0€)
+  // Offrir la livraison si sous-total >= 80€ (hors remise en main propre)
   if (discountedSubtotal >= 80 && selectedMode !== 'Remise en main propre') {
     shippingCost = 0.00;
   }
@@ -280,7 +280,7 @@ function updateCheckoutSummary() {
   };
 }
 
-// Obtenir la valeur brute des frais de livraison pour PayPal/Formspree
+// Obtenir la valeur brute des frais de livraison
 function getShippingCost() {
   return updateCheckoutSummary().shippingCost;
 }
@@ -518,7 +518,7 @@ function initProductPage() {
     });
   }
 
-  // Initialisation des accordéons (Description & Livraison)
+  // Initialisation des accordéons
   const accordionHeaders = document.querySelectorAll('.accordion-header');
   accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   initProductPage();
 
-  // Écoute des changements de mode de livraison pour récalculer et recharger PayPal
+  // Écoute des changements de mode de livraison pour recalculer et recharger PayPal
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
       updateCheckoutSummary();
