@@ -14,12 +14,12 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Leaflet CSS (Requis pour l'affichage propre des cartes OpenStreetMap dans Mondial Relay) -->
+  <!-- Leaflet CSS & JS (Requis pour l'affichage propre des cartes OpenStreetMap dans Mondial Relay) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Dépendance jQuery pour le Widget Mondial Relay -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <!-- Widget Carte Mondial Relay -->
+  <!-- Dépendance jQuery & Widget Carte Mondial Relay -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://widget.mondialrelay.com/parcelshop-picker/jquery.plugin.mondialrelay.parcelshoppicker.min.js"></script>
 
   <!-- SDK PayPal -->
@@ -340,7 +340,10 @@
         <!-- Conteneur Carte Interactive Mondial Relay -->
         <div id="zone-carte-relais" style="margin-top: 15px; margin-bottom: 15px; min-height: 300px;">
           <label style="display: block; font-weight: 600; margin-bottom: 5px;">Choisis ton Point Relais :</label>
+          
+          <!-- Conteneurs requis par Mondial Relay -->
           <div id="Zone_Widget"></div>
+          <div id="Target_Widget"></div>
           
           <!-- Champs masqués pour capturer la sélection -->
           <input type="hidden" id="selected-relais-id" name="relais_id">
