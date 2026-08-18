@@ -64,9 +64,9 @@ const products = [
 
 let cart = JSON.parse(localStorage.getItem('rawz_cart')) || [];
 let appliedDiscount = 0;
-let selectedRelayInfo = null; // Stocke les infos du Point Relais sélectionné
+let selectedRelayInfo = null;
 
-// Fonctions Menu Burger
+// Menu Burger
 function openMenu() {
   const menuDrawer = document.getElementById('menu-drawer');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -85,7 +85,7 @@ function closeMenu() {
   }
 }
 
-// Rendu du catalogue sur index.html
+// Rendu Catalogue
 function renderProducts(items) {
   const productGrid = document.getElementById('product-grid');
   if (!productGrid) return;
@@ -115,35 +115,29 @@ function renderProducts(items) {
   });
 }
 
-// Fonction centrale de filtrage
+// Filtres
 function filterByCategory(category) {
   document.querySelectorAll('.filter-btn').forEach(btn => {
-    if (btn.dataset.category === category) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
+    btn.classList.toggle('active', btn.dataset.category === category);
   });
 
   if (category === 'all') {
     renderProducts(products);
   } else {
-    const filtered = products.filter(p => p.category === category);
-    renderProducts(filtered);
+    renderProducts(products.filter(p => p.category === category));
   }
 }
 
-// Logique du Panier
+// Panier & LocalStorage
 function saveCart() {
   localStorage.setItem('rawz_cart', JSON.stringify(cart));
 }
 
-// Obtenir les frais de livraison selon l'option sélectionnée
 function getShippingCost() {
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
   if (selectedMode === 'Mondial Relay') return 4.50;
   if (selectedMode === 'Colissimo Domicile') return 6.90;
-  return 0.00; // Remise en main propre
+  return 0.00;
 }
 
 function updateCartUI() {
@@ -179,7 +173,6 @@ function updateCartUI() {
     cartItemsContainer.appendChild(itemEl);
   });
 
-  // Écouteurs pour la quantité et suppression
   cartItemsContainer.querySelectorAll('.btn-qty-minus').forEach(btn => {
     btn.addEventListener('click', () => changeQuantity(btn.dataset.key, -1));
   });
@@ -215,7 +208,6 @@ function removeFromCart(cartItemKey) {
   updateCartUI();
 }
 
-// Ouverture & fermeture Panier
 function openCart() {
   const cartDrawer = document.getElementById('cart-drawer');
   const cartOverlay = document.getElementById('cart-overlay');
@@ -234,7 +226,7 @@ function closeCart() {
   }
 }
 
-// Modale Checkout
+// Modale Paiement
 function openCheckoutModal() {
   if (cart.length === 0) {
     alert("Ton panier est vide !");
@@ -244,9 +236,7 @@ function openCheckoutModal() {
   if (modal) {
     modal.classList.add('active');
     handleDeliveryModeChange();
-    setTimeout(() => {
-      initPayPalButton();
-    }, 100);
+    initPayPalButton();
   }
 }
 
@@ -255,7 +245,7 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// GESTION DU WIDGET ET DE L'AFFICHAGE MONDIAL RELAY
+// Widget Mondial Relay
 function handleDeliveryModeChange() {
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
   const mrContainer = document.getElementById('zone-carte-relais');
@@ -276,7 +266,7 @@ function initMondialRelayWidget() {
   if (typeof jQuery !== 'undefined' && jQuery.fn.MR_Target) {
     jQuery("#Zone_Widget").MR_Target({
       Target: "#Target_Widget",
-      Brand: "BDTEST  ", // Remplace avec ton code Enseigne Mondial Relay si tu en as un
+      Brand: "BDTEST  ",
       Country: "FR",
       PostCode: zipcode,
       City: city,
@@ -285,14 +275,12 @@ function initMondialRelayWidget() {
       OnSelect: function(data) {
         selectedRelayInfo = data;
 
-        // Remplissage des champs masqués pour le formulaire
         if (document.getElementById('selected-relais-id')) document.getElementById('selected-relais-id').value = data.ID;
         if (document.getElementById('selected-relais-nom')) document.getElementById('selected-relais-nom').value = data.Nom;
         if (document.getElementById('selected-relais-adresse')) document.getElementById('selected-relais-adresse').value = data.Adresse1;
         if (document.getElementById('selected-relais-cp')) document.getElementById('selected-relais-cp').value = data.CP;
         if (document.getElementById('selected-relais-ville')) document.getElementById('selected-relais-ville').value = data.Ville;
 
-        // Affichage texte de confirmation
         const displayDiv = document.getElementById('relais-choisi-text');
         if (displayDiv) {
           displayDiv.innerHTML = `<strong>Point Relais Sélectionné :</strong><br>${data.Nom} - ${data.Adresse1}, ${data.CP} ${data.Ville} (ID: ${data.ID})`;
@@ -302,7 +290,7 @@ function initMondialRelayWidget() {
   }
 }
 
-// INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
+// SDK PayPal
 function initPayPalButton() {
   const paypalContainer = document.getElementById('paypal-button-container');
   if (!paypalContainer || typeof paypal === 'undefined') return;
@@ -442,7 +430,7 @@ function initPayPalButton() {
             alert(`Paiement PayPal réussi (ID: ${details.id}), mais une erreur est survenue lors de l'enregistrement Formspree.`);
           }
         } catch (e) {
-          console.error("Erreur de sauvegarde Formspree", e);
+          console.error("Erreur Formspree", e);
           alert(`Paiement réussi (ID: ${details.id}), mais la confirmation n'a pas pu être envoyée automatiquement.`);
         } finally {
           cart = [];
@@ -464,7 +452,7 @@ function initPayPalButton() {
   }).render('#paypal-button-container');
 }
 
-// LOGIQUE SPÉCIFIQUE À LA PAGE PRODUIT (product.html)
+// Page Produit
 function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = parseInt(urlParams.get('id'));
@@ -487,12 +475,10 @@ function initProductPage() {
   if (descEl) descEl.textContent = product.description;
   if (mainImgEl) mainImgEl.src = product.mainImage;
 
-  // Tailles
   if (sizeSelect && product.sizes) {
     sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
   }
 
-  // Couleurs & Galerie dynamique
   const updateGallery = (imageList) => {
     if (!thumbsContainer || !mainImgEl || !imageList) return;
     thumbsContainer.innerHTML = '';
@@ -529,7 +515,6 @@ function initProductPage() {
     updateGallery(product.images);
   }
 
-  // Ajouter au panier
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedSize = sizeSelect ? sizeSelect.value : product.sizes[0];
@@ -553,40 +538,33 @@ function initProductPage() {
 
       saveCart();
       updateCartUI();
-      // Retrait de openCart() pour éviter d'ouvrir le tiroir du panier automatiquement
     });
   }
 
   // Accordéons
-  const accordionHeaders = document.querySelectorAll('.accordion-header');
-  accordionHeaders.forEach(header => {
+  document.querySelectorAll('.accordion-header').forEach(header => {
     header.addEventListener('click', () => {
       const item = header.parentElement;
       const content = item.querySelector('.accordion-content');
-      const icon = header.querySelector('i') || header.querySelector('span:last-child');
-
       const isOpen = item.classList.contains('active');
 
       if (isOpen) {
         item.classList.remove('active');
         if (content) content.style.maxHeight = null;
-        if (icon && icon.tagName === 'I') icon.style.transform = 'rotate(0deg)';
       } else {
         item.classList.add('active');
         if (content) content.style.maxHeight = `${content.scrollHeight}px`;
-        if (icon && icon.tagName === 'I') icon.style.transform = 'rotate(180deg)';
       }
     });
   });
 }
 
-// Initialisation au chargement
+// Initialisation globale
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
   initProductPage();
 
-  // Écoute des changements de mode de livraison
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
       handleDeliveryModeChange();
@@ -594,24 +572,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Mise à jour du widget si l'utilisateur change de code postal ou ville
   const zipInput = document.getElementById('client-zipcode');
   const cityInput = document.getElementById('client-city');
   if (zipInput) zipInput.addEventListener('change', initMondialRelayWidget);
   if (cityInput) cityInput.addEventListener('change', initMondialRelayWidget);
 
-  // Mode sombre
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
       document.body.classList.toggle('dark-theme');
       document.documentElement.classList.toggle('dark-theme');
-      const isDark = document.body.classList.contains('dark-theme');
-      themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
+      themeToggleBtn.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
     });
   }
 
-  // Événements Panier
   const cartToggleBtn = document.getElementById('cart-toggle-btn');
   const closeCartBtn = document.getElementById('close-cart-btn');
   const cartOverlay = document.getElementById('cart-overlay');
@@ -622,7 +596,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
   if (checkoutBtn) checkoutBtn.addEventListener('click', openCheckoutModal);
 
-  // Code Promo
   const applyPromoBtn = document.getElementById('apply-promo-btn');
   const promoInput = document.getElementById('promo-input');
   const promoMsg = document.getElementById('promo-msg');
@@ -644,7 +617,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Filtres et Recherche
   const searchInput = document.getElementById('search-input');
   const sortSelect = document.getElementById('sort-select');
 
@@ -664,7 +636,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Burger Menu
   const burgerToggle = document.getElementById('burger-toggle');
   const closeMenuBtn = document.getElementById('close-menu');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -675,15 +646,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const category = e.target.dataset.category;
-      filterByCategory(category);
+      filterByCategory(e.target.dataset.category);
     });
   });
 
   document.querySelectorAll('.menu-filter-link').forEach(link => {
     link.addEventListener('click', (e) => {
-      const selectedCategory = link.getAttribute('data-category');
-      filterByCategory(selectedCategory);
+      filterByCategory(link.getAttribute('data-category'));
       closeMenu();
     });
   });
@@ -691,7 +660,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
-  // Modales Footer
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
 
