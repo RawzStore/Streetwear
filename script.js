@@ -64,9 +64,8 @@ const products = [
 
 let cart = JSON.parse(localStorage.getItem('rawz_cart')) || [];
 let appliedDiscount = 0;
-let selectedRelayInfo = null;
 
-// Menu Burger
+// Fonctions Menu Burger
 function openMenu() {
   const menuDrawer = document.getElementById('menu-drawer');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -85,7 +84,7 @@ function closeMenu() {
   }
 }
 
-// Rendu Catalogue
+// Rendu du catalogue sur index.html
 function renderProducts(items) {
   const productGrid = document.getElementById('product-grid');
   if (!productGrid) return;
@@ -115,29 +114,27 @@ function renderProducts(items) {
   });
 }
 
-// Filtres
+// Fonction centrale de filtrage
 function filterByCategory(category) {
   document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.category === category);
+    if (btn.dataset.category === category) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
   });
 
   if (category === 'all') {
     renderProducts(products);
   } else {
-    renderProducts(products.filter(p => p.category === category));
+    const filtered = products.filter(p => p.category === category);
+    renderProducts(filtered);
   }
 }
 
-// Panier & LocalStorage
+// Logique du Panier
 function saveCart() {
   localStorage.setItem('rawz_cart', JSON.stringify(cart));
-}
-
-function getShippingCost() {
-  const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
-  if (selectedMode === 'Mondial Relay') return 4.50;
-  if (selectedMode === 'Colissimo Domicile') return 6.90;
-  return 0.00;
 }
 
 function updateCartUI() {
@@ -161,32 +158,19 @@ function updateCartUI() {
       <div class="cart-item-info">
         <strong>${item.name}</strong>
         <small>Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''}</small>
-        <small>${(item.price * item.quantity).toFixed(2)} €</small>
+        <small>${item.price.toFixed(2)} €</small>
         <div class="qty-controls">
-          <button class="btn-qty-minus" data-key="${item.key}">-</button>
+          <button onclick="changeQuantity('${item.key}', -1)">-</button>
           <span>${item.quantity}</span>
-          <button class="btn-qty-plus" data-key="${item.key}">+</button>
+          <button onclick="changeQuantity('${item.key}', 1)">+</button>
         </div>
       </div>
-      <button class="btn-remove delete-btn" data-key="${item.key}">✕</button>
+      <button onclick="removeFromCart('${item.key}')" class="delete-btn">✕</button>
     `;
     cartItemsContainer.appendChild(itemEl);
   });
 
-  cartItemsContainer.querySelectorAll('.btn-qty-minus').forEach(btn => {
-    btn.addEventListener('click', () => changeQuantity(btn.dataset.key, -1));
-  });
-  cartItemsContainer.querySelectorAll('.btn-qty-plus').forEach(btn => {
-    btn.addEventListener('click', () => changeQuantity(btn.dataset.key, 1));
-  });
-  cartItemsContainer.querySelectorAll('.btn-remove').forEach(btn => {
-    btn.addEventListener('click', () => removeFromCart(btn.dataset.key));
-  });
-
-  let discountedSubtotal = subtotal * (1 - appliedDiscount);
-  let shippingCost = cart.length > 0 ? getShippingCost() : 0;
-  let finalTotal = discountedSubtotal + shippingCost;
-
+  let finalTotal = subtotal * (1 - appliedDiscount);
   if (cartBadge) cartBadge.textContent = count;
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
 }
@@ -208,6 +192,7 @@ function removeFromCart(cartItemKey) {
   updateCartUI();
 }
 
+// Ouverture & fermeture Panier
 function openCart() {
   const cartDrawer = document.getElementById('cart-drawer');
   const cartOverlay = document.getElementById('cart-overlay');
@@ -235,11 +220,9 @@ function openCheckoutModal() {
   const modal = document.getElementById('checkout-modal');
   if (modal) {
     modal.classList.add('active');
-    // Delai pour que la modale soit affichée à l'écran avant le calcul de taille du Widget
     setTimeout(() => {
-      handleDeliveryModeChange();
       initPayPalButton();
-    }, 200);
+    }, 100);
   }
 }
 
@@ -248,56 +231,15 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// GESTION DU WIDGET MONDIAL RELAY
-function handleDeliveryModeChange() {
+// Obtenir les frais de livraison selon l'option sélectionnée
+function getShippingCost() {
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
-  const mrContainer = document.getElementById('zone-carte-relais');
-
-  if (selectedMode === 'Mondial Relay') {
-    if (mrContainer) mrContainer.style.display = 'block';
-    setTimeout(() => {
-      initMondialRelayWidget();
-    }, 150);
-  } else {
-    if (mrContainer) mrContainer.style.display = 'none';
-  }
-  updateCartUI();
+  if (selectedMode === 'Mondial Relay') return 4.50;
+  if (selectedMode === 'Colissimo Domicile') return 6.90;
+  return 0.00; // Remise en main propre
 }
 
-function initMondialRelayWidget() {
-  const zipcode = document.getElementById('client-zipcode')?.value.trim() || '75001';
-  const city = document.getElementById('client-city')?.value.trim() || '';
-
-  if (typeof jQuery !== 'undefined' && jQuery.fn.MR_Target) {
-    jQuery("#Zone_Widget").MR_Target({
-      Target: "#Target_Widget",
-      Brand: "BDTEST  ", // 8 caractères exacts
-      Country: "FR",
-      PostCode: zipcode,
-      City: city,
-      ColLivMod: "24R",
-      NbResults: "5",
-      OnSelect: function(data) {
-        selectedRelayInfo = data;
-
-        if (document.getElementById('selected-relais-id')) document.getElementById('selected-relais-id').value = data.ID;
-        if (document.getElementById('selected-relais-nom')) document.getElementById('selected-relais-nom').value = data.Nom;
-        if (document.getElementById('selected-relais-adresse')) document.getElementById('selected-relais-adresse').value = data.Adresse1;
-        if (document.getElementById('selected-relais-cp')) document.getElementById('selected-relais-cp').value = data.CP;
-        if (document.getElementById('selected-relais-ville')) document.getElementById('selected-relais-ville').value = data.Ville;
-
-        const displayDiv = document.getElementById('relais-choisi-text');
-        if (displayDiv) {
-          displayDiv.innerHTML = `<strong>Point Relais Sélectionné :</strong><br>${data.Nom} - ${data.Adresse1}, ${data.CP} ${data.Ville} (ID: ${data.ID})`;
-        }
-      }
-    });
-  } else {
-    console.error("jQuery ou la librairie Mondial Relay n'est pas chargée.");
-  }
-}
-
-// SDK PayPal
+// INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
 function initPayPalButton() {
   const paypalContainer = document.getElementById('paypal-button-container');
   if (!paypalContainer || typeof paypal === 'undefined') return;
@@ -313,18 +255,10 @@ function initPayPalButton() {
     },
     onClick: function(data, actions) {
       const form = document.getElementById('checkout-form');
-      const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value;
-
       if (form && !form.checkValidity()) {
         form.reportValidity();
         return actions.reject();
       }
-
-      if (selectedMode === 'Mondial Relay' && !selectedRelayInfo) {
-        alert("Merci de sélectionner un Point Relais sur la carte avant de continuer.");
-        return actions.reject();
-      }
-
       return actions.resolve();
     },
     createOrder: function(data, actions) {
@@ -386,12 +320,6 @@ function initPayPalButton() {
         const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
         const city = document.getElementById('client-city')?.value.trim() || '';
         const deliveryMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Non spécifié';
-        const clientNote = document.getElementById('client-note')?.value.trim() || 'Aucune note particulière';
-
-        let relayDetailsText = "N/A";
-        if (deliveryMode === 'Mondial Relay' && selectedRelayInfo) {
-          relayDetailsText = `${selectedRelayInfo.Nom} (ID: ${selectedRelayInfo.ID}) - ${selectedRelayInfo.Adresse1}, ${selectedRelayInfo.CP} ${selectedRelayInfo.Ville}`;
-        }
 
         let orderDetails = cart.map(item => 
           `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
@@ -410,10 +338,8 @@ function initPayPalButton() {
           Code_postal: zipcode,
           Ville: city,
           Mode_de_livraison: deliveryMode,
-          Point_Relais: relayDetailsText,
-          Note_Client: clientNote,
           Transaction_ID: details.id,
-          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\nPOINT RELAIS : ${relayDetailsText}\n\nNOTE / REMARQUE DU CLIENT :\n${clientNote}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${total.toFixed(2)} €`
+          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${total.toFixed(2)} €`
         };
 
         const paypalBtnContainer = document.getElementById('paypal-button-container');
@@ -434,14 +360,13 @@ function initPayPalButton() {
           if (response.ok) {
             alert(`Merci ${details.payer.name.given_name} ! Ta commande a été validée avec succès.`);
           } else {
-            alert(`Paiement PayPal réussi (ID: ${details.id}), mais une erreur est survenue lors de l'enregistrement Formspree.`);
+            alert(`Paiement PayPal réussi (ID: ${details.id}), mais une erreur est survenue lors de l'enregistrement.`);
           }
         } catch (e) {
-          console.error("Erreur Formspree", e);
+          console.error("Erreur de sauvegarde Formspree", e);
           alert(`Paiement réussi (ID: ${details.id}), mais la confirmation n'a pas pu être envoyée automatiquement.`);
         } finally {
           cart = [];
-          selectedRelayInfo = null;
           saveCart();
           updateCartUI();
           closeCheckoutModal();
@@ -459,7 +384,7 @@ function initPayPalButton() {
   }).render('#paypal-button-container');
 }
 
-// Page Produit
+// LOGIQUE SPÉCIFIQUE À LA PAGE PRODUIT (product.html)
 function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = parseInt(urlParams.get('id'));
@@ -480,16 +405,18 @@ function initProductPage() {
   if (titleEl) titleEl.textContent = product.name;
   if (priceEl) priceEl.textContent = `${product.price.toFixed(2)} €`;
   if (descEl) descEl.textContent = product.description;
+  if (mainImgEl) mainImgEl.src = product.mainImage;
 
+  // Tailles
   if (sizeSelect && product.sizes) {
     sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
   }
 
+  // Couleurs & Galerie dynamique
   const updateGallery = (imageList) => {
-    if (!thumbsContainer || !mainImgEl || !imageList || imageList.length === 0) return;
-    
-    mainImgEl.src = imageList[0];
+    if (!thumbsContainer || !mainImgEl || !imageList) return;
     thumbsContainer.innerHTML = '';
+    mainImgEl.src = imageList[0];
 
     imageList.forEach((imgSrc, index) => {
       const thumb = document.createElement('img');
@@ -508,9 +435,7 @@ function initProductPage() {
     colorSelect.innerHTML = product.colors.map(c => `<option value="${c}">${c}</option>`).join('');
     
     if (product.imagesByColor) {
-      const defaultColor = product.colors[0];
-      updateGallery(product.imagesByColor[defaultColor] || [product.mainImage]);
-
+      updateGallery(product.imagesByColor[product.colors[0]]);
       colorSelect.addEventListener('change', (e) => {
         const selectedColor = e.target.value;
         if (product.imagesByColor[selectedColor]) {
@@ -519,18 +444,15 @@ function initProductPage() {
       });
     } else if (product.images) {
       updateGallery(product.images);
-    } else {
-      updateGallery([product.mainImage]);
     }
   } else if (product.images) {
     updateGallery(product.images);
-  } else {
-    updateGallery([product.mainImage]);
   }
 
+  // Ajouter au panier
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
-      const selectedSize = sizeSelect ? sizeSelect.value : (product.sizes ? product.sizes[0] : 'Unique');
+      const selectedSize = sizeSelect ? sizeSelect.value : product.sizes[0];
       const selectedColor = colorSelect ? colorSelect.value : (product.colors ? product.colors[0] : null);
       const cartKey = `${product.id}-${selectedSize}-${selectedColor || 'default'}`;
 
@@ -554,51 +476,54 @@ function initProductPage() {
     });
   }
 
-  // Accordéons
-  document.querySelectorAll('.accordion-header').forEach(header => {
+  // Initialisation des accordéons (Description & Livraison)
+  const accordionHeaders = document.querySelectorAll('.accordion-header');
+  accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
       const item = header.parentElement;
       const content = item.querySelector('.accordion-content');
+      const icon = header.querySelector('i') || header.querySelector('span:last-child');
+
       const isOpen = item.classList.contains('active');
 
       if (isOpen) {
         item.classList.remove('active');
         if (content) content.style.maxHeight = null;
+        if (icon && icon.tagName === 'I') icon.style.transform = 'rotate(0deg)';
       } else {
         item.classList.add('active');
         if (content) content.style.maxHeight = `${content.scrollHeight}px`;
+        if (icon && icon.tagName === 'I') icon.style.transform = 'rotate(180deg)';
       }
     });
   });
 }
 
-// Initialisation globale au chargement de la page
+// Initialisation au chargement
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
   initProductPage();
 
+  // Écoute des changements de mode de livraison pour recharger PayPal avec le bon montant
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
-      handleDeliveryModeChange();
       initPayPalButton();
     });
   });
 
-  const zipInput = document.getElementById('client-zipcode');
-  const cityInput = document.getElementById('client-city');
-  if (zipInput) zipInput.addEventListener('change', initMondialRelayWidget);
-  if (cityInput) cityInput.addEventListener('change', initMondialRelayWidget);
-
+  // Mode sombre
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
       document.body.classList.toggle('dark-theme');
       document.documentElement.classList.toggle('dark-theme');
-      themeToggleBtn.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+      const isDark = document.body.classList.contains('dark-theme');
+      themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
     });
   }
 
+  // Événements Panier
   const cartToggleBtn = document.getElementById('cart-toggle-btn');
   const closeCartBtn = document.getElementById('close-cart-btn');
   const cartOverlay = document.getElementById('cart-overlay');
@@ -609,6 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
   if (checkoutBtn) checkoutBtn.addEventListener('click', openCheckoutModal);
 
+  // Appliquer le Code Promo
   const applyPromoBtn = document.getElementById('apply-promo-btn');
   const promoInput = document.getElementById('promo-input');
   const promoMsg = document.getElementById('promo-msg');
@@ -630,6 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Filtres et Recherche
   const searchInput = document.getElementById('search-input');
   const sortSelect = document.getElementById('sort-select');
 
@@ -649,6 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Burger Menu
   const burgerToggle = document.getElementById('burger-toggle');
   const closeMenuBtn = document.getElementById('close-menu');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -659,13 +587,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      filterByCategory(e.target.dataset.category);
+      const category = e.target.dataset.category;
+      filterByCategory(category);
     });
   });
 
   document.querySelectorAll('.menu-filter-link').forEach(link => {
     link.addEventListener('click', (e) => {
-      filterByCategory(link.getAttribute('data-category'));
+      const selectedCategory = link.getAttribute('data-category');
+      filterByCategory(selectedCategory);
       closeMenu();
     });
   });
@@ -673,6 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
+  // Modales du Footer
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
 
