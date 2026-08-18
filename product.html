@@ -52,7 +52,7 @@
       padding-bottom: 16px;
     }
 
-    /* ZOOM INTERACTIF AMÉLIORÉ */
+    /* CONTENEUR IMAGE PRINCIPALE & BOUTON LOUPE */
     .main-image-container {
       position: relative;
       width: 100%;
@@ -60,16 +60,69 @@
       overflow: hidden;
       background: #f5f5f5;
       margin-bottom: 15px;
-      cursor: zoom-in;
-      touch-action: none;
     }
     .main-image-container img {
       width: 100%;
       height: auto;
       display: block;
       object-fit: cover;
-      transform-origin: center center;
-      transition: transform 0.15s ease-out;
+    }
+    .zoom-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s ease, transform 0.2s ease;
+      z-index: 5;
+    }
+    .zoom-btn:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.08);
+    }
+
+    /* MODALE LIGHTBOX (PLEIN ÉCRAN) */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .lightbox-modal.active {
+      display: flex;
+    }
+    .lightbox-content {
+      max-width: 90%;
+      max-height: 90vh;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      color: #fff;
+      font-size: 2.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      line-height: 1;
     }
 
     /* BOUTON RETOUR CATALOGUE */
@@ -182,10 +235,13 @@
     
     <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
       
-      <!-- Galerie avec Zoom -->
+      <!-- Galerie avec Bouton Loupe -->
       <div class="product-gallery">
-        <div class="main-image-container" id="zoom-container">
+        <div class="main-image-container">
           <img id="main-product-img" src="" alt="Produit">
+          <button type="button" id="open-lightbox-btn" class="zoom-btn" title="Agrandir l'image">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
         </div>
         <div id="thumbnails-container" class="thumbnails-flex" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
       </div>
@@ -374,6 +430,12 @@
     </div>
   </div>
 
+  <!-- MODALE LIGHTBOX POUR L'IMAGE AGRANDIE -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <button type="button" id="close-lightbox-btn" class="lightbox-close">&times;</button>
+    <img id="lightbox-img" class="lightbox-content" src="" alt="Image agrandie">
+  </div>
+
   <!-- FOOTER RAWZ -->
   <footer class="site-footer">
     <div class="footer-container">
@@ -467,33 +529,28 @@
         });
       }
 
-      // Logique Zoom dynamique au survol / touch
-      const zoomContainer = document.getElementById('zoom-container');
-      const zoomImg = document.getElementById('main-product-img');
+      // Logique de la modale Lightbox (Loupe)
+      const openBtn = document.getElementById('open-lightbox-btn');
+      const closeBtn = document.getElementById('close-lightbox-btn');
+      const modal = document.getElementById('lightbox-modal');
+      const mainImg = document.getElementById('main-product-img');
+      const lightboxImg = document.getElementById('lightbox-img');
 
-      if (zoomContainer && zoomImg) {
-        const handleZoom = (e) => {
-          const rect = zoomContainer.getBoundingClientRect();
-          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      if (openBtn && modal && mainImg && lightboxImg) {
+        openBtn.addEventListener('click', () => {
+          lightboxImg.src = mainImg.src;
+          modal.classList.add('active');
+        });
 
-          const x = ((clientX - rect.left) / rect.width) * 100;
-          const y = ((clientY - rect.top) / rect.height) * 100;
+        closeBtn.addEventListener('click', () => {
+          modal.classList.remove('active');
+        });
 
-          zoomImg.style.transformOrigin = `${x}% ${y}%`;
-          zoomImg.style.transform = 'scale(2)';
-        };
-
-        const resetZoom = () => {
-          zoomImg.style.transform = 'scale(1)';
-          zoomImg.style.transformOrigin = 'center center';
-        };
-
-        zoomContainer.addEventListener('mousemove', handleZoom);
-        zoomContainer.addEventListener('mouseleave', resetZoom);
-
-        zoomContainer.addEventListener('touchmove', handleZoom, { passive: true });
-        zoomContainer.addEventListener('touchend', resetZoom);
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('active');
+          }
+        });
       }
     });
   </script>
