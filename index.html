@@ -18,14 +18,10 @@
   
   <!-- FontAwesome pour les icônes officielles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <!-- Leaflet CSS & JS (Requis pour l'affichage de la carte Mondial Relay) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Dépendance jQuery & Script Widget Carte Mondial Relay -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://widget.mondialrelay.com/parcelshop-picker/jquery.plugin.mondialrelay.parcelshoppicker.min.js"></script>
+  <!-- jQuery & Script Widget Carte Mondial Relay (Séquence exacte requise) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://widget.mondialrelay.com/parcelshop-picker/v4_0/js/jquery.plugin.mondialrelay.parcelshoppicker.min.js"></script>
 
   <!-- SDK PayPal -->
   <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
@@ -199,12 +195,14 @@
         </div>
 
         <!-- Conteneur Carte Interactive Mondial Relay -->
-        <div id="zone-carte-relais" style="margin-top: 15px; margin-bottom: 15px; min-height: 300px;">
-          <label style="display: block; font-weight: 600; margin-bottom: 5px;">Choisis ton Point Relais :</label>
+        <div id="zone-carte-relais" style="margin-top: 15px; margin-bottom: 15px; min-height: 350px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 8px;">Choisis ton Point Relais :</label>
           
-          <!-- Conteneurs requis par Mondial Relay -->
-          <div id="Zone_Widget"></div>
-          <div id="Target_Widget"></div>
+          <!-- Conteneur où le widget s'affiche -->
+          <div id="Zone_Widget" style="width: 100%; min-height: 320px;"></div>
+          
+          <!-- Target_Widget : Champ masqué obligatoire pour l'API Mondial Relay -->
+          <input type="hidden" id="Target_Widget" name="target_widget" />
           
           <!-- Champs masqués pour capturer la sélection -->
           <input type="hidden" id="selected-relais-id" name="relais_id">
@@ -234,13 +232,11 @@
   <footer class="site-footer">
     <div class="footer-container">
       
-      <!-- Colonne 1 : Marque & Description -->
       <div class="footer-col footer-brand">
         <h3>RAWZ</h3>
         <p>Streetwear épuré & drops limités.</p>
       </div>
 
-      <!-- Colonne 2 : Réseaux sociaux -->
       <div class="footer-col footer-socials">
         <h4>Nous suivre</h4>
         <ul class="social-links">
@@ -257,7 +253,6 @@
         </ul>
       </div>
 
-      <!-- Colonne 3 : Informations & Contact -->
       <div class="footer-col footer-legal">
         <h4>Informations</h4>
         <ul>
@@ -268,7 +263,6 @@
         </ul>
       </div>
 
-      <!-- Colonne 4 : Paiements sécurisés -->
       <div class="footer-col footer-payments">
         <div class="payment-box" style="margin-top: 0;">
           <span class="payment-title">Paiements sécurisés</span>
@@ -281,7 +275,6 @@
 
     </div>
 
-    <!-- Bas de page -->
     <div class="footer-bottom">
       <p>&copy; 2026 RAWZ Store. Tous droits réservés.</p>
       <p class="secure-tag"><i class="fa-solid fa-lock"></i> Transactions 100% sécurisées via PayPal</p>
