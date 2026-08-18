@@ -286,7 +286,7 @@ function getShippingCost() {
   return updateCheckoutSummary().shippingCost;
 }
 
-// --- LOGIQUE WIDGET MONDIAL RELAY (CORRIGÉE) ---
+// --- LOGIQUE WIDGET MONDIAL RELAY ---
 function initMondialRelayWidget() {
   const zipcode = document.getElementById('client-zipcode')?.value.trim() || '75001';
 
@@ -295,13 +295,12 @@ function initMondialRelayWidget() {
     return;
   }
 
-  // Vérification de l'existence du plugin Mondial Relay
   if ($.fn.MR_ParcelShopPicker) {
     $("#Zone_Widget").MR_ParcelShopPicker({
       Target: "#mr-relay-id",
       TargetDisplay: "#mr-relay-name",
       TargetDisplayInfoPR: "#mr-relay-address",
-      Brand: "BDTEST  ", // 8 caractères exacts avec 2 espaces pour le mode test
+      Brand: "BDTEST  ",
       Country: "FR",
       PostCode: zipcode,
       ColLivMod: "24R",
@@ -326,7 +325,6 @@ function initMondialRelayWidget() {
       }
     });
   } else if ($.mr_widget) {
-    // Fallback pour la v3 si ancienne version chargée
     $("#Zone_Widget").mr_widget({
       Target: "#Zone_Widget",
       Brand: "BDTEST  ",
@@ -356,7 +354,7 @@ function initMondialRelayWidget() {
       }
     });
   } else {
-    alert("Le script Mondial Relay ne s'est pas chargé correctement. Vérifie la balise <script> dans ton HTML.");
+    alert("Le script Mondial Relay ne s'est pas chargé correctement.");
   }
 }
 
@@ -579,6 +577,12 @@ function initProductPage() {
       const thumb = document.createElement('img');
       thumb.src = imgSrc;
       thumb.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+      thumb.style.width = '60px';
+      thumb.style.height = '60px';
+      thumb.style.objectFit = 'cover';
+      thumb.style.borderRadius = '4px';
+      thumb.style.cursor = 'pointer';
+      
       thumb.addEventListener('click', () => {
         mainImgEl.src = imgSrc;
         document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
@@ -639,18 +643,18 @@ function initProductPage() {
     header.addEventListener('click', () => {
       const item = header.parentElement;
       const content = item.querySelector('.accordion-content');
-      const icon = header.querySelector('i') || header.querySelector('span:last-child');
+      const toggleSign = header.querySelector('span:last-child');
 
       const isOpen = item.classList.contains('active');
 
       if (isOpen) {
         item.classList.remove('active');
         if (content) content.style.maxHeight = null;
-        if (icon && icon.tagName === 'I') icon.style.transform = 'rotate(0deg)';
+        if (toggleSign) toggleSign.textContent = '+';
       } else {
         item.classList.add('active');
         if (content) content.style.maxHeight = `${content.scrollHeight}px`;
-        if (icon && icon.tagName === 'I') icon.style.transform = 'rotate(180deg)';
+        if (toggleSign) toggleSign.textContent = '−';
       }
     });
   });
@@ -696,12 +700,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartToggleBtn = document.getElementById('cart-toggle-btn');
   const closeCartBtn = document.getElementById('close-cart-btn');
   const cartOverlay = document.getElementById('cart-overlay');
-  const checkoutBtn = document.getElementById('checkout-btn');
 
   if (cartToggleBtn) cartToggleBtn.addEventListener('click', openCart);
   if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
-  if (checkoutBtn) checkoutBtn.addEventListener('click', openCheckoutModal);
 
   // Appliquer le Code Promo
   const applyPromoBtn = document.getElementById('apply-promo-btn');
