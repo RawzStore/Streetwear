@@ -286,24 +286,29 @@ function getShippingCost() {
   return updateCheckoutSummary().shippingCost;
 }
 
-// --- LOGIQUE WIDGET MONDIAL RELAY ---
+// --- LOGIQUE WIDGET MONDIAL RELAY (CORRIGÉE) ---
 function initMondialRelayWidget() {
   const zipcode = document.getElementById('client-zipcode')?.value.trim() || '75001';
 
-  if (window.$ && $.mr_widget) {
-    $("#Zone_Widget").mr_widget({
-      Target: "#Zone_Widget",
-      Brand: "BDTEST11", // Remplace par ton code Enseigne Mondial Relay si disponible
+  if (typeof $ === 'undefined') {
+    alert("jQuery n'est pas chargé sur la page.");
+    return;
+  }
+
+  // Vérification de l'existence du plugin Mondial Relay
+  if ($.fn.MR_ParcelShopPicker) {
+    $("#Zone_Widget").MR_ParcelShopPicker({
+      Target: "#mr-relay-id",
+      TargetDisplay: "#mr-relay-name",
+      TargetDisplayInfoPR: "#mr-relay-address",
+      Brand: "BDTEST  ", // 8 caractères exacts avec 2 espaces pour le mode test
       Country: "FR",
       PostCode: zipcode,
-      ColMode: "REL",
-      AllowedDeliveryMode: "24R",
-      DefaultCountry: "FR",
-      Weight: "1000",
-      NbResults: "5",
+      ColLivMod: "24R",
+      AllowedCountries: "FR",
       OnParcelShopSelected: function(data) {
         const relayDetails = `${data.Nom} (${data.ID}) - ${data.Adresse1}, ${data.CP} ${data.Ville}`;
-        
+
         const relayIdEl = document.getElementById('mr-relay-id');
         const relayNameEl = document.getElementById('mr-relay-name');
         const relayAddressEl = document.getElementById('mr-relay-address');
@@ -320,6 +325,38 @@ function initMondialRelayWidget() {
         }
       }
     });
+  } else if ($.mr_widget) {
+    // Fallback pour la v3 si ancienne version chargée
+    $("#Zone_Widget").mr_widget({
+      Target: "#Zone_Widget",
+      Brand: "BDTEST  ",
+      Country: "FR",
+      PostCode: zipcode,
+      ColMode: "REL",
+      AllowedDeliveryMode: "24R",
+      DefaultCountry: "FR",
+      Weight: "1000",
+      NbResults: "5",
+      OnParcelShopSelected: function(data) {
+        const relayDetails = `${data.Nom} (${data.ID}) - ${data.Adresse1}, ${data.CP} ${data.Ville}`;
+        const relayIdEl = document.getElementById('mr-relay-id');
+        const relayNameEl = document.getElementById('mr-relay-name');
+        const relayAddressEl = document.getElementById('mr-relay-address');
+
+        if (relayIdEl) relayIdEl.value = data.ID;
+        if (relayNameEl) relayNameEl.value = data.Nom;
+        if (relayAddressEl) relayAddressEl.value = `${data.Adresse1}, ${data.CP} ${data.Ville}`;
+
+        const infoDiv = document.getElementById('mr-selected-info');
+        const detailsSpan = document.getElementById('mr-relay-details');
+        if (infoDiv && detailsSpan) {
+          detailsSpan.textContent = relayDetails;
+          infoDiv.style.display = 'block';
+        }
+      }
+    });
+  } else {
+    alert("Le script Mondial Relay ne s'est pas chargé correctement. Vérifie la balise <script> dans ton HTML.");
   }
 }
 
@@ -638,7 +675,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Bouton d'ouverture / recherche Mondial Relay
   const openMrBtn = document.getElementById('open-mr-widget-btn');
   if (openMrBtn) {
-    openMrBtn.addEventListener('click', () => {
+    openMrBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       initMondialRelayWidget();
     });
   }
