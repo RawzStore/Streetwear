@@ -231,6 +231,14 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
+// Obtenir les frais de livraison selon l'option sélectionnée
+function getShippingCost() {
+  const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
+  if (selectedMode === 'Mondial Relay') return 4.50;
+  if (selectedMode === 'Colissimo Domicile') return 6.90;
+  return 0.00; // Remise en main propre
+}
+
 // INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
 function initPayPalButton() {
   const paypalContainer = document.getElementById('paypal-button-container');
@@ -255,7 +263,9 @@ function initPayPalButton() {
     },
     createOrder: function(data, actions) {
       let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      let total = (subtotal * (1 - appliedDiscount)).toFixed(2);
+      let discountedSubtotal = subtotal * (1 - appliedDiscount);
+      let shippingCost = getShippingCost();
+      let total = (discountedSubtotal + shippingCost).toFixed(2);
 
       const firstname = document.getElementById('client-firstname')?.value.trim() || '';
       const lastname = document.getElementById('client-lastname')?.value.trim() || '';
@@ -309,12 +319,15 @@ function initPayPalButton() {
         const address = document.getElementById('client-address')?.value.trim() || '';
         const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
         const city = document.getElementById('client-city')?.value.trim() || '';
+        const deliveryMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Non spécifié';
 
         let orderDetails = cart.map(item => 
           `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
         ).join('\n');
 
-        let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+        let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 - appliedDiscount);
+        let shippingCost = getShippingCost();
+        let total = subtotal + shippingCost;
 
         const formData = {
           Nom: lastname,
@@ -324,8 +337,9 @@ function initPayPalButton() {
           Adresse: address,
           Code_postal: zipcode,
           Ville: city,
+          Mode_de_livraison: deliveryMode,
           Transaction_ID: details.id,
-          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nTOTAL PAYÉ : ${total.toFixed(2)} €`
+          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${total.toFixed(2)} €`
         };
 
         const paypalBtnContainer = document.getElementById('paypal-button-container');
@@ -490,6 +504,13 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
   initProductPage();
+
+  // Écoute des changements de mode de livraison pour recharger PayPal avec le bon montant
+  document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      initPayPalButton();
+    });
+  });
 
   // Mode sombre
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
