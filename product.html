@@ -14,6 +14,11 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
+  <!-- Dépendance jQuery pour le Widget Mondial Relay -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- Widget Carte Mondial Relay -->
+  <script src="https://widget.mondialrelay.com/parcelshop-picker/jquery.plugin.mondialrelay.parcelshoppicker.min.js"></script>
+
   <!-- SDK PayPal -->
   <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
 
@@ -314,6 +319,21 @@
           </div>
         </div>
 
+        <!-- Conteneur Carte Interactive Mondial Relay -->
+        <div id="zone-carte-relais" style="margin-top: 15px; margin-bottom: 15px;">
+          <label style="display: block; font-weight: 600; margin-bottom: 5px;">Choisis ton Point Relais :</label>
+          <div id="Zone_Widget" style="width: 100%; min-height: 300px;"></div>
+          
+          <!-- Champs masqués stockant le relais sélectionné -->
+          <input type="hidden" id="selected-relais-id" name="relais_id">
+          <input type="hidden" id="selected-relais-nom" name="relais_nom">
+          <input type="hidden" id="selected-relais-adresse" name="relais_adresse">
+          <input type="hidden" id="selected-relais-cp" name="relais_cp">
+          <input type="hidden" id="selected-relais-ville" name="relais_ville">
+
+          <p id="relais-choisi-text" style="font-size: 0.9rem; color: #16a34a; font-weight: 600; margin-top: 8px;"></p>
+        </div>
+
         <div class="form-group">
           <label for="client-address">Adresse *</label>
           <input type="text" id="client-address" name="adresse" required placeholder="12 rue des Fleurs">
@@ -327,6 +347,14 @@
             <label for="client-city">Ville *</label>
             <input type="text" id="client-city" name="ville" required placeholder="Paris">
           </div>
+        </div>
+
+        <!-- Champ Note / Instructions (Optionnel) -->
+        <div class="form-group" style="margin-top: 15px;">
+          <label for="client-note" style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+            Remarque / Instructions particulières <span style="font-weight: normal; opacity: 0.6;">(Optionnel)</span>
+          </label>
+          <textarea id="client-note" name="note" rows="3" placeholder="Ex: Point relais préféré, disponibilités pour la remise en main propre..." style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: inherit; font-size: 0.9rem; resize: vertical; box-sizing: border-box;"></textarea>
         </div>
 
         <div id="paypal-button-container" style="margin-top: 20px;"></div>
