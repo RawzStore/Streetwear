@@ -553,7 +553,7 @@ function initProductPage() {
 
       saveCart();
       updateCartUI();
-      openCart();
+      // Retrait de openCart() pour éviter d'ouvrir le tiroir du panier automatiquement
     });
   }
 
