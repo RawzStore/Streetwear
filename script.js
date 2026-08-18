@@ -223,6 +223,7 @@ function openCheckoutModal() {
   if (modal) {
     modal.classList.add('active');
     updateCheckoutSummary();
+    toggleMondialRelayZone();
     setTimeout(() => {
       initPayPalButton();
     }, 100);
@@ -285,6 +286,68 @@ function getShippingCost() {
   return updateCheckoutSummary().shippingCost;
 }
 
+// --- LOGIQUE WIDGET MONDIAL RELAY ---
+function initMondialRelayWidget() {
+  const zipcode = document.getElementById('client-zipcode')?.value.trim() || '75001';
+
+  if (window.$ && $.mr_widget) {
+    $("#Zone_Widget").mr_widget({
+      Target: "#Zone_Widget",
+      Brand: "BDTEST11", // Remplace par ton code Enseigne Mondial Relay si disponible
+      Country: "FR",
+      PostCode: zipcode,
+      ColMode: "REL",
+      AllowedDeliveryMode: "24R",
+      DefaultCountry: "FR",
+      Weight: "1000",
+      NbResults: "5",
+      OnParcelShopSelected: function(data) {
+        const relayDetails = `${data.Nom} (${data.ID}) - ${data.Adresse1}, ${data.CP} ${data.Ville}`;
+        
+        const relayIdEl = document.getElementById('mr-relay-id');
+        const relayNameEl = document.getElementById('mr-relay-name');
+        const relayAddressEl = document.getElementById('mr-relay-address');
+
+        if (relayIdEl) relayIdEl.value = data.ID;
+        if (relayNameEl) relayNameEl.value = data.Nom;
+        if (relayAddressEl) relayAddressEl.value = `${data.Adresse1}, ${data.CP} ${data.Ville}`;
+
+        const infoDiv = document.getElementById('mr-selected-info');
+        const detailsSpan = document.getElementById('mr-relay-details');
+        if (infoDiv && detailsSpan) {
+          detailsSpan.textContent = relayDetails;
+          infoDiv.style.display = 'block';
+        }
+      }
+    });
+  }
+}
+
+function toggleMondialRelayZone() {
+  const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value;
+  const mrZone = document.getElementById('zone-mondial-relay');
+
+  if (mrZone) {
+    if (selectedMode === 'Mondial Relay') {
+      mrZone.style.display = 'block';
+    } else {
+      mrZone.style.display = 'none';
+    }
+  }
+}
+
+function validateDeliverySelection() {
+  const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value;
+  if (selectedMode === 'Mondial Relay') {
+    const relayId = document.getElementById('mr-relay-id')?.value;
+    if (!relayId) {
+      alert("Merci de choisir un Point Relais sur la carte Mondial Relay avant de continuer.");
+      return false;
+    }
+  }
+  return true;
+}
+
 // INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
 function initPayPalButton() {
   const paypalContainer = document.getElementById('paypal-button-container');
@@ -305,6 +368,11 @@ function initPayPalButton() {
         form.reportValidity();
         return actions.reject();
       }
+
+      if (!validateDeliverySelection()) {
+        return actions.reject();
+      }
+
       return actions.resolve();
     },
     createOrder: function(data, actions) {
@@ -365,6 +433,15 @@ function initPayPalButton() {
         const city = document.getElementById('client-city')?.value.trim() || '';
         const deliveryMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Non spécifié';
 
+        const relayId = document.getElementById('mr-relay-id')?.value || '';
+        const relayName = document.getElementById('mr-relay-name')?.value || '';
+        const relayAddress = document.getElementById('mr-relay-address')?.value || '';
+
+        let relayInfoText = "";
+        if (deliveryMode === 'Mondial Relay' && relayId) {
+          relayInfoText = `\nPOINT RELAIS SÉLECTIONNÉ :\nID: ${relayId}\nNom: ${relayName}\nAdresse: ${relayAddress}\n`;
+        }
+
         let orderDetails = cart.map(item => 
           `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
         ).join('\n');
@@ -380,8 +457,9 @@ function initPayPalButton() {
           Code_postal: zipcode,
           Ville: city,
           Mode_de_livraison: deliveryMode,
+          Point_Relais: relayId ? `${relayName} (${relayId}) - ${relayAddress}` : 'N/A',
           Transaction_ID: details.id,
-          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${summary.shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${summary.total.toFixed(2)} €`
+          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\n${relayInfoText}\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${summary.shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${summary.total.toFixed(2)} €`
         };
 
         const paypalBtnContainer = document.getElementById('paypal-button-container');
@@ -546,14 +624,24 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
   initProductPage();
+  toggleMondialRelayZone();
 
-  // Écoute des changements de mode de livraison pour recalculer et recharger PayPal
+  // Écoute des changements de mode de livraison pour recalculer et recharger PayPal & Mondial Relay
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
       updateCheckoutSummary();
       initPayPalButton();
+      toggleMondialRelayZone();
     });
   });
+
+  // Bouton d'ouverture / recherche Mondial Relay
+  const openMrBtn = document.getElementById('open-mr-widget-btn');
+  if (openMrBtn) {
+    openMrBtn.addEventListener('click', () => {
+      initMondialRelayWidget();
+    });
+  }
 
   // Mode sombre
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
