@@ -64,6 +64,7 @@ const products = [
 
 let cart = JSON.parse(localStorage.getItem('rawz_cart')) || [];
 let appliedDiscount = 0;
+let selectedRelayInfo = null; // Stocke les infos du Point Relais sélectionné
 
 // Fonctions Menu Burger
 function openMenu() {
@@ -137,6 +138,14 @@ function saveCart() {
   localStorage.setItem('rawz_cart', JSON.stringify(cart));
 }
 
+// Obtenir les frais de livraison selon l'option sélectionnée
+function getShippingCost() {
+  const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
+  if (selectedMode === 'Mondial Relay') return 4.50;
+  if (selectedMode === 'Colissimo Domicile') return 6.90;
+  return 0.00; // Remise en main propre
+}
+
 function updateCartUI() {
   const cartItemsContainer = document.getElementById('cart-items');
   const cartBadge = document.getElementById('cart-badge');
@@ -158,19 +167,33 @@ function updateCartUI() {
       <div class="cart-item-info">
         <strong>${item.name}</strong>
         <small>Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''}</small>
-        <small>${item.price.toFixed(2)} €</small>
+        <small>${(item.price * item.quantity).toFixed(2)} €</small>
         <div class="qty-controls">
-          <button onclick="changeQuantity('${item.key}', -1)">-</button>
+          <button class="btn-qty-minus" data-key="${item.key}">-</button>
           <span>${item.quantity}</span>
-          <button onclick="changeQuantity('${item.key}', 1)">+</button>
+          <button class="btn-qty-plus" data-key="${item.key}">+</button>
         </div>
       </div>
-      <button onclick="removeFromCart('${item.key}')" class="delete-btn">✕</button>
+      <button class="btn-remove delete-btn" data-key="${item.key}">✕</button>
     `;
     cartItemsContainer.appendChild(itemEl);
   });
 
-  let finalTotal = subtotal * (1 - appliedDiscount);
+  // Écouteurs pour la quantité et suppression
+  cartItemsContainer.querySelectorAll('.btn-qty-minus').forEach(btn => {
+    btn.addEventListener('click', () => changeQuantity(btn.dataset.key, -1));
+  });
+  cartItemsContainer.querySelectorAll('.btn-qty-plus').forEach(btn => {
+    btn.addEventListener('click', () => changeQuantity(btn.dataset.key, 1));
+  });
+  cartItemsContainer.querySelectorAll('.btn-remove').forEach(btn => {
+    btn.addEventListener('click', () => removeFromCart(btn.dataset.key));
+  });
+
+  let discountedSubtotal = subtotal * (1 - appliedDiscount);
+  let shippingCost = cart.length > 0 ? getShippingCost() : 0;
+  let finalTotal = discountedSubtotal + shippingCost;
+
   if (cartBadge) cartBadge.textContent = count;
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2)} €`;
 }
@@ -220,6 +243,7 @@ function openCheckoutModal() {
   const modal = document.getElementById('checkout-modal');
   if (modal) {
     modal.classList.add('active');
+    handleDeliveryModeChange();
     setTimeout(() => {
       initPayPalButton();
     }, 100);
@@ -231,12 +255,42 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// Obtenir les frais de livraison selon l'option sélectionnée
-function getShippingCost() {
+// GESTION DU WIDGET ET DE L'AFFICHAGE MONDIAL RELAY
+function handleDeliveryModeChange() {
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
-  if (selectedMode === 'Mondial Relay') return 4.50;
-  if (selectedMode === 'Colissimo Domicile') return 6.90;
-  return 0.00; // Remise en main propre
+  const mrContainer = document.getElementById('mondial-relay-container');
+
+  if (selectedMode === 'Mondial Relay') {
+    if (mrContainer) mrContainer.style.display = 'block';
+    initMondialRelayWidget();
+  } else {
+    if (mrContainer) mrContainer.style.display = 'none';
+  }
+  updateCartUI();
+}
+
+function initMondialRelayWidget() {
+  const zipcode = document.getElementById('client-zipcode')?.value.trim() || '75001';
+  const city = document.getElementById('client-city')?.value.trim() || '';
+
+  if (typeof jQuery !== 'undefined' && jQuery.fn.MR_Target) {
+    jQuery("#Zone_Widget").MR_Target({
+      Target: "#Target_Widget",
+      Brand: "BDTEST  ", // Remplace avec ton code Enseigne Mondial Relay si tu en as un
+      Country: "FR",
+      PostCode: zipcode,
+      City: city,
+      ColLivMod: "24R",
+      NbResults: "5",
+      OnSelect: function(data) {
+        selectedRelayInfo = data;
+        const displayDiv = document.getElementById('selected-relay-display');
+        if (displayDiv) {
+          displayDiv.innerHTML = `<strong>Point Relais Sélectionné :</strong><br>${data.Nom} - ${data.Adresse1}, ${data.CP} ${data.Ville} (ID: ${data.ID})`;
+        }
+      }
+    });
+  }
 }
 
 // INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
@@ -255,10 +309,18 @@ function initPayPalButton() {
     },
     onClick: function(data, actions) {
       const form = document.getElementById('checkout-form');
+      const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value;
+
       if (form && !form.checkValidity()) {
         form.reportValidity();
         return actions.reject();
       }
+
+      if (selectedMode === 'Mondial Relay' && !selectedRelayInfo) {
+        alert("Merci de sélectionner un Point Relais sur la carte avant de continuer.");
+        return actions.reject();
+      }
+
       return actions.resolve();
     },
     createOrder: function(data, actions) {
@@ -320,6 +382,12 @@ function initPayPalButton() {
         const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
         const city = document.getElementById('client-city')?.value.trim() || '';
         const deliveryMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Non spécifié';
+        const clientNote = document.getElementById('client-note')?.value.trim() || 'Aucune note particulière';
+
+        let relayDetailsText = "N/A";
+        if (deliveryMode === 'Mondial Relay' && selectedRelayInfo) {
+          relayDetailsText = `${selectedRelayInfo.Nom} (ID: ${selectedRelayInfo.ID}) - ${selectedRelayInfo.Adresse1}, ${selectedRelayInfo.CP} ${selectedRelayInfo.Ville}`;
+        }
 
         let orderDetails = cart.map(item => 
           `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
@@ -338,8 +406,10 @@ function initPayPalButton() {
           Code_postal: zipcode,
           Ville: city,
           Mode_de_livraison: deliveryMode,
+          Point_Relais: relayDetailsText,
+          Note_Client: clientNote,
           Transaction_ID: details.id,
-          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${total.toFixed(2)} €`
+          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\nPOINT RELAIS : ${relayDetailsText}\n\nNOTE / REMARQUE DU CLIENT :\n${clientNote}\n\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${total.toFixed(2)} €`
         };
 
         const paypalBtnContainer = document.getElementById('paypal-button-container');
@@ -360,13 +430,14 @@ function initPayPalButton() {
           if (response.ok) {
             alert(`Merci ${details.payer.name.given_name} ! Ta commande a été validée avec succès.`);
           } else {
-            alert(`Paiement PayPal réussi (ID: ${details.id}), mais une erreur est survenue lors de l'enregistrement.`);
+            alert(`Paiement PayPal réussi (ID: ${details.id}), mais une erreur est survenue lors de l'enregistrement Formspree.`);
           }
         } catch (e) {
           console.error("Erreur de sauvegarde Formspree", e);
           alert(`Paiement réussi (ID: ${details.id}), mais la confirmation n'a pas pu être envoyée automatiquement.`);
         } finally {
           cart = [];
+          selectedRelayInfo = null;
           saveCart();
           updateCartUI();
           closeCheckoutModal();
@@ -473,10 +544,11 @@ function initProductPage() {
 
       saveCart();
       updateCartUI();
+      openCart();
     });
   }
 
-  // Initialisation des accordéons (Description & Livraison)
+  // Accordéons
   const accordionHeaders = document.querySelectorAll('.accordion-header');
   accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
@@ -505,12 +577,19 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   initProductPage();
 
-  // Écoute des changements de mode de livraison pour recharger PayPal avec le bon montant
+  // Écoute des changements de mode de livraison
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
+      handleDeliveryModeChange();
       initPayPalButton();
     });
   });
+
+  // Mise à jour du widget si l'utilisateur change de code postal ou ville
+  const zipInput = document.getElementById('client-zipcode');
+  const cityInput = document.getElementById('client-city');
+  if (zipInput) zipInput.addEventListener('change', initMondialRelayWidget);
+  if (cityInput) cityInput.addEventListener('change', initMondialRelayWidget);
 
   // Mode sombre
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
@@ -534,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
   if (checkoutBtn) checkoutBtn.addEventListener('click', openCheckoutModal);
 
-  // Appliquer le Code Promo
+  // Code Promo
   const applyPromoBtn = document.getElementById('apply-promo-btn');
   const promoInput = document.getElementById('promo-input');
   const promoMsg = document.getElementById('promo-msg');
@@ -603,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
-  // Modales du Footer
+  // Modales Footer
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
 
