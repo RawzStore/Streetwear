@@ -329,6 +329,24 @@
           </div>
         </div>
 
+        <!-- RÉCAPITULATIF DU PRIX EN TEMPS RÉEL -->
+        <div class="checkout-summary" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; color: #555;">
+            <span>Sous-total produits :</span>
+            <span id="summary-subtotal">0,00 €</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: #555;">
+            <span>Frais de livraison :</span>
+            <span id="summary-shipping">4,50 €</span>
+          </div>
+          <hr style="border: none; border-top: 1px solid #ddd; margin: 8px 0;">
+          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000;">
+            <span>Total à payer :</span>
+            <span id="summary-total">0,00 €</span>
+          </div>
+        </div>
+
+        <!-- Conteneur dynamique PayPal -->
         <div id="paypal-button-container" style="margin-top: 20px;"></div>
       </form>
     </div>
