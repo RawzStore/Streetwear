@@ -552,7 +552,6 @@ function initProductPage() {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  // Ciblages des éléments HTML (compatibilité multi-IDs)
   const titleEl = document.getElementById('product-title') || document.getElementById('product-name');
   const priceEl = document.getElementById('product-price');
   const descEl = document.getElementById('product-description');
@@ -569,7 +568,6 @@ function initProductPage() {
   if (priceEl) priceEl.textContent = `${product.price.toFixed(2)} €`;
   if (descEl) descEl.textContent = product.description;
 
-  // Obtenir la liste d'images correspondant à la couleur active ou les images générales
   const getImagesForColor = (color) => {
     if (product.imagesByColor && product.imagesByColor[color] && product.imagesByColor[color].length > 0) {
       return product.imagesByColor[color];
@@ -580,32 +578,24 @@ function initProductPage() {
     return [product.mainImage];
   };
 
-  // Affichage dynamique des vignettes dans #thumbnails-container
   const updateGallery = (imageList) => {
     if (!thumbsContainer || !mainImgEl || !imageList || imageList.length === 0) return;
     
-    // Réinitialiser le conteneur des vignettes
     thumbsContainer.innerHTML = '';
-    
-    // Définir la première image de la liste comme image principale
     mainImgEl.src = imageList[0];
 
-    // Créer chaque vignette
     imageList.forEach((imgSrc, index) => {
       const thumb = document.createElement('img');
       thumb.src = imgSrc;
       thumb.alt = `${product.name} - ${index + 1}`;
       thumb.className = `thumbnail ${index === 0 ? 'active' : ''}`;
       
-      // CLIC SUR UNE VIGNETTE : Change l'image principale
       thumb.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        // Changer la source de l'image principale
         mainImgEl.src = imgSrc;
 
-        // Mettre à jour les classes "active" sur les vignettes
         const currentThumbs = thumbsContainer.querySelectorAll('.thumbnail');
         currentThumbs.forEach(t => t.classList.remove('active'));
         thumb.classList.add('active');
@@ -615,7 +605,6 @@ function initProductPage() {
     });
   };
 
-  // Affichage des choix de couleurs (Swatches)
   if (colorSwatchesContainer && product.colors && product.colors.length > 0) {
     colorSwatchesContainer.innerHTML = '';
     if (selectedColorName) selectedColorName.textContent = activeColor;
@@ -628,7 +617,6 @@ function initProductPage() {
       swatch.title = color;
       swatch.className = `color-swatch ${index === 0 ? 'active' : ''}`;
 
-      // CLIC SUR UNE COULEUR : Recharge la galerie d'images
       swatch.addEventListener('click', () => {
         activeColor = color;
         if (selectedColorName) selectedColorName.textContent = color;
@@ -636,7 +624,6 @@ function initProductPage() {
         colorSwatchesContainer.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
         swatch.classList.add('active');
 
-        // Régénérer les vignettes selon la couleur cliquée
         updateGallery(getImagesForColor(color));
       });
 
@@ -644,15 +631,12 @@ function initProductPage() {
     });
   }
 
-  // Chargement initial des vignettes
   updateGallery(getImagesForColor(activeColor));
 
-  // Tailles du produit
   if (sizeSelect && product.sizes) {
     sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
   }
 
-  // Ajout au panier
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedSize = sizeSelect ? sizeSelect.value : (product.sizes ? product.sizes[0] : '');
@@ -684,7 +668,6 @@ function initProductPage() {
     });
   }
 
-  // Accordéons produit (Description, Livraison, etc.)
   const accordionHeaders = document.querySelectorAll('.accordion-header');
   accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
@@ -716,16 +699,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initProductPage();
   toggleMondialRelayZone();
 
-  // Événements livraison
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
       updateCheckoutSummary();
-      initPayPalButton();
       toggleMondialRelayZone();
     });
   });
 
-  // Widget Mondial Relay
   const openMrBtn = document.getElementById('open-mr-widget-btn');
   if (openMrBtn) {
     openMrBtn.addEventListener('click', (e) => {
@@ -734,7 +714,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Mode sombre
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', () => {
@@ -745,7 +724,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Ouverture/Fermeture Panier
   const cartToggleBtn = document.getElementById('cart-toggle-btn');
   const closeCartBtn = document.getElementById('close-cart-btn');
   const cartOverlay = document.getElementById('cart-overlay');
@@ -754,7 +732,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 
-  // Code Promo
   const applyPromoBtn = document.getElementById('apply-promo-btn');
   const promoInput = document.getElementById('promo-input');
   const promoMsg = document.getElementById('promo-msg');
@@ -776,11 +753,9 @@ document.addEventListener('DOMContentLoaded', () => {
         promoMsg.className = "promo-message error";
       }
       updateCartUI();
-      initPayPalButton();
     });
   }
 
-  // Filtres / Recherche / Tri
   const searchInput = document.getElementById('search-input');
   const sortSelect = document.getElementById('sort-select');
 
@@ -797,7 +772,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Menu burger
   const burgerToggle = document.getElementById('burger-toggle');
   const closeMenuBtn = document.getElementById('close-menu');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -822,7 +796,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
-  // Modales Footer
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
 
