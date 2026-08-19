@@ -103,6 +103,10 @@ body {
   height: 75px;
   width: auto;
   object-fit: contain;
+  background-color: #ffffff !important; /* Force le fond blanc opaque */
+  padding: 6px 10px;                   /* Espace le blanc autour des pointes du logo */
+  border-radius: 6px;                  /* Adoucit légèrement les coins du cadre */
+  display: inline-block;
 }
 
 .back-link {
@@ -1112,6 +1116,7 @@ body.dark-theme .submit-order-btn .spinner {
 
   .logo-img {
     height: 45px;
+    padding: 4px 6px; /* Ajuste l'espacement blanc sur écran mobile */
   }
 
   .nav-controls {
