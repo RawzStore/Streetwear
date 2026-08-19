@@ -182,6 +182,7 @@ function updateCartUI() {
     const itemEl = document.createElement('div');
     itemEl.className = 'cart-item';
     itemEl.innerHTML = `
+      <img src="${item.image || 'images/default.jpg'}" alt="${item.name}" class="cart-item-img">
       <div class="cart-item-info">
         <strong>${item.name}</strong>
         <small>Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''}</small>
@@ -642,6 +643,9 @@ function initProductPage() {
       const selectedSize = sizeSelect ? sizeSelect.value : (product.sizes ? product.sizes[0] : '');
       const cartKey = `${product.id}-${selectedSize}-${activeColor || 'default'}`;
 
+      const currentImages = getImagesForColor(activeColor);
+      const itemImage = currentImages[0] || product.mainImage;
+
       const existingItem = cart.find(i => i.key === cartKey);
       if (existingItem) {
         existingItem.quantity += 1;
@@ -653,6 +657,7 @@ function initProductPage() {
           price: product.price,
           selectedSize: selectedSize,
           selectedColor: activeColor,
+          image: itemImage,
           quantity: 1
         });
       }
