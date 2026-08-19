@@ -542,7 +542,7 @@ function initPayPalButton() {
 }
 
 // ==========================================
-// 8. PAGE PRODUIT (AVEC GESTION CORRIGÉE DES VIGNETTES)
+// 8. PAGE PRODUIT (GESTION INTERACTIVE DES VIGNETTES ET COULEURS)
 // ==========================================
 function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -552,6 +552,7 @@ function initProductPage() {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
+  // Ciblages des éléments HTML (compatibilité multi-IDs)
   const titleEl = document.getElementById('product-title') || document.getElementById('product-name');
   const priceEl = document.getElementById('product-price');
   const descEl = document.getElementById('product-description');
@@ -567,9 +568,8 @@ function initProductPage() {
   if (titleEl) titleEl.textContent = product.name;
   if (priceEl) priceEl.textContent = `${product.price.toFixed(2)} €`;
   if (descEl) descEl.textContent = product.description;
-  if (mainImgEl) mainImgEl.src = product.mainImage;
 
-  // Récupérer les images selon la couleur sélectionnée ou le tableau général
+  // Obtenir la liste d'images correspondant à la couleur active ou les images générales
   const getImagesForColor = (color) => {
     if (product.imagesByColor && product.imagesByColor[color] && product.imagesByColor[color].length > 0) {
       return product.imagesByColor[color];
@@ -580,22 +580,34 @@ function initProductPage() {
     return [product.mainImage];
   };
 
-  // Rendu/Mise à jour des miniatures (thumbnails)
+  // Affichage dynamique des vignettes dans #thumbnails-container
   const updateGallery = (imageList) => {
     if (!thumbsContainer || !mainImgEl || !imageList || imageList.length === 0) return;
     
+    // Réinitialiser le conteneur des vignettes
     thumbsContainer.innerHTML = '';
+    
+    // Définir la première image de la liste comme image principale
     mainImgEl.src = imageList[0];
 
+    // Créer chaque vignette
     imageList.forEach((imgSrc, index) => {
       const thumb = document.createElement('img');
       thumb.src = imgSrc;
-      thumb.alt = `${product.name} - Vue ${index + 1}`;
+      thumb.alt = `${product.name} - ${index + 1}`;
       thumb.className = `thumbnail ${index === 0 ? 'active' : ''}`;
       
-      thumb.addEventListener('click', () => {
+      // CLIC SUR UNE VIGNETTE : Change l'image principale
+      thumb.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Changer la source de l'image principale
         mainImgEl.src = imgSrc;
-        thumbsContainer.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+
+        // Mettre à jour les classes "active" sur les vignettes
+        const currentThumbs = thumbsContainer.querySelectorAll('.thumbnail');
+        currentThumbs.forEach(t => t.classList.remove('active'));
         thumb.classList.add('active');
       });
 
@@ -603,7 +615,7 @@ function initProductPage() {
     });
   };
 
-  // Rendu des vignettes de couleurs (swatches)
+  // Affichage des choix de couleurs (Swatches)
   if (colorSwatchesContainer && product.colors && product.colors.length > 0) {
     colorSwatchesContainer.innerHTML = '';
     if (selectedColorName) selectedColorName.textContent = activeColor;
@@ -616,6 +628,7 @@ function initProductPage() {
       swatch.title = color;
       swatch.className = `color-swatch ${index === 0 ? 'active' : ''}`;
 
+      // CLIC SUR UNE COULEUR : Recharge la galerie d'images
       swatch.addEventListener('click', () => {
         activeColor = color;
         if (selectedColorName) selectedColorName.textContent = color;
@@ -623,6 +636,7 @@ function initProductPage() {
         colorSwatchesContainer.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
         swatch.classList.add('active');
 
+        // Régénérer les vignettes selon la couleur cliquée
         updateGallery(getImagesForColor(color));
       });
 
@@ -630,15 +644,15 @@ function initProductPage() {
     });
   }
 
-  // Initialisation de la galerie principale
+  // Chargement initial des vignettes
   updateGallery(getImagesForColor(activeColor));
 
-  // Options de taille
+  // Tailles du produit
   if (sizeSelect && product.sizes) {
     sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
   }
 
-  // Bouton Ajouter au panier
+  // Ajout au panier
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedSize = sizeSelect ? sizeSelect.value : (product.sizes ? product.sizes[0] : '');
@@ -670,7 +684,7 @@ function initProductPage() {
     });
   }
 
-  // Accordéons produit (Description / Livraison / Retours)
+  // Accordéons produit (Description, Livraison, etc.)
   const accordionHeaders = document.querySelectorAll('.accordion-header');
   accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
