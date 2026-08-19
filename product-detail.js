@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const productPrice = document.getElementById('product-price');
   const productDescription = document.getElementById('product-description');
   const displayImg = document.getElementById('display-img');
-  const mainImgContainer = document.querySelector('.main-image-container');
   const thumbnailsContainer = document.getElementById('thumbnails-container');
   const colorSelect = document.getElementById('color-select');
   const sizeSelect = document.getElementById('size-select');
@@ -41,42 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (productPrice) productPrice.textContent = `${product.price.toFixed(2)} €`;
   if (productDescription) productDescription.textContent = product.description || '';
 
-  // 5. Effet de Zoom (Souris + Tactile Mobile)
-  if (mainImgContainer && displayImg) {
-    
-    // Fonction centrale pour calculer le zoom
-    const applyZoom = (clientX, clientY) => {
-      const rect = mainImgContainer.getBoundingClientRect();
-      const x = ((clientX - rect.left) / rect.width) * 100;
-      const y = ((clientY - rect.top) / rect.height) * 100;
-
-      displayImg.style.transformOrigin = `${x}% ${y}%`;
-      displayImg.style.transform = 'scale(2)';
-    };
-
-    const resetZoom = () => {
-      displayImg.style.transform = 'scale(1)';
-      displayImg.style.transformOrigin = 'center center';
-    };
-
-    // --- PC (Souris) ---
-    mainImgContainer.addEventListener('mousemove', (e) => applyZoom(e.clientX, e.clientY));
-    mainImgContainer.addEventListener('mouseleave', resetZoom);
-
-    // --- MOBILE (Tactile) ---
-    mainImgContainer.addEventListener('touchmove', (e) => {
-      if (e.touches.length > 0) {
-        e.preventDefault(); 
-        const touch = e.touches[0];
-        applyZoom(touch.clientX, touch.clientY);
-      }
-    }, { passive: false });
-
-    mainImgContainer.addEventListener('touchend', resetZoom);
-    mainImgContainer.addEventListener('touchcancel', resetZoom);
-  }
-
-  // 6. Gestion de la Galerie d'images
+  // 5. Gestion de la Galerie d'images
   function updateGallery(imagesList) {
     if (!imagesList || imagesList.length === 0) return;
 
@@ -112,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return product.images || [product.mainImage];
   }
 
-  // 7. Injection des Couleurs
+  // 6. Injection des Couleurs
   if (colorSelect && product.colors && product.colors.length > 0) {
     colorSelect.innerHTML = '';
     product.colors.forEach(color => {
@@ -129,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     colorSelect.parentElement.style.display = 'none';
   }
 
-  // 8. Injection des Tailles
+  // 7. Injection des Tailles
   if (sizeSelect && product.sizes && product.sizes.length > 0) {
     sizeSelect.innerHTML = '';
     product.sizes.forEach(size => {
@@ -142,11 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
     sizeSelect.parentElement.style.display = 'none';
   }
 
-  // 9. Galerie initiale
+  // 8. Galerie initiale
   const initialColor = colorSelect ? colorSelect.value : null;
   updateGallery(getImagesForColor(initialColor));
 
-  // 10. Ajout au panier avec notification Toast
+  // 9. Ajout au panier avec notification Toast
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedColor = colorSelect ? colorSelect.value : '';
