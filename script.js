@@ -538,20 +538,24 @@ function initPayPalButton() {
 // LOGIQUE SPÉCIFIQUE À LA PAGE PRODUIT (product.html)
 function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
-  const productId = parseInt(urlParams.get('id'));
+  const productId = parseInt(urlParams.get('id'), 10);
   if (isNaN(productId)) return;
 
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  const titleEl = document.getElementById('product-title');
+  // Ciblage des éléments (prend en compte product.html et product-detail.html)
+  const titleEl = document.getElementById('product-title') || document.getElementById('product-name');
   const priceEl = document.getElementById('product-price');
   const descEl = document.getElementById('product-description');
-  const mainImgEl = document.getElementById('main-product-img');
+  const mainImgEl = document.getElementById('main-product-img') || document.getElementById('display-img');
   const thumbsContainer = document.getElementById('thumbnails-container');
+  const colorSwatchesContainer = document.getElementById('color-swatches-container');
+  const selectedColorName = document.getElementById('selected-color-name');
   const sizeSelect = document.getElementById('size-select');
-  const colorSelect = document.getElementById('color-select');
   const addToCartBtn = document.getElementById('add-to-cart-btn');
+
+  let activeColor = (product.colors && product.colors.length > 0) ? product.colors[0] : '';
 
   if (titleEl) titleEl.textContent = product.name;
   if (priceEl) priceEl.textContent = `${product.price.toFixed(2)} €`;
@@ -563,9 +567,9 @@ function initProductPage() {
     sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
   }
 
-  // Couleurs & Galerie dynamique
+  // Fonction de mise à jour de la galerie principale
   const updateGallery = (imageList) => {
-    if (!thumbsContainer || !mainImgEl || !imageList) return;
+    if (!thumbsContainer || !mainImgEl || !imageList || imageList.length === 0) return;
     thumbsContainer.innerHTML = '';
     mainImgEl.src = imageList[0];
 
@@ -573,11 +577,6 @@ function initProductPage() {
       const thumb = document.createElement('img');
       thumb.src = imgSrc;
       thumb.className = `thumbnail ${index === 0 ? 'active' : ''}`;
-      thumb.style.width = '60px';
-      thumb.style.height = '60px';
-      thumb.style.objectFit = 'cover';
-      thumb.style.borderRadius = '4px';
-      thumb.style.cursor = 'pointer';
       
       thumb.addEventListener('click', () => {
         mainImgEl.src = imgSrc;
@@ -588,30 +587,49 @@ function initProductPage() {
     });
   };
 
-  if (colorSelect && product.colors) {
-    colorSelect.innerHTML = product.colors.map(c => `<option value="${c}">${c}</option>`).join('');
-    
-    if (product.imagesByColor) {
-      updateGallery(product.imagesByColor[product.colors[0]]);
-      colorSelect.addEventListener('change', (e) => {
-        const selectedColor = e.target.value;
-        if (product.imagesByColor[selectedColor]) {
-          updateGallery(product.imagesByColor[selectedColor]);
-        }
-      });
-    } else if (product.images) {
-      updateGallery(product.images);
+  // Récupérer les images associées à une couleur
+  const getImagesForColor = (color) => {
+    if (product.imagesByColor && product.imagesByColor[color]) {
+      return product.imagesByColor[color];
     }
-  } else if (product.images) {
-    updateGallery(product.images);
+    return product.images || [product.mainImage];
+  };
+
+  // Injection des vignettes de couleurs (Swatches)
+  if (colorSwatchesContainer && product.colors && product.colors.length > 0) {
+    colorSwatchesContainer.innerHTML = '';
+    if (selectedColorName) selectedColorName.textContent = activeColor;
+
+    product.colors.forEach((color, index) => {
+      const colorImages = getImagesForColor(color);
+      const swatch = document.createElement('img');
+      swatch.src = colorImages[0] || product.mainImage;
+      swatch.alt = color;
+      swatch.title = color;
+      swatch.className = `color-swatch ${index === 0 ? 'active' : ''}`;
+
+      swatch.addEventListener('click', () => {
+        activeColor = color;
+        if (selectedColorName) selectedColorName.textContent = color;
+
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+
+        updateGallery(getImagesForColor(color));
+      });
+
+      colorSwatchesContainer.appendChild(swatch);
+    });
   }
+
+  // Chargement de la galerie initiale
+  updateGallery(getImagesForColor(activeColor));
 
   // Ajouter au panier
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
-      const selectedSize = sizeSelect ? sizeSelect.value : product.sizes[0];
-      const selectedColor = colorSelect ? colorSelect.value : (product.colors ? product.colors[0] : null);
-      const cartKey = `${product.id}-${selectedSize}-${selectedColor || 'default'}`;
+      const selectedSize = sizeSelect ? sizeSelect.value : (product.sizes ? product.sizes[0] : '');
+      const cartKey = `${product.id}-${selectedSize}-${activeColor || 'default'}`;
 
       const existingItem = cart.find(i => i.key === cartKey);
       if (existingItem) {
@@ -623,17 +641,24 @@ function initProductPage() {
           name: product.name,
           price: product.price,
           selectedSize: selectedSize,
-          selectedColor: selectedColor,
+          selectedColor: activeColor,
           quantity: 1
         });
       }
 
       saveCart();
       updateCartUI();
+
+      // Notification Toast si présente
+      const toast = document.getElementById('toast-notification');
+      if (toast) {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
     });
   }
 
-  // Initialisation des accordéons
+  // Accordéons
   const accordionHeaders = document.querySelectorAll('.accordion-header');
   accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
