@@ -1261,23 +1261,44 @@ body.dark-theme .submit-order-btn .spinner {
 }
 
 /* ==========================================
-   11. FIX WIDGET MONDIAL RELAY
+   11. FIX WIDGET MONDIAL RELAY (DESKTOP & MOBILE)
    ========================================== */
 #Zone_Widget {
   width: 100% !important;
   max-width: 100% !important;
-  overflow-x: auto !important;
-}
-
-#Zone_Widget iframe,
-#Zone_Widget table,
-#Zone_Widget div {
-  max-width: 100% !important;
   box-sizing: border-box !important;
 }
 
-.modal-content, 
-#checkout-modal .modal-content {
-  max-width: 700px !important;
-  width: 95% !important;
+#Zone_Widget *, 
+#Zone_Widget div, 
+#Zone_Widget td, 
+#Zone_Widget tr {
+  box-sizing: border-box !important;
+}
+
+#Zone_Widget .MR-Widget,
+#Zone_Widget .MR_Widget {
+  width: 100% !important;
+  height: auto !important;
+}
+
+@media (max-width: 768px) {
+  .modal-content, 
+  #checkout-modal .modal-content {
+    width: 96% !important;
+    padding: 12px !important;
+  }
+
+  #Zone_Widget .MR-Map, 
+  #Zone_Widget .leaflet-container {
+    min-height: 250px !important;
+    max-height: 300px !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  #Zone_Widget table {
+    display: block !important;
+    width: 100% !important;
+  }
 }
