@@ -1,4 +1,6 @@
-// Base de données : 4 articles complets
+// ==========================================
+// 1. BASE DE DONNÉES PRODUITS
+// ==========================================
 const products = [
   { 
     id: 1, 
@@ -62,12 +64,15 @@ const products = [
   }
 ];
 
+// Variables d'état
 let cart = JSON.parse(localStorage.getItem('rawz_cart')) || [];
 let appliedDiscount = 0;
 let currentCategory = 'all';
 let currentSearchTerm = '';
 
-// Fonctions Menu Burger
+// ==========================================
+// 2. MENU BURGER
+// ==========================================
 function openMenu() {
   const menuDrawer = document.getElementById('menu-drawer');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -86,7 +91,9 @@ function closeMenu() {
   }
 }
 
-// Rendu du catalogue sur index.html
+// ==========================================
+// 3. CATALOGUE & FILTRES
+// ==========================================
 function renderProducts(items) {
   const productGrid = document.getElementById('product-grid');
   if (!productGrid) return;
@@ -116,21 +123,17 @@ function renderProducts(items) {
   });
 }
 
-// Application combinée des filtres (Catégorie + Recherche + Tri)
 function applyFiltersAndRender() {
   let filtered = [...products];
 
-  // Filtre par catégorie
   if (currentCategory !== 'all') {
     filtered = filtered.filter(p => p.category === currentCategory);
   }
 
-  // Filtre par mot-clé de recherche
   if (currentSearchTerm.trim() !== '') {
     filtered = filtered.filter(p => p.name.toLowerCase().includes(currentSearchTerm.toLowerCase()));
   }
 
-  // Application du tri actuel s'il existe
   const sortSelect = document.getElementById('sort-select');
   if (sortSelect && sortSelect.value) {
     if (sortSelect.value === 'price-asc') filtered.sort((a, b) => a.price - b.price);
@@ -140,7 +143,6 @@ function applyFiltersAndRender() {
   renderProducts(filtered);
 }
 
-// Fonction centrale de filtrage par catégorie
 function filterByCategory(category) {
   currentCategory = category;
 
@@ -155,7 +157,9 @@ function filterByCategory(category) {
   applyFiltersAndRender();
 }
 
-// Logique du Panier
+// ==========================================
+// 4. PANIER (LOCALSTORAGE & UI)
+// ==========================================
 function saveCart() {
   localStorage.setItem('rawz_cart', JSON.stringify(cart));
 }
@@ -217,7 +221,6 @@ function removeFromCart(cartItemKey) {
   updateCartUI();
 }
 
-// Ouverture & fermeture Panier
 function openCart() {
   const cartDrawer = document.getElementById('cart-drawer');
   const cartOverlay = document.getElementById('cart-overlay');
@@ -236,7 +239,9 @@ function closeCart() {
   }
 }
 
-// Modale Checkout
+// ==========================================
+// 5. MODALE CHECKOUT & CALCULS
+// ==========================================
 function openCheckoutModal() {
   if (cart.length === 0) {
     alert("Ton panier est vide !");
@@ -258,7 +263,6 @@ function closeCheckoutModal() {
   if (modal) modal.classList.remove('active');
 }
 
-// Calculer et afficher le récapitulatif du prix en temps réel
 function updateCheckoutSummary() {
   let subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   let discountedSubtotal = subtotal * (1 - appliedDiscount);
@@ -274,7 +278,6 @@ function updateCheckoutSummary() {
     shippingCost = 0.00;
   }
 
-  // Offrir la livraison si sous-total >= 80€ (hors remise en main propre)
   if (discountedSubtotal >= 80 && selectedMode !== 'Remise en main propre') {
     shippingCost = 0.00;
   }
@@ -304,12 +307,9 @@ function updateCheckoutSummary() {
   };
 }
 
-// Obtenir la valeur brute des frais de livraison
-function getShippingCost() {
-  return updateCheckoutSummary().shippingCost;
-}
-
-// --- LOGIQUE WIDGET MONDIAL RELAY ---
+// ==========================================
+// 6. MONDIAL RELAY
+// ==========================================
 function initMondialRelayWidget() {
   const zipcode = document.getElementById('client-zipcode')?.value.trim() || '75001';
 
@@ -317,6 +317,25 @@ function initMondialRelayWidget() {
     alert("jQuery n'est pas chargé sur la page.");
     return;
   }
+
+  const handleSelected = function(data) {
+    const relayDetails = `${data.Nom} (${data.ID}) - ${data.Adresse1}, ${data.CP} ${data.Ville}`;
+
+    const relayIdEl = document.getElementById('mr-relay-id');
+    const relayNameEl = document.getElementById('mr-relay-name');
+    const relayAddressEl = document.getElementById('mr-relay-address');
+
+    if (relayIdEl) relayIdEl.value = data.ID;
+    if (relayNameEl) relayNameEl.value = data.Nom;
+    if (relayAddressEl) relayAddressEl.value = `${data.Adresse1}, ${data.CP} ${data.Ville}`;
+
+    const infoDiv = document.getElementById('mr-selected-info');
+    const detailsSpan = document.getElementById('mr-relay-details');
+    if (infoDiv && detailsSpan) {
+      detailsSpan.textContent = relayDetails;
+      infoDiv.style.display = 'block';
+    }
+  };
 
   if ($.fn.MR_ParcelShopPicker) {
     $("#Zone_Widget").MR_ParcelShopPicker({
@@ -328,24 +347,7 @@ function initMondialRelayWidget() {
       PostCode: zipcode,
       ColLivMod: "24R",
       AllowedCountries: "FR",
-      OnParcelShopSelected: function(data) {
-        const relayDetails = `${data.Nom} (${data.ID}) - ${data.Adresse1}, ${data.CP} ${data.Ville}`;
-
-        const relayIdEl = document.getElementById('mr-relay-id');
-        const relayNameEl = document.getElementById('mr-relay-name');
-        const relayAddressEl = document.getElementById('mr-relay-address');
-
-        if (relayIdEl) relayIdEl.value = data.ID;
-        if (relayNameEl) relayNameEl.value = data.Nom;
-        if (relayAddressEl) relayAddressEl.value = `${data.Adresse1}, ${data.CP} ${data.Ville}`;
-
-        const infoDiv = document.getElementById('mr-selected-info');
-        const detailsSpan = document.getElementById('mr-relay-details');
-        if (infoDiv && detailsSpan) {
-          detailsSpan.textContent = relayDetails;
-          infoDiv.style.display = 'block';
-        }
-      }
+      OnParcelShopSelected: handleSelected
     });
   } else if ($.mr_widget) {
     $("#Zone_Widget").mr_widget({
@@ -358,23 +360,7 @@ function initMondialRelayWidget() {
       DefaultCountry: "FR",
       Weight: "1000",
       NbResults: "5",
-      OnParcelShopSelected: function(data) {
-        const relayDetails = `${data.Nom} (${data.ID}) - ${data.Adresse1}, ${data.CP} ${data.Ville}`;
-        const relayIdEl = document.getElementById('mr-relay-id');
-        const relayNameEl = document.getElementById('mr-relay-name');
-        const relayAddressEl = document.getElementById('mr-relay-address');
-
-        if (relayIdEl) relayIdEl.value = data.ID;
-        if (relayNameEl) relayNameEl.value = data.Nom;
-        if (relayAddressEl) relayAddressEl.value = `${data.Adresse1}, ${data.CP} ${data.Ville}`;
-
-        const infoDiv = document.getElementById('mr-selected-info');
-        const detailsSpan = document.getElementById('mr-relay-details');
-        if (infoDiv && detailsSpan) {
-          detailsSpan.textContent = relayDetails;
-          infoDiv.style.display = 'block';
-        }
-      }
+      OnParcelShopSelected: handleSelected
     });
   } else {
     alert("Le script Mondial Relay ne s'est pas chargé correctement.");
@@ -402,7 +388,9 @@ function validateDeliverySelection() {
   return true;
 }
 
-// INTÉGRATION ET INITIALISATION BOUTONS PAYPAL
+// ==========================================
+// 7. PAYPAL & FORMSPREE
+// ==========================================
 function initPayPalButton() {
   const paypalContainer = document.getElementById('paypal-button-container');
   if (!paypalContainer || typeof paypal === 'undefined') return;
@@ -497,7 +485,6 @@ function initPayPalButton() {
 
         const summary = updateCheckoutSummary();
 
-        // Envoi propre à Formspree
         const formData = {
           "1_Client": `${firstname} ${lastname}`,
           "2_Email": email,
@@ -554,7 +541,9 @@ function initPayPalButton() {
   }).render('#paypal-button-container');
 }
 
-// LOGIQUE SPÉCIFIQUE À LA PAGE PRODUIT (product.html)
+// ==========================================
+// 8. PAGE PRODUIT (AVEC GESTION CORRIGÉE DES VIGNETTES)
+// ==========================================
 function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = parseInt(urlParams.get('id'), 10);
@@ -563,11 +552,10 @@ function initProductPage() {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  // Ciblage des éléments (compatible product.html et product-detail.html)
   const titleEl = document.getElementById('product-title') || document.getElementById('product-name');
   const priceEl = document.getElementById('product-price');
   const descEl = document.getElementById('product-description');
-  const mainImgEl = document.getElementById('main-product-img') || document.getElementById('display-img');
+  const mainImgEl = document.getElementById('display-img') || document.getElementById('main-product-img');
   const thumbsContainer = document.getElementById('thumbnails-container');
   const colorSwatchesContainer = document.getElementById('color-swatches-container');
   const selectedColorName = document.getElementById('selected-color-name');
@@ -581,40 +569,41 @@ function initProductPage() {
   if (descEl) descEl.textContent = product.description;
   if (mainImgEl) mainImgEl.src = product.mainImage;
 
-  // Tailles
-  if (sizeSelect && product.sizes) {
-    sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
-  }
+  // Récupérer les images selon la couleur sélectionnée ou le tableau général
+  const getImagesForColor = (color) => {
+    if (product.imagesByColor && product.imagesByColor[color] && product.imagesByColor[color].length > 0) {
+      return product.imagesByColor[color];
+    }
+    if (product.images && product.images.length > 0) {
+      return product.images;
+    }
+    return [product.mainImage];
+  };
 
-  // Fonction de mise à jour de la galerie principale
+  // Rendu/Mise à jour des miniatures (thumbnails)
   const updateGallery = (imageList) => {
     if (!thumbsContainer || !mainImgEl || !imageList || imageList.length === 0) return;
+    
     thumbsContainer.innerHTML = '';
     mainImgEl.src = imageList[0];
 
     imageList.forEach((imgSrc, index) => {
       const thumb = document.createElement('img');
       thumb.src = imgSrc;
+      thumb.alt = `${product.name} - Vue ${index + 1}`;
       thumb.className = `thumbnail ${index === 0 ? 'active' : ''}`;
       
       thumb.addEventListener('click', () => {
         mainImgEl.src = imgSrc;
-        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        thumbsContainer.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
         thumb.classList.add('active');
       });
+
       thumbsContainer.appendChild(thumb);
     });
   };
 
-  // Récupérer les images associées à une couleur
-  const getImagesForColor = (color) => {
-    if (product.imagesByColor && product.imagesByColor[color]) {
-      return product.imagesByColor[color];
-    }
-    return product.images || [product.mainImage];
-  };
-
-  // Injection des vignettes de couleurs (Swatches)
+  // Rendu des vignettes de couleurs (swatches)
   if (colorSwatchesContainer && product.colors && product.colors.length > 0) {
     colorSwatchesContainer.innerHTML = '';
     if (selectedColorName) selectedColorName.textContent = activeColor;
@@ -631,7 +620,7 @@ function initProductPage() {
         activeColor = color;
         if (selectedColorName) selectedColorName.textContent = color;
 
-        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+        colorSwatchesContainer.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
         swatch.classList.add('active');
 
         updateGallery(getImagesForColor(color));
@@ -641,10 +630,15 @@ function initProductPage() {
     });
   }
 
-  // Chargement de la galerie initiale
+  // Initialisation de la galerie principale
   updateGallery(getImagesForColor(activeColor));
 
-  // Ajouter au panier
+  // Options de taille
+  if (sizeSelect && product.sizes) {
+    sizeSelect.innerHTML = product.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
+  }
+
+  // Bouton Ajouter au panier
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedSize = sizeSelect ? sizeSelect.value : (product.sizes ? product.sizes[0] : '');
@@ -668,7 +662,6 @@ function initProductPage() {
       saveCart();
       updateCartUI();
 
-      // Notification Toast si présente
       const toast = document.getElementById('toast-notification');
       if (toast) {
         toast.classList.add('show');
@@ -677,7 +670,7 @@ function initProductPage() {
     });
   }
 
-  // Accordéons
+  // Accordéons produit (Description / Livraison / Retours)
   const accordionHeaders = document.querySelectorAll('.accordion-header');
   accordionHeaders.forEach(header => {
     header.addEventListener('click', () => {
@@ -700,14 +693,16 @@ function initProductPage() {
   });
 }
 
-// Initialisation au chargement du DOM
+// ==========================================
+// 9. INITIALISATION GLOBALE DU DOM
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
   initProductPage();
   toggleMondialRelayZone();
 
-  // Écoute des changements de mode de livraison
+  // Événements livraison
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
       updateCheckoutSummary();
@@ -716,7 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Bouton d'ouverture / recherche Mondial Relay
+  // Widget Mondial Relay
   const openMrBtn = document.getElementById('open-mr-widget-btn');
   if (openMrBtn) {
     openMrBtn.addEventListener('click', (e) => {
@@ -736,7 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Événements Panier
+  // Ouverture/Fermeture Panier
   const cartToggleBtn = document.getElementById('cart-toggle-btn');
   const closeCartBtn = document.getElementById('close-cart-btn');
   const cartOverlay = document.getElementById('cart-overlay');
@@ -745,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 
-  // Appliquer le Code Promo
+  // Code Promo
   const applyPromoBtn = document.getElementById('apply-promo-btn');
   const promoInput = document.getElementById('promo-input');
   const promoMsg = document.getElementById('promo-msg');
@@ -771,7 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Filtres et Recherche
+  // Filtres / Recherche / Tri
   const searchInput = document.getElementById('search-input');
   const sortSelect = document.getElementById('sort-select');
 
@@ -788,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Burger Menu
+  // Menu burger
   const burgerToggle = document.getElementById('burger-toggle');
   const closeMenuBtn = document.getElementById('close-menu');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -799,15 +794,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const category = e.target.dataset.category;
-      filterByCategory(category);
+      filterByCategory(e.target.dataset.category);
     });
   });
 
   document.querySelectorAll('.menu-filter-link').forEach(link => {
     link.addEventListener('click', (e) => {
-      const selectedCategory = link.getAttribute('data-category');
-      filterByCategory(selectedCategory);
+      filterByCategory(link.getAttribute('data-category'));
       closeMenu();
     });
   });
@@ -815,7 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModalBtn = document.getElementById('close-modal-btn');
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
 
-  // Modales du Footer
+  // Modales Footer
   const mentionsModal = document.getElementById('mentions-modal');
   const returnsModal = document.getElementById('returns-modal');
 
