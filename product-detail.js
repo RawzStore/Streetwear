@@ -31,9 +31,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const productDescription = document.getElementById('product-description');
   const displayImg = document.getElementById('display-img');
   const thumbnailsContainer = document.getElementById('thumbnails-container');
-  const colorSelect = document.getElementById('color-select');
+  
+  // Éléments pour les couleurs & vignettes
+  const colorGroup = document.getElementById('color-group');
+  const colorSwatchesContainer = document.getElementById('color-swatches-container');
+  const selectedColorName = document.getElementById('selected-color-name');
+  
   const sizeSelect = document.getElementById('size-select');
   const addToCartBtn = document.getElementById('add-to-cart-btn');
+
+  let activeColor = '';
 
   // 4. Contenu texte
   if (productName) productName.textContent = product.name;
@@ -76,21 +83,41 @@ document.addEventListener('DOMContentLoaded', () => {
     return product.images || [product.mainImage];
   }
 
-  // 6. Injection des Couleurs
-  if (colorSelect && product.colors && product.colors.length > 0) {
-    colorSelect.innerHTML = '';
-    product.colors.forEach(color => {
-      const option = document.createElement('option');
-      option.value = color;
-      option.textContent = color;
-      colorSelect.appendChild(option);
-    });
+  // 6. Injection des Couleurs sous forme de vignettes (Swatches)
+  if (colorSwatchesContainer && product.colors && product.colors.length > 0) {
+    colorSwatchesContainer.innerHTML = '';
+    activeColor = product.colors[0]; // Couleur par défaut
 
-    colorSelect.addEventListener('change', (e) => {
-      updateGallery(getImagesForColor(e.target.value));
+    if (selectedColorName) {
+      selectedColorName.textContent = activeColor;
+    }
+
+    product.colors.forEach((color, index) => {
+      const swatch = document.createElement('img');
+      const colorImages = getImagesForColor(color);
+      
+      // Image de la vignette (1ère image de la couleur ou image principale)
+      swatch.src = colorImages[0] || product.mainImage;
+      swatch.alt = color;
+      swatch.title = color;
+      swatch.className = `color-swatch ${index === 0 ? 'active' : ''}`;
+
+      swatch.addEventListener('click', () => {
+        activeColor = color;
+        if (selectedColorName) selectedColorName.textContent = color;
+        
+        // Gestion de la classe active sur les vignettes
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+        
+        // Mise à jour de la galerie principale
+        updateGallery(getImagesForColor(color));
+      });
+
+      colorSwatchesContainer.appendChild(swatch);
     });
-  } else if (colorSelect && colorSelect.parentElement) {
-    colorSelect.parentElement.style.display = 'none';
+  } else if (colorGroup) {
+    colorGroup.style.display = 'none';
   }
 
   // 7. Injection des Tailles
@@ -106,17 +133,15 @@ document.addEventListener('DOMContentLoaded', () => {
     sizeSelect.parentElement.style.display = 'none';
   }
 
-  // 8. Galerie initiale
-  const initialColor = colorSelect ? colorSelect.value : null;
-  updateGallery(getImagesForColor(initialColor));
+  // 8. Galerie initiale avec la première couleur
+  updateGallery(getImagesForColor(activeColor));
 
   // 9. Ajout au panier avec notification Toast
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
-      const selectedColor = colorSelect ? colorSelect.value : '';
       const selectedSize = sizeSelect ? sizeSelect.value : '';
 
-      const cartItemKey = `${product.id}-${selectedSize}-${selectedColor}`;
+      const cartItemKey = `${product.id}-${selectedSize}-${activeColor}`;
       const existingItem = cart.find(item => item.key === cartItemKey);
 
       if (existingItem) {
@@ -128,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
           price: product.price,
           image: displayImg ? displayImg.src : product.mainImage,
           selectedSize: selectedSize,
-          selectedColor: selectedColor,
+          selectedColor: activeColor,
           key: cartItemKey,
           quantity: 1
         });
