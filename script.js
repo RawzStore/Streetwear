@@ -472,29 +472,25 @@ function initPayPalButton() {
         const relayName = document.getElementById('mr-relay-name')?.value || '';
         const relayAddress = document.getElementById('mr-relay-address')?.value || '';
 
-        let relayInfoText = "";
-        if (deliveryMode === 'Mondial Relay' && relayId) {
-          relayInfoText = `\nPOINT RELAIS SÉLECTIONNÉ :\nID: ${relayId}\nNom: ${relayName}\nAdresse: ${relayAddress}\n`;
-        }
-
         let orderDetails = cart.map(item => 
           `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
         ).join('\n');
 
         const summary = updateCheckoutSummary();
 
+        // Envoi propre sans doublons à Formspree
         const formData = {
-          Nom: lastname,
-          Prénom: firstname,
-          Email: email,
-          Téléphone: phone,
-          Adresse: address,
-          Code_postal: zipcode,
-          Ville: city,
-          Mode_de_livraison: deliveryMode,
-          Point_Relais: relayId ? `${relayName} (${relayId}) - ${relayAddress}` : 'N/A',
-          Transaction_ID: details.id,
-          Message: `COMMANDE PAYÉE ET VALIDÉE PAR PAYPAL (${details.id}) :\n\nINFORMATIONS CLIENT :\nNom : ${lastname}\nPrénom : ${firstname}\nEmail : ${email}\nTéléphone : ${phone}\nAdresse : ${address}, ${zipcode} ${city}\n\nMODE DE LIVRAISON : ${deliveryMode}\n${relayInfoText}\nDÉTAIL DU PANIER :\n${orderDetails}\n\nFrais de livraison : ${summary.shippingCost.toFixed(2)} €\nTOTAL PAYÉ : ${summary.total.toFixed(2)} €`
+          "1_Client": `${firstname} ${lastname}`,
+          "2_Email": email,
+          "3_Telephone": phone,
+          "4_Adresse_Livraison": `${address}, ${zipcode} ${city}`,
+          "5_Mode_de_Livraison": deliveryMode,
+          "6_Point_Relais": (deliveryMode === 'Mondial Relay' && relayId) ? `${relayName} (${relayId}) - ${relayAddress}` : 'Non applicable',
+          "7_Articles_Commandes": orderDetails,
+          "8_Total_Articles": `${summary.subtotal.toFixed(2)} €`,
+          "9_Frais_Livraison": `${summary.shippingCost.toFixed(2)} €`,
+          "10_TOTAL_PAYE": `${summary.total.toFixed(2)} €`,
+          "11_Transaction_PayPal_ID": details.id
         };
 
         const paypalBtnContainer = document.getElementById('paypal-button-container');
