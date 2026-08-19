@@ -661,6 +661,36 @@ body.dark-theme .back-link:hover {
   border-color: var(--text-color);
 }
 
+/* VIGNETTES D'IMAGES DE COULEUR (SWATCHES) */
+.color-swatches-flex {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+  opacity: 0.7;
+  transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+  background-color: var(--gray-light);
+}
+
+.color-swatch:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.color-swatch.active {
+  opacity: 1;
+  border-color: var(--text-color);
+  box-shadow: 0 0 0 1px var(--text-color);
+}
+
 .product-info-panel,
 .product-info-col {
   display: flex;
@@ -1173,6 +1203,11 @@ body.dark-theme .submit-order-btn .spinner {
     height: 60px;
     object-fit: contain;
     padding: 2px;
+  }
+
+  .color-swatch {
+    width: 50px;
+    height: 50px;
   }
 
   .cart-drawer {
