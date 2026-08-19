@@ -64,6 +64,8 @@ const products = [
 
 let cart = JSON.parse(localStorage.getItem('rawz_cart')) || [];
 let appliedDiscount = 0;
+let currentCategory = 'all';
+let currentSearchTerm = '';
 
 // Fonctions Menu Burger
 function openMenu() {
@@ -91,7 +93,7 @@ function renderProducts(items) {
   
   productGrid.innerHTML = '';
   if (items.length === 0) {
-    productGrid.innerHTML = '<p>Aucun produit trouvé.</p>';
+    productGrid.innerHTML = '<p class="no-products">Aucun produit trouvé.</p>';
     return;
   }
   
@@ -114,8 +116,34 @@ function renderProducts(items) {
   });
 }
 
-// Fonction centrale de filtrage
+// Application combinée des filtres (Catégorie + Recherche + Tri)
+function applyFiltersAndRender() {
+  let filtered = [...products];
+
+  // Filtre par catégorie
+  if (currentCategory !== 'all') {
+    filtered = filtered.filter(p => p.category === currentCategory);
+  }
+
+  // Filtre par mot-clé de recherche
+  if (currentSearchTerm.trim() !== '') {
+    filtered = filtered.filter(p => p.name.toLowerCase().includes(currentSearchTerm.toLowerCase()));
+  }
+
+  // Application du tri actuel s'il existe
+  const sortSelect = document.getElementById('sort-select');
+  if (sortSelect && sortSelect.value) {
+    if (sortSelect.value === 'price-asc') filtered.sort((a, b) => a.price - b.price);
+    if (sortSelect.value === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+  }
+
+  renderProducts(filtered);
+}
+
+// Fonction centrale de filtrage par catégorie
 function filterByCategory(category) {
+  currentCategory = category;
+
   document.querySelectorAll('.filter-btn').forEach(btn => {
     if (btn.dataset.category === category) {
       btn.classList.add('active');
@@ -124,12 +152,7 @@ function filterByCategory(category) {
     }
   });
 
-  if (category === 'all') {
-    renderProducts(products);
-  } else {
-    const filtered = products.filter(p => p.category === category);
-    renderProducts(filtered);
-  }
+  applyFiltersAndRender();
 }
 
 // Logique du Panier
@@ -363,11 +386,7 @@ function toggleMondialRelayZone() {
   const mrZone = document.getElementById('zone-mondial-relay');
 
   if (mrZone) {
-    if (selectedMode === 'Mondial Relay') {
-      mrZone.style.display = 'block';
-    } else {
-      mrZone.style.display = 'none';
-    }
+    mrZone.style.display = (selectedMode === 'Mondial Relay') ? 'block' : 'none';
   }
 }
 
@@ -478,7 +497,7 @@ function initPayPalButton() {
 
         const summary = updateCheckoutSummary();
 
-        // Envoi propre sans doublons à Formspree
+        // Envoi propre à Formspree
         const formData = {
           "1_Client": `${firstname} ${lastname}`,
           "2_Email": email,
@@ -544,7 +563,7 @@ function initProductPage() {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  // Ciblage des éléments (prend en compte product.html et product-detail.html)
+  // Ciblage des éléments (compatible product.html et product-detail.html)
   const titleEl = document.getElementById('product-title') || document.getElementById('product-name');
   const priceEl = document.getElementById('product-price');
   const descEl = document.getElementById('product-description');
@@ -681,14 +700,14 @@ function initProductPage() {
   });
 }
 
-// Initialisation au chargement
+// Initialisation au chargement du DOM
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts(products);
   updateCartUI();
   initProductPage();
   toggleMondialRelayZone();
 
-  // Écoute des changements de mode de livraison pour recalculer et recharger PayPal & Mondial Relay
+  // Écoute des changements de mode de livraison
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
       updateCheckoutSummary();
@@ -731,13 +750,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const promoInput = document.getElementById('promo-input');
   const promoMsg = document.getElementById('promo-msg');
 
-  if (applyPromoBtn) {
+  if (applyPromoBtn && promoInput && promoMsg) {
     applyPromoBtn.addEventListener('click', () => {
       const code = promoInput.value.trim().toUpperCase();
       if (code === "RAWZ10") {
         appliedDiscount = 0.10;
         promoMsg.textContent = "Code RAWZ10 appliqué (-10%) !";
         promoMsg.className = "promo-message success";
+      } else if (code === "") {
+        appliedDiscount = 0;
+        promoMsg.textContent = "";
+        promoMsg.className = "promo-message";
       } else {
         appliedDiscount = 0;
         promoMsg.textContent = "Code invalide.";
@@ -754,17 +777,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
-      renderProducts(products.filter(p => p.name.toLowerCase().includes(term)));
+      currentSearchTerm = e.target.value;
+      applyFiltersAndRender();
     });
   }
 
   if (sortSelect) {
-    sortSelect.addEventListener('change', (e) => {
-      let sorted = [...products];
-      if (e.target.value === 'price-asc') sorted.sort((a, b) => a.price - b.price);
-      if (e.target.value === 'price-desc') sorted.sort((a, b) => b.price - a.price);
-      renderProducts(sorted);
+    sortSelect.addEventListener('change', () => {
+      applyFiltersAndRender();
     });
   }
 
