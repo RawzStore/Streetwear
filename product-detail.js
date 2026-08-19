@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sizeSelect = document.getElementById('size-select');
   const addToCartBtn = document.getElementById('add-to-cart-btn');
 
-  let activeColor = '';
+  // Définir la couleur active initiale
+  let activeColor = (product.colors && product.colors.length > 0) ? product.colors[0] : '';
 
   // 4. Contenu texte
   if (productName) productName.textContent = product.name;
@@ -76,17 +77,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Récupération souple des images selon la couleur
   function getImagesForColor(color) {
-    if (product.imagesByColor && product.imagesByColor[color]) {
-      return product.imagesByColor[color];
+    if (!color) return product.images || [product.mainImage];
+
+    // Recherche insensible à la casse dans imagesByColor
+    if (product.imagesByColor) {
+      const cleanColor = color.trim().toLowerCase();
+      const matchKey = Object.keys(product.imagesByColor).find(
+        k => k.trim().toLowerCase() === cleanColor
+      );
+      if (matchKey && product.imagesByColor[matchKey].length > 0) {
+        return product.imagesByColor[matchKey];
+      }
     }
+
     return product.images || [product.mainImage];
   }
 
   // 6. Injection des Couleurs sous forme de vignettes (Swatches)
   if (colorSwatchesContainer && product.colors && product.colors.length > 0) {
     colorSwatchesContainer.innerHTML = '';
-    activeColor = product.colors[0]; // Couleur par défaut
 
     if (selectedColorName) {
       selectedColorName.textContent = activeColor;
@@ -96,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const swatch = document.createElement('img');
       const colorImages = getImagesForColor(color);
       
-      // Image de la vignette (1ère image de la couleur ou image principale)
       swatch.src = colorImages[0] || product.mainImage;
       swatch.alt = color;
       swatch.title = color;
@@ -106,12 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
         activeColor = color;
         if (selectedColorName) selectedColorName.textContent = color;
         
-        // Gestion de la classe active sur les vignettes
         document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
         swatch.classList.add('active');
         
-        // Mise à jour de la galerie principale
-        updateGallery(getImagesForColor(color));
+        // Mise à jour explicite de la galerie
+        const newImages = getImagesForColor(color);
+        updateGallery(newImages);
       });
 
       colorSwatchesContainer.appendChild(swatch);
@@ -133,10 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
     sizeSelect.parentElement.style.display = 'none';
   }
 
-  // 8. Galerie initiale avec la première couleur
+  // 8. Galerie initiale (appelée avec la couleur par défaut)
   updateGallery(getImagesForColor(activeColor));
 
-  // 9. Ajout au panier avec notification Toast
+  // 9. Ajout au panier
   if (addToCartBtn) {
     addToCartBtn.addEventListener('click', () => {
       const selectedSize = sizeSelect ? sizeSelect.value : '';
