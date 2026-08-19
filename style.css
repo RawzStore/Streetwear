@@ -1306,11 +1306,12 @@ body.dark-theme .submit-order-btn .spinner {
 /* ==========================================
    12. BANDEAU DE RÉASSURANCE
    ========================================== */
+.reassurance-banner,
 .reassurance-bar {
   background-color: var(--gray-light);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
-  padding: 30px 20px;
+  padding: 30px 25px;
   margin: 40px 0;
   transition: background-color 0.3s, border-color 0.3s;
 }
@@ -1321,22 +1322,28 @@ body.dark-theme .submit-order-btn .spinner {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 25px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .reassurance-item {
   display: flex;
-  align-items: center;
-  gap: 15px;
+  align-items: flex-start;
+  gap: 12px;
 }
 
+.reassurance-item i,
 .reassurance-icon {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   line-height: 1;
   flex-shrink: 0;
+  min-width: 24px;
+  text-align: center;
+  margin-top: 2px;
+  color: var(--text-color);
 }
 
-.reassurance-text h3 {
+.reassurance-text h3,
+.reassurance-text h4 {
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-color);
@@ -1353,25 +1360,30 @@ body.dark-theme .submit-order-btn .spinner {
 }
 
 @media (max-width: 768px) {
+  .reassurance-banner,
   .reassurance-bar {
-    padding: 20px 15px;
+    padding: 25px 24px;
     margin: 25px 0;
   }
 
   .reassurance-container {
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    gap: 20px 20px;
+    padding-left: 10px;
   }
 
   .reassurance-item {
     gap: 10px;
   }
 
+  .reassurance-item i,
   .reassurance-icon {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    min-width: 20px;
   }
 
-  .reassurance-text h3 {
+  .reassurance-text h3,
+  .reassurance-text h4 {
     font-size: 0.8rem;
   }
 
