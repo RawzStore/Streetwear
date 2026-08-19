@@ -312,7 +312,7 @@ function updateCheckoutSummary() {
 // 6. MONDIAL RELAY
 // ==========================================
 function initMondialRelayWidget() {
-  const zipcode = document.getElementById('client-zipcode')?.value.trim() || '75001';
+  const zipcode = document.getElementById('client-zipcode')?.value.trim() || '35690';
 
   if (typeof $ === 'undefined') {
     alert("jQuery n'est pas chargé sur la page.");
