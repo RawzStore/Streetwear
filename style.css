@@ -1383,3 +1383,208 @@ body.dark-theme .back-link:hover {
     font-size: 0.75rem;
   }
 }
+
+/* ==========================================
+   14. EXTENSION : FICHE PRODUIT & LIGHTBOX
+   ========================================== */
+.zoom-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #ffffff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+  z-index: 5;
+}
+
+.zoom-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.08);
+}
+
+.lightbox-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.lightbox-modal.active {
+  display: flex;
+}
+
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90vh;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  color: #ffffff;
+  font-size: 2.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* CLASSES DE STRUCTURATION PRODUIT & CHECKOUT */
+.product-detail-title {
+  font-size: 1.8rem;
+  margin: 10px 0 5px 0;
+}
+
+.product-detail-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.option-group-margin {
+  margin-bottom: 15px;
+}
+
+.option-group-large-margin {
+  margin-bottom: 20px;
+}
+
+.option-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.option-sublabel {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.size-select-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.add-to-cart-btn-green {
+  background: #16a34a !important;
+}
+
+.add-to-cart-btn-green:hover {
+  background: #15803d !important;
+}
+
+.accordion-subtext {
+  margin-top: 8px;
+}
+
+.shipping-options-block {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.shipping-title {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.shipping-option-item {
+  margin-bottom: 6px;
+}
+
+.mr-zone-container {
+  margin-top: 15px;
+  display: block;
+}
+
+.mr-zone-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.mr-widget-btn {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.mr-selected-box {
+  display: none;
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--gray-light);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.mr-relay-text {
+  margin: 5px 0 0 0;
+}
+
+.checkout-summary-box {
+  margin-top: 15px;
+  padding: 15px;
+  background: var(--gray-light);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--gray-text);
+}
+
+.summary-row-margin {
+  margin-bottom: 8px;
+}
+
+.summary-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 8px 0;
+}
+
+.summary-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--text-color);
+}
+
+.paypal-container-block {
+  margin-top: 20px;
+}
+
+.payment-box-no-margin {
+  margin-top: 0;
+}
+
