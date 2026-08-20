@@ -17,7 +17,7 @@
   --gray-light: #f9f9f9;
   --gray-text: #666666;
   --input-bg: #ffffff;
-  --success-color: #2b9348;
+  --success-color: #1b4332;
   --danger-color: #e63946;
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
@@ -783,17 +783,17 @@ body.dark-theme .back-link:hover {
 }
 
 /* ==========================================
-   8. STYLE MODERNE BOUTONS VERT (PANIER & PAIEMENT)
+   8. STYLE MODERNE BOUTONS VERT FONCÉ (PANIER & PAIEMENT)
    ========================================== */
 .add-cart-large-btn,
 .checkout-btn,
 .submit-order-btn {
   width: 100%;
   padding: 15px 22px;
-  background-color: var(--success-color);
+  background-color: #1b4332; /* Vert Forêt Sombre */
   color: #ffffff;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-family: var(--font-family);
   font-weight: 700;
   font-size: 0.95rem;
@@ -805,16 +805,16 @@ body.dark-theme .back-link:hover {
   justify-content: center;
   gap: 10px;
   transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 14px rgba(43, 147, 72, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin-top: 10px;
 }
 
 .add-cart-large-btn:hover,
 .checkout-btn:hover,
 .submit-order-btn:hover {
-  background-color: #237a3b;
+  background-color: #081c15; /* Presque noir au survol */
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(43, 147, 72, 0.35);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
   opacity: 1;
 }
 
@@ -822,7 +822,7 @@ body.dark-theme .back-link:hover {
 .checkout-btn:active,
 .submit-order-btn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(43, 147, 72, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .submit-order-btn.btn-loading,
