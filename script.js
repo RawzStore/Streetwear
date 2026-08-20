@@ -274,7 +274,7 @@ function updateCheckoutSummary() {
   if (selectedMode === 'Mondial Relay') {
     shippingCost = 4.50;
   } else if (selectedMode === 'Colissimo Domicile') {
-    shippingCost = 60.90;
+    shippingCost = 6.90;
   } else if (selectedMode === 'Remise en main propre') {
     shippingCost = 0.00;
   }
