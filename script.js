@@ -407,7 +407,7 @@ function toggleMondialRelayZone() {
 }
 
 // ==========================================
-// 7. ENVOI COMMANDE & REDIRECTION SUMUP
+// 7. ENVOI COMMANDE & REDIRECTION SUMUP (SÉCURISÉ)
 // ==========================================
 async function processOrderSubmit() {
   const firstname = document.getElementById('client-firstname')?.value.trim() || '';
@@ -423,11 +423,11 @@ async function processOrderSubmit() {
   const relayName = document.getElementById('mr-relay-name')?.value || '';
   const relayAddress = document.getElementById('mr-relay-address')?.value || '';
 
+  const summary = updateCheckoutSummary();
+
   let orderDetails = cart.map(item => 
     `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
   ).join('\n');
-
-  const summary = updateCheckoutSummary();
 
   const formData = {
     "1_Client": `${firstname} ${lastname}`,
@@ -439,7 +439,7 @@ async function processOrderSubmit() {
     "7_Articles_Commandes": orderDetails,
     "8_Total_Articles": `${summary.subtotal.toFixed(2)} €`,
     "9_Frais_Livraison": `${summary.shippingCost.toFixed(2)} €`,
-    "10_TOTAL_PAYE": `${summary.total.toFixed(2)} €`
+    "10_TOTAL_ESTIME": `${summary.total.toFixed(2)} €`
   };
 
   const submitBtn = document.getElementById('sumup-submit-btn');
@@ -449,8 +449,8 @@ async function processOrderSubmit() {
   }
 
   try {
-    // 1. Sauvegarde dans Formspree
-    const response = await fetch("https://formspree.io/f/xgaweybe", {
+    // 1. Envoi à Formspree pour garder une trace de la fiche client
+    await fetch("https://formspree.io/f/xgaweybe", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -459,38 +459,34 @@ async function processOrderSubmit() {
       body: JSON.stringify(formData)
     });
 
-    if (response.ok) {
-      // 2. Appel de la fonction Vercel pour verrouiller le montant exact chez SumUp
-      const checkoutResponse = await fetch("https://rawz-store.vercel.app/api/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: summary.total.toFixed(2),
-          currency: "EUR",
-          email: email,
-          orderId: `RAWZ-${Date.now()}`
-        })
-      });
+    // 2. Transmettre le panier brut à Vercel pour calcul du prix réel côté serveur
+    const checkoutResponse = await fetch("https://rawz-store.vercel.app/api/create-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cart: cart,
+        deliveryMode: deliveryMode,
+        promoCode: (appliedDiscount > 0) ? "RAWZ10" : "",
+        email: email,
+        orderId: `RAWZ-${Date.now()}`
+      })
+    });
 
-      const checkoutData = await checkoutResponse.json();
+    const checkoutData = await checkoutResponse.json();
 
-      if (checkoutData.checkoutId) {
-        // Vider le panier local
-        cart = [];
-        saveCart();
-        updateCartUI();
+    if (checkoutData.checkoutId) {
+      cart = [];
+      saveCart();
+      updateCartUI();
 
-        // 3. Redirection vers la page de paiement sécurisée
-        window.location.href = `https://pay.sumup.com/checkout/${checkoutData.checkoutId}`;
-      } else {
-        alert("Erreur lors de la préparation du paiement SumUp.");
-      }
+      // Redirection sécurisée vers SumUp
+      window.location.href = `https://pay.sumup.com/checkout/${checkoutData.checkoutId}`;
     } else {
-      alert(`Une erreur est survenue lors de la validation de la commande.`);
+      alert("Erreur lors de la préparation du paiement. Vérifie ton panier.");
     }
   } catch (e) {
-    console.error("Erreur de commande", e);
-    alert(`Erreur de connexion. Impossible de valider la commande pour le moment.`);
+    console.error("Erreur lors de la commande", e);
+    alert("Erreur de connexion avec le serveur de paiement.");
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;
