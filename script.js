@@ -1,3 +1,6 @@
+// Variable globale pour la redirection SumUp
+const SUMUP_PAYMENT_LINK = "https://pay.sumup.com/b2c/XXXXXXXX"; // <- Mettre ton vrai lien de paiement SumUp ici
+
 // ==========================================
 // 1. BASE DE DONNÉES PRODUITS
 // ==========================================
@@ -407,7 +410,7 @@ function toggleMondialRelayZone() {
 }
 
 // ==========================================
-// 7. ENVOI COMMANDE & FORMSPREE
+// 7. ENVOI COMMANDE & REDIRECTION SUMUP
 // ==========================================
 async function processOrderSubmit() {
   const firstname = document.getElementById('client-firstname')?.value.trim() || '';
@@ -459,15 +462,12 @@ async function processOrderSubmit() {
     });
 
     if (response.ok) {
-      alert(`Merci ${firstname} ! Ta commande a été enregistrée avec succès.`);
       cart = [];
       saveCart();
       updateCartUI();
-      closeCheckoutModal();
-      closeCart();
 
-      const form = document.getElementById('checkout-form');
-      if (form) form.reset();
+      // Redirection automatique vers la page de paiement SumUp
+      window.location.href = SUMUP_PAYMENT_LINK;
     } else {
       alert(`Une erreur est survenue lors de la validation de la commande.`);
     }
