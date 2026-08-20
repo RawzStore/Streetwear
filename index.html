@@ -164,7 +164,7 @@
     <div class="modal-content">
       <button id="close-modal-btn" class="modal-close">&times;</button>
       <h2>Informations de livraison</h2>
-      <form id="checkout-form">
+      <form id="checkout-form" onsubmit="return false;">
         <!-- 1. Informations client -->
         <div class="form-row">
           <div class="form-group">
@@ -261,7 +261,7 @@
         </div>
 
         <!-- 5. BOUTON PAIEMENT SUMUP -->
-        <button type="submit" id="sumup-submit-btn" class="cta-btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1rem; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 4px;">
+        <button type="button" id="sumup-submit-btn" class="cta-btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1rem; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 4px;">
           <i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire (SumUp)
         </button>
       </form>
