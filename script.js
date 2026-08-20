@@ -1,5 +1,5 @@
 // Variable globale pour la redirection SumUp
-const SUMUP_PAYMENT_LINK = "https://pay.sumup.com/b2c/XXXXXXXX"; // <- Mettre ton vrai lien de paiement SumUp ici
+const SUMUP_PAYMENT_LINK = "https://pay.sumup.com/b2c/Q8QYTUT8"; // <- Mettre ton vrai lien de paiement SumUp ici
 
 // ==========================================
 // 1. BASE DE DONNÉES PRODUITS
