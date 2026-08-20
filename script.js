@@ -253,6 +253,7 @@ function openCheckoutModal() {
     modal.classList.add('active');
     updateCheckoutSummary();
     toggleMondialRelayZone();
+    checkZipcodeState();
     setTimeout(() => {
       initPayPalButton();
     }, 100);
@@ -311,8 +312,31 @@ function updateCheckoutSummary() {
 // ==========================================
 // 6. MONDIAL RELAY
 // ==========================================
+function checkZipcodeState() {
+  const zipInput = document.getElementById('client-zipcode');
+  const openMrBtn = document.getElementById('open-mr-widget-btn');
+  if (!zipInput || !openMrBtn) return;
+
+  if (zipInput.value.trim().length === 5) {
+    openMrBtn.disabled = false;
+    openMrBtn.style.opacity = '1';
+    openMrBtn.style.cursor = 'pointer';
+  } else {
+    openMrBtn.disabled = true;
+    openMrBtn.style.opacity = '0.5';
+    openMrBtn.style.cursor = 'not-allowed';
+  }
+}
+
 function initMondialRelayWidget() {
-  const zipcode = document.getElementById('client-zipcode')?.value.trim() || '35690';
+  const zipcodeEl = document.getElementById('client-zipcode');
+  const zipcode = zipcodeEl ? zipcodeEl.value.trim() : '';
+
+  if (!zipcode || zipcode.length < 5) {
+    alert("Entre un code postal valide (5 chiffres) avant de choisir un Point Relais.");
+    if (zipcodeEl) zipcodeEl.focus();
+    return;
+  }
 
   if (typeof $ === 'undefined') {
     alert("jQuery n'est pas chargé sur la page.");
@@ -710,6 +734,12 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleMondialRelayZone();
     });
   });
+
+  const zipInput = document.getElementById('client-zipcode');
+  if (zipInput) {
+    zipInput.addEventListener('input', checkZipcodeState);
+    checkZipcodeState();
+  }
 
   const openMrBtn = document.getElementById('open-mr-widget-btn');
   if (openMrBtn) {
