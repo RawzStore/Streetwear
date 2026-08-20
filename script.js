@@ -202,6 +202,15 @@ function updateCartUI() {
   if (cartBadge) cartBadge.textContent = count;
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2).replace('.', ',')} €`;
 
+  // Sécurisation du bouton de commande si le panier est vide
+  const checkoutBtn = document.getElementById('checkout-btn') || document.getElementById('open-checkout-btn');
+  if (checkoutBtn) {
+    const isEmpty = cart.length === 0;
+    checkoutBtn.disabled = isEmpty;
+    checkoutBtn.style.opacity = isEmpty ? '0.5' : '1';
+    checkoutBtn.style.cursor = isEmpty ? 'not-allowed' : 'pointer';
+  }
+
   updateCheckoutSummary();
 }
 
@@ -254,8 +263,13 @@ function openCheckoutModal() {
     updateCheckoutSummary();
     toggleMondialRelayZone();
     checkZipcodeState();
+    
+    // Nettoyage et initialisation du widget SumUp
+    const sumupContainer = document.getElementById('sumup-card');
+    if (sumupContainer) sumupContainer.innerHTML = '';
+    
     setTimeout(() => {
-      initPayPalButton();
+      initSumUpWidget();
     }, 100);
   }
 }
@@ -414,156 +428,94 @@ function validateDeliverySelection() {
 }
 
 // ==========================================
-// 7. PAYPAL & FORMSPREE
+// 7. SUMUP & FORMSPREE
 // ==========================================
-function initPayPalButton() {
-  const paypalContainer = document.getElementById('paypal-button-container');
-  if (!paypalContainer || typeof paypal === 'undefined') return;
+function initSumUpWidget(checkoutId) {
+  const sumupContainer = document.getElementById('sumup-card');
+  if (!sumupContainer || typeof SumUpCard === 'undefined') return;
 
-  paypalContainer.innerHTML = '';
+  sumupContainer.innerHTML = '';
 
-  paypal.Buttons({
-    style: {
-      layout: 'vertical',
-      color:  'gold',
-      shape:  'rect',
-      label:  'paypal'
-    },
-    onClick: function(data, actions) {
-      const form = document.getElementById('checkout-form');
-      if (form && !form.checkValidity()) {
-        form.reportValidity();
-        return actions.reject();
+  SumUpCard.mount({
+    id: 'sumup-card',
+    checkoutId: checkoutId,
+    onResponse: function(type, body) {
+      if (type === 'success') {
+        handleSuccessfulOrder(body);
+      } else if (type === 'error') {
+        alert("Une erreur est survenue lors du paiement SumUp.");
       }
-
-      if (!validateDeliverySelection()) {
-        return actions.reject();
-      }
-
-      return actions.resolve();
-    },
-    createOrder: function(data, actions) {
-      const summary = updateCheckoutSummary();
-      const total = summary.total.toFixed(2);
-
-      const firstname = document.getElementById('client-firstname')?.value.trim() || '';
-      const lastname = document.getElementById('client-lastname')?.value.trim() || '';
-      const email = document.getElementById('client-email')?.value.trim() || '';
-      const rawPhone = document.getElementById('client-phone')?.value.trim().replace(/\s+/g, '') || '';
-      const address = document.getElementById('client-address')?.value.trim() || '';
-      const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
-      const city = document.getElementById('client-city')?.value.trim() || '';
-
-      const formattedPhone = rawPhone.replace(/^(\+33|0)/, '');
-
-      return actions.order.create({
-        intent: 'CAPTURE',
-        purchase_units: [{
-          amount: {
-            value: total,
-            currency_code: 'EUR'
-          },
-          shipping: {
-            name: { full_name: `${firstname} ${lastname}` },
-            address: {
-              address_line_1: address,
-              admin_area_2: city,
-              postal_code: zipcode,
-              country_code: 'FR'
-            }
-          }
-        }],
-        payer: {
-          name: { given_name: firstname, surname: lastname },
-          email_address: email,
-          phone: formattedPhone ? {
-            phone_type: 'MOBILE',
-            phone_number: { national_number: formattedPhone }
-          } : undefined,
-          address: {
-            address_line_1: address,
-            admin_area_2: city,
-            postal_code: zipcode,
-            country_code: 'FR'
-          }
-        }
-      });
-    },
-    onApprove: function(data, actions) {
-      return actions.order.capture().then(async function(details) {
-        const firstname = document.getElementById('client-firstname')?.value.trim() || '';
-        const lastname = document.getElementById('client-lastname')?.value.trim() || '';
-        const email = document.getElementById('client-email')?.value.trim() || '';
-        const phone = document.getElementById('client-phone')?.value.trim() || '';
-        const address = document.getElementById('client-address')?.value.trim() || '';
-        const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
-        const city = document.getElementById('client-city')?.value.trim() || '';
-        const deliveryMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Non spécifié';
-
-        const relayId = document.getElementById('mr-relay-id')?.value || '';
-        const relayName = document.getElementById('mr-relay-name')?.value || '';
-        const relayAddress = document.getElementById('mr-relay-address')?.value || '';
-
-        let orderDetails = cart.map(item => 
-          `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
-        ).join('\n');
-
-        const summary = updateCheckoutSummary();
-
-        const formData = {
-          "1_Client": `${firstname} ${lastname}`,
-          "2_Email": email,
-          "3_Telephone": phone,
-          "4_Adresse_Livraison": `${address}, ${zipcode} ${city}`,
-          "5_Mode_de_Livraison": deliveryMode,
-          "6_Point_Relais": (deliveryMode === 'Mondial Relay' && relayId) ? `${relayName} (${relayId}) - ${relayAddress}` : 'Non applicable',
-          "7_Articles_Commandes": orderDetails,
-          "8_Total_Articles": `${summary.subtotal.toFixed(2)} €`,
-          "9_Frais_Livraison": `${summary.shippingCost.toFixed(2)} €`,
-          "10_TOTAL_PAYE": `${summary.total.toFixed(2)} €`,
-          "11_Transaction_PayPal_ID": details.id
-        };
-
-        const paypalBtnContainer = document.getElementById('paypal-button-container');
-        if (paypalBtnContainer) {
-          paypalBtnContainer.innerHTML = '<p style="text-align:center; padding:15px; font-weight:bold;">Validation de la commande en cours...</p>';
-        }
-
-        try {
-          const response = await fetch("https://formspree.io/f/xgaweybe", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json"
-            },
-            body: JSON.stringify(formData)
-          });
-
-          if (response.ok) {
-            alert(`Merci ${details.payer.name.given_name} ! Ta commande a été validée avec succès.`);
-          } else {
-            alert(`Paiement PayPal réussi (ID: ${details.id}), mais une erreur est survenue lors de l'enregistrement.`);
-          }
-        } catch (e) {
-          console.error("Erreur de sauvegarde Formspree", e);
-          alert(`Paiement réussi (ID: ${details.id}), mais la confirmation n'a pas pu être envoyée automatiquement.`);
-        } finally {
-          cart = [];
-          saveCart();
-          updateCartUI();
-          closeCheckoutModal();
-          closeCart();
-
-          const form = document.getElementById('checkout-form');
-          if (form) form.reset();
-        }
-      });
-    },
-    onError: function(err) {
-      console.error(err);
-      alert("Une erreur est survenue lors du paiement PayPal.");
     }
-  }).render('#paypal-button-container');
+  });
+}
+
+async function handleSuccessfulOrder(paymentDetails) {
+  const firstname = document.getElementById('client-firstname')?.value.trim() || '';
+  const lastname = document.getElementById('client-lastname')?.value.trim() || '';
+  const email = document.getElementById('client-email')?.value.trim() || '';
+  const phone = document.getElementById('client-phone')?.value.trim() || '';
+  const address = document.getElementById('client-address')?.value.trim() || '';
+  const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
+  const city = document.getElementById('client-city')?.value.trim() || '';
+  const deliveryMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Non spécifié';
+
+  const relayId = document.getElementById('mr-relay-id')?.value || '';
+  const relayName = document.getElementById('mr-relay-name')?.value || '';
+  const relayAddress = document.getElementById('mr-relay-address')?.value || '';
+
+  let orderDetails = cart.map(item => 
+    `- ${item.name} | Taille: ${item.selectedSize} ${item.selectedColor ? '| Coloris: ' + item.selectedColor : ''} | Qte: ${item.quantity} | Prix: ${(item.price * item.quantity).toFixed(2)}€`
+  ).join('\n');
+
+  const summary = updateCheckoutSummary();
+
+  const formData = {
+    "1_Client": `${firstname} ${lastname}`,
+    "2_Email": email,
+    "3_Telephone": phone,
+    "4_Adresse_Livraison": `${address}, ${zipcode} ${city}`,
+    "5_Mode_de_Livraison": deliveryMode,
+    "6_Point_Relais": (deliveryMode === 'Mondial Relay' && relayId) ? `${relayName} (${relayId}) - ${relayAddress}` : 'Non applicable',
+    "7_Articles_Commandes": orderDetails,
+    "8_Total_Articles": `${summary.subtotal.toFixed(2)} €`,
+    "9_Frais_Livraison": `${summary.shippingCost.toFixed(2)} €`,
+    "10_TOTAL_PAYE": `${summary.total.toFixed(2)} €`,
+    "11_Transaction_SumUp_ID": paymentDetails.transaction_id || paymentDetails.id || 'Confirmé'
+  };
+
+  const sumupContainer = document.getElementById('sumup-card');
+  if (sumupContainer) {
+    sumupContainer.innerHTML = '<p style="text-align:center; padding:15px; font-weight:bold;">Validation de la commande en cours...</p>';
+  }
+
+  try {
+    const response = await fetch("https://formspree.io/f/xgaweybe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(formData)
+    });
+
+    if (response.ok) {
+      alert(`Merci ${firstname} ! Ta commande a été validée avec succès.`);
+    } else {
+      alert(`Paiement réussi, mais une erreur est survenue lors de l'enregistrement Formspree.`);
+    }
+  } catch (e) {
+    console.error("Erreur de sauvegarde Formspree", e);
+    alert(`Paiement réussi, mais la confirmation n'a pas pu être envoyée automatiquement.`);
+  } finally {
+    cart = [];
+    saveCart();
+    updateCartUI();
+    closeCheckoutModal();
+    closeCart();
+
+    const form = document.getElementById('checkout-form');
+    if (form) form.reset();
+  }
 }
 
 // ==========================================
@@ -817,7 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      filterByCategory(e.target.dataset.category);
+      filterByCategory(e.currentTarget.dataset.category);
     });
   });
 
