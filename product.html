@@ -16,170 +16,6 @@
   
   <!-- SDK PayPal -->
   <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
-
-  <style>
-    .accordion-section {
-      margin-top: 25px;
-      border-top: 1px solid var(--border-color, #eee);
-    }
-    .accordion-item {
-      border-bottom: 1px solid var(--border-color, #eee);
-    }
-    .accordion-header {
-      width: 100%;
-      background: none;
-      border: none;
-      padding: 16px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: inherit;
-      cursor: pointer;
-      text-align: left;
-    }
-    .accordion-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      font-size: 0.9rem;
-      color: inherit;
-      opacity: 0.8;
-      line-height: 1.6;
-    }
-    .accordion-item.active .accordion-content {
-      padding-bottom: 16px;
-    }
-
-    /* CONTENEUR IMAGE PRINCIPALE & BOUTON LOUPE */
-    .main-image-container {
-      position: relative;
-      width: 100%;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #f5f5f5;
-      margin-bottom: 15px;
-    }
-    .main-image-container img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: cover;
-    }
-    .zoom-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(0, 0, 0, 0.65);
-      color: #fff;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.2s ease, transform 0.2s ease;
-      z-index: 5;
-    }
-    .zoom-btn:hover {
-      background: rgba(0, 0, 0, 0.9);
-      transform: scale(1.08);
-    }
-
-    /* MODALE LIGHTBOX (PLEIN ÉCRAN) */
-    .lightbox-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 10000;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-    .lightbox-modal.active {
-      display: flex;
-    }
-    .lightbox-content {
-      max-width: 90%;
-      max-height: 90vh;
-      border-radius: 8px;
-      object-fit: contain;
-    }
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 25px;
-      color: #fff;
-      font-size: 2.5rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    /* BOUTON RETOUR CATALOGUE */
-    .back-link {
-      display: inline-block !important;
-      margin-bottom: 20px;
-      text-decoration: none;
-      font-weight: 600;
-      color: inherit;
-      transition: opacity 0.2s ease;
-    }
-    .back-link:hover {
-      opacity: 0.7;
-    }
-
-    /* LAYOUT ADAPTATIF PC / DESKTOP */
-    @media (min-width: 768px) {
-      .product-detail-grid {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 40px !important;
-        align-items: start;
-      }
-      .product-gallery {
-        position: sticky;
-        top: 90px;
-      }
-      .back-link {
-        font-size: 0.9rem;
-        margin-bottom: 15px;
-      }
-    }
-
-    /* TOAST NOTIFICATION */
-    .toast {
-      position: fixed;
-      bottom: -60px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #111;
-      color: #fff;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      z-index: 9999;
-      opacity: 0;
-      transition: bottom 0.4s ease, opacity 0.4s ease;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    .toast.show {
-      bottom: 30px;
-      opacity: 1;
-    }
-  </style>
 </head>
 <body>
 
@@ -230,10 +66,10 @@
   </aside>
 
   <!-- FICHE PRODUIT -->
-  <main class="product-page-container" style="max-width: 1000px; margin: 20px auto; padding: 0 15px;">
+  <main class="product-page-container">
     <a href="index.html" class="back-link">&larr; Retour au catalogue</a>
     
-    <div class="product-detail-grid" style="display: flex; flex-direction: column; gap: 20px;">
+    <div class="product-detail-grid">
       
       <!-- Galerie avec Bouton Loupe -->
       <div class="product-gallery">
@@ -243,29 +79,29 @@
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
-        <div id="thumbnails-container" class="thumbnails-flex" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;"></div>
+        <div id="thumbnails-container" class="thumbnails-flex"></div>
       </div>
 
       <!-- Informations -->
       <div class="product-info-col">
-        <h1 id="product-title" style="font-size: 1.8rem; margin: 10px 0 5px 0;">Nom du produit</h1>
-        <p id="product-price" class="product-price" style="font-size: 1.4rem; font-weight: 700; margin-bottom: 15px;">0,00 €</p>
+        <h1 id="product-title" class="product-detail-title">Nom du produit</h1>
+        <p id="product-price" class="product-price product-detail-price">0,00 €</p>
 
         <!-- Couleurs sous forme de vignettes d'images -->
-        <div class="option-group" id="color-group" style="margin-bottom: 15px;">
-          <label style="display: block; font-weight: 600; margin-bottom: 8px;">
-            Couleur : <span id="selected-color-name" style="font-weight: 400; opacity: 0.8;"></span>
+        <div class="option-group option-group-margin" id="color-group">
+          <label class="option-label">
+            Couleur : <span id="selected-color-name" class="option-sublabel"></span>
           </label>
-          <div id="color-swatches-container" class="color-swatches-flex" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+          <div id="color-swatches-container" class="color-swatches-flex"></div>
         </div>
 
         <!-- Tailles -->
-        <div class="option-group" style="margin-bottom: 20px;">
-          <label for="size-select" style="display: block; font-weight: 600; margin-bottom: 5px;">Taille :</label>
-          <select id="size-select" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.95rem;"></select>
+        <div class="option-group option-group-large-margin">
+          <label for="size-select" class="option-label">Taille :</label>
+          <select id="size-select" class="size-select-input"></select>
         </div>
 
-        <button id="add-to-cart-btn" class="checkout-btn" style="width: 100%; padding: 16px; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;">Ajouter au panier</button>
+        <button id="add-to-cart-btn" class="checkout-btn add-to-cart-btn-green">Ajouter au panier</button>
 
         <!-- ACCORDÉONS DÉROULANTS -->
         <div class="accordion-section">
@@ -287,7 +123,7 @@
             </button>
             <div class="accordion-content">
               <p><i class="fa-solid fa-truck-fast"></i> <strong>Livraison :</strong> Livraison offerte dès 80€ d'achat.</p>
-              <p style="margin-top: 8px;"><i class="fa-solid fa-rotate-left"></i> <strong>Retours :</strong> Satisfait ou remboursé sous 14 jours après réception de la commande.</p>
+              <p class="accordion-subtext"><i class="fa-solid fa-rotate-left"></i> <strong>Retours :</strong> Satisfait ou remboursé sous 14 jours après réception de la commande.</p>
             </div>
           </div>
 
@@ -370,15 +206,15 @@
         </div>
 
         <!-- 3. Mode de livraison -->
-        <div class="shipping-options" style="margin-top: 20px; margin-bottom: 15px;">
-          <label style="display: block; margin-bottom: 8px;"><strong>Mode de livraison / Retrait :</strong></label>
+        <div class="shipping-options shipping-options-block">
+          <label class="shipping-title"><strong>Mode de livraison / Retrait :</strong></label>
           
-          <div style="margin-bottom: 6px;">
+          <div class="shipping-option-item">
             <input type="radio" id="relais" name="mode_de_livraison" value="Mondial Relay" checked>
             <label for="relais">Mondial Relay (Point Relais) - 3,90 €</label>
           </div>
 
-          <div style="margin-bottom: 6px;">
+          <div class="shipping-option-item">
             <input type="radio" id="colissimo" name="mode_de_livraison" value="Colissimo Domicile">
             <label for="colissimo">Colissimo (Livraison à domicile) - 9,50 €</label>
           </div>
@@ -390,18 +226,18 @@
         </div>
 
         <!-- CONTENEUR DU WIDGET MONDIAL RELAY -->
-        <div id="zone-mondial-relay" style="margin-top: 15px; display: block;">
-          <label style="display: block; margin-bottom: 8px; font-weight: bold;">Choisis ton Point Relais :</label>
+        <div id="zone-mondial-relay" class="mr-zone-container">
+          <label class="mr-zone-label">Choisis ton Point Relais :</label>
           
-          <button type="button" id="open-mr-widget-btn" class="cta-btn" style="padding: 8px 16px; font-size: 0.9rem; margin-bottom: 12px; width: 100%;">
+          <button type="button" id="open-mr-widget-btn" class="cta-btn mr-widget-btn">
             Rechercher / Afficher les relais
           </button>
 
           <div id="Zone_Widget"></div>
 
-          <div id="mr-selected-info" style="display: none; margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 6px; font-size: 0.9rem; color: #333;">
+          <div id="mr-selected-info" class="mr-selected-box">
             <strong>Relais sélectionné :</strong>
-            <p id="mr-relay-details" style="margin: 5px 0 0 0;"></p>
+            <p id="mr-relay-details" class="mr-relay-text"></p>
           </div>
 
           <input type="hidden" id="mr-relay-id" name="mr_relay_id">
@@ -410,24 +246,24 @@
         </div>
 
         <!-- 4. RÉCAPITULATIF DU PRIX EN TEMPS RÉEL -->
-        <div class="checkout-summary" style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; color: #555;">
+        <div class="checkout-summary checkout-summary-box">
+          <div class="summary-row">
             <span>Sous-total produits :</span>
             <span id="summary-subtotal">0,00 €</span>
           </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: #555;">
+          <div class="summary-row summary-row-margin">
             <span>Frais de livraison :</span>
             <span id="summary-shipping">4,50 €</span>
           </div>
-          <hr style="border: none; border-top: 1px solid #ddd; margin: 8px 0;">
-          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000;">
+          <hr class="summary-divider">
+          <div class="summary-total-row">
             <span>Total à payer :</span>
             <span id="summary-total">0,00 €</span>
           </div>
         </div>
 
         <!-- 5. Conteneur dynamique PayPal -->
-        <div id="paypal-button-container" style="margin-top: 20px;"></div>
+        <div id="paypal-button-container" class="paypal-container-block"></div>
       </form>
     </div>
   </div>
@@ -499,7 +335,7 @@
       </div>
 
       <div class="footer-col footer-payments">
-        <div class="payment-box" style="margin-top: 0;">
+        <div class="payment-box payment-box-no-margin">
           <span class="payment-title">Paiements sécurisés</span>
           <div class="payment-badges">
             <span class="badge-item"><i class="fa-brands fa-paypal"></i> PayPal</span>
