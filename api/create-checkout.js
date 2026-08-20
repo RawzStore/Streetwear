@@ -23,11 +23,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Parsing de sécurité si le body est transmis en string
     const bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     const { cart, deliveryMode, promoCode, email, orderId } = bodyData || {};
 
-    if (!cart || !Array.isArray(cart)) {
+    if (!cart || !Array.isArray(cart) || cart.length === 0) {
       console.log("ERREUR: Panier invalide ou absent", bodyData);
       return res.status(400).json({ error: 'Panier invalide' });
     }
@@ -49,28 +48,37 @@ export default async function handler(req, res) {
     // 3. Frais de port
     let shippingCost = 0.00;
     if (deliveryMode === 'Mondial Relay') shippingCost = 3.90;
-    if (deliveryMode === 'Colissimo (Livraison à domicile)') shippingCost = 9.50;
-    if (subtotal >= 80 || deliveryMode === 'Remise en main propre (Gratuit)') shippingCost = 0.00;
+    if (deliveryMode && deliveryMode.includes('Colissimo')) shippingCost = 9.50;
+    if (subtotal >= 80 || (deliveryMode && deliveryMode.includes('Remise en main propre'))) shippingCost = 0.00;
 
     const totalAmount = parseFloat((subtotal + shippingCost).toFixed(2));
 
     console.log("Calcul effectué:", { subtotal, shippingCost, totalAmount });
 
-    // 4. Appel SumUp
+    // 4. Log de contrôle de la clé d'API
+    const apiKey = process.env.SUMUP_SECRET_KEY;
+    console.log("Cle detectee :", apiKey ? `${apiKey.trim().substring(0, 8)}...` : "AUCUNE CLE TROUVÉE");
+
+    // 5. Payload SumUp corrigé
+    const sumupPayload = {
+      checkout_reference: orderId || `RAWZ-${Date.now()}`,
+      amount: totalAmount,
+      currency: 'EUR',
+      pay_to_email: process.env.SUMUP_ACCOUNT_EMAIL,
+      description: `Commande Rawz Store`
+    };
+
+    if (email && email.trim() !== '') {
+      sumupPayload.customer_email = email.trim();
+    }
+
     const sumupResponse = await fetch('https://api.sumup.com/v0.1/checkouts', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.SUMUP_SECRET_KEY}`,
+        'Authorization': `Bearer ${apiKey ? apiKey.trim() : ''}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        checkout_reference: orderId || `RAWZ-${Date.now()}`,
-        amount: totalAmount,
-        currency: 'EUR',
-        payee_email: process.env.SUMUP_ACCOUNT_EMAIL,
-        description: `Commande Rawz Store`,
-        customer_email: email
-      })
+      body: JSON.stringify(sumupPayload)
     });
 
     const data = await sumupResponse.json();
@@ -79,6 +87,7 @@ export default async function handler(req, res) {
     if (data.id) {
       return res.status(200).json({ checkoutId: data.id });
     } else {
+      console.error("Erreur SumUp détaillée:", data);
       return res.status(400).json({ error: 'Erreur création SumUp', details: data });
     }
   } catch (error) {
