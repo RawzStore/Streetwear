@@ -18,9 +18,6 @@
   
   <!-- FontAwesome pour les icônes officielles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <!-- SDK PayPal chargé en arrière-plan -->
-  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=EUR" defer></script>
 </head>
 <body>
 
@@ -118,7 +115,7 @@
         <i class="fa-solid fa-shield-halved"></i>
         <div class="reassurance-text">
           <h4>Paiement 100% sécurisé</h4>
-          <p>PayPal & Cartes bancaires</p>
+          <p>CB & Cartes bancaires (SumUp)</p>
         </div>
       </div>
       <div class="reassurance-item">
@@ -162,7 +159,7 @@
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
 
-  <!-- MODALE FORMULAIRE DE COMMANDE + PAYPAL -->
+  <!-- MODALE FORMULAIRE DE COMMANDE + SUMUP -->
   <div id="checkout-modal" class="modal-overlay">
     <div class="modal-content">
       <button id="close-modal-btn" class="modal-close">&times;</button>
@@ -254,7 +251,7 @@
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: #555;">
             <span>Frais de livraison :</span>
-            <span id="summary-shipping">4,50 €</span>
+            <span id="summary-shipping">3,90 €</span>
           </div>
           <hr style="border: none; border-top: 1px solid #ddd; margin: 8px 0;">
           <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000;">
@@ -263,8 +260,10 @@
           </div>
         </div>
 
-        <!-- 5. Conteneur dynamique des boutons PayPal -->
-        <div id="paypal-button-container" style="margin-top: 20px;"></div>
+        <!-- 5. BOUTON PAIEMENT SUMUP -->
+        <button type="submit" id="sumup-submit-btn" class="cta-btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1rem; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 4px;">
+          <i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire (SumUp)
+        </button>
       </form>
     </div>
   </div>
@@ -308,8 +307,7 @@
         <div class="payment-box" style="margin-top: 0;">
           <span class="payment-title">Paiements sécurisés</span>
           <div class="payment-badges">
-            <span class="badge-item"><i class="fa-brands fa-paypal"></i> PayPal</span>
-            <span class="badge-item"><i class="fa-regular fa-credit-card"></i> Carte bancaire</span>
+            <span class="badge-item"><i class="fa-regular fa-credit-card"></i> Carte bancaire (SumUp)</span>
           </div>
         </div>
       </div>
@@ -318,7 +316,7 @@
 
     <div class="footer-bottom">
       <p>&copy; 2026 RAWZ Store. Tous droits réservés.</p>
-      <p class="secure-tag"><i class="fa-solid fa-lock"></i> Transactions 100% sécurisées via PayPal</p>
+      <p class="secure-tag"><i class="fa-solid fa-lock"></i> Transactions 100% sécurisées via SumUp</p>
     </div>
   </footer>
 
