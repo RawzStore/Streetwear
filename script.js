@@ -1,6 +1,3 @@
-// Variable globale pour la redirection SumUp
-const SUMUP_BASE_URL = "https://pay.sumup.com/b2c/XTMC3IZ4OY"; 
-
 // ==========================================
 // 1. BASE DE DONNÉES PRODUITS
 // ==========================================
@@ -452,6 +449,7 @@ async function processOrderSubmit() {
   }
 
   try {
+    // 1. Sauvegarde dans Formspree
     const response = await fetch("https://formspree.io/f/xgaweybe", {
       method: "POST",
       headers: {
@@ -462,18 +460,36 @@ async function processOrderSubmit() {
     });
 
     if (response.ok) {
-      cart = [];
-      saveCart();
-      updateCartUI();
+      // 2. Appel de la fonction Vercel pour verrouiller le montant exact chez SumUp
+      const checkoutResponse = await fetch("https://rawz-store.vercel.app/api/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: summary.total.toFixed(2),
+          currency: "EUR",
+          email: email,
+          orderId: `RAWZ-${Date.now()}`
+        })
+      });
 
-      // Redirection dynamique vers la page SumUp avec le montant pré-rempli
-      const formattedAmount = summary.total.toFixed(2);
-      window.location.href = `${SUMUP_BASE_URL}?amount=${encodeURIComponent(formattedAmount)}`;
+      const checkoutData = await checkoutResponse.json();
+
+      if (checkoutData.checkoutId) {
+        // Vider le panier local
+        cart = [];
+        saveCart();
+        updateCartUI();
+
+        // 3. Redirection vers la page de paiement sécurisée
+        window.location.href = `https://pay.sumup.com/checkout/${checkoutData.checkoutId}`;
+      } else {
+        alert("Erreur lors de la préparation du paiement SumUp.");
+      }
     } else {
       alert(`Une erreur est survenue lors de la validation de la commande.`);
     }
   } catch (e) {
-    console.error("Erreur de sauvegarde Formspree", e);
+    console.error("Erreur de commande", e);
     alert(`Erreur de connexion. Impossible de valider la commande pour le moment.`);
   } finally {
     if (submitBtn) {
