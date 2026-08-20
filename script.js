@@ -277,15 +277,16 @@ function updateCheckoutSummary() {
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
   let shippingCost = 0.00;
 
+  // CORRECTION: Correspondance exacte avec les valeurs des boutons radio HTML
   if (selectedMode === 'Mondial Relay') {
     shippingCost = 3.90;
-  } else if (selectedMode === 'Colissimo Domicile') {
+  } else if (selectedMode.includes('Colissimo')) {
     shippingCost = 9.50;
-  } else if (selectedMode === 'Remise en main propre') {
+  } else if (selectedMode.includes('Remise en main propre')) {
     shippingCost = 0.00;
   }
 
-  if (discountedSubtotal >= 80 && selectedMode !== 'Remise en main propre') {
+  if (discountedSubtotal >= 80 && !selectedMode.includes('Remise en main propre')) {
     shippingCost = 0.00;
   }
 
@@ -297,9 +298,9 @@ function updateCheckoutSummary() {
 
   if (subtotalEl) subtotalEl.textContent = `${discountedSubtotal.toFixed(2).replace('.', ',')} €`;
   if (shippingEl) {
-    if (shippingCost === 0 && selectedMode !== 'Remise en main propre') {
+    if (shippingCost === 0 && !selectedMode.includes('Remise en main propre')) {
       shippingEl.textContent = 'Offerte (dès 80€)';
-    } else if (shippingCost === 0 && selectedMode === 'Remise en main propre') {
+    } else if (shippingCost === 0 && selectedMode.includes('Remise en main propre')) {
       shippingEl.textContent = 'Gratuit';
     } else {
       shippingEl.textContent = `${shippingCost.toFixed(2).replace('.', ',')} €`;
@@ -417,7 +418,7 @@ async function processOrderSubmit() {
   const address = document.getElementById('client-address')?.value.trim() || '';
   const zipcode = document.getElementById('client-zipcode')?.value.trim() || '';
   const city = document.getElementById('client-city')?.value.trim() || '';
-  const deliveryMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Non spécifié';
+  const deliveryMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
 
   const relayId = document.getElementById('mr-relay-id')?.value || '';
   const relayName = document.getElementById('mr-relay-name')?.value || '';
@@ -450,16 +451,16 @@ async function processOrderSubmit() {
 
   try {
     // 1. Envoi à Formspree pour garder une trace de la fiche client
-    await fetch("https://formspree.io/f/xgaweybe", {
+    fetch("https://formspree.io/f/xgaweybe", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
       body: JSON.stringify(formData)
-    });
+    }).catch(err => console.error("Erreur Formspree", err));
 
-    // 2. Transmettre le panier brut à Vercel pour calcul du prix réel côté serveur
+    // 2. Transmettre le panier à Vercel pour le traitement du paiement SumUp
     const checkoutResponse = await fetch("https://rawz-store.vercel.app/api/create-checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -479,7 +480,7 @@ async function processOrderSubmit() {
       saveCart();
       updateCartUI();
 
-      // Redirection sécurisée vers SumUp
+      // Redirection vers le paiement SumUp
       window.location.href = `https://pay.sumup.com/checkout/${checkoutData.checkoutId}`;
     } else {
       alert("Erreur lors de la préparation du paiement. Vérifie ton panier.");
