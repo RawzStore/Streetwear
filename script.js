@@ -1,5 +1,5 @@
 // Variable globale pour la redirection SumUp
-const SUMUP_PAYMENT_LINK = "https://pay.sumup.com/b2c/Q8QYTUT8"; // <- Mettre ton vrai lien de paiement SumUp ici
+const SUMUP_BASE_URL = "https://pay.sumup.com/b2c/Q8QYTUT8"; 
 
 // ==========================================
 // 1. BASE DE DONNÉES PRODUITS
@@ -466,8 +466,9 @@ async function processOrderSubmit() {
       saveCart();
       updateCartUI();
 
-      // Redirection automatique vers la page de paiement SumUp
-      window.location.href = SUMUP_PAYMENT_LINK;
+      // Redirection dynamique vers la page SumUp avec le montant pré-rempli
+      const formattedAmount = summary.total.toFixed(2);
+      window.location.href = `${SUMUP_BASE_URL}?amount=${encodeURIComponent(formattedAmount)}`;
     } else {
       alert(`Une erreur est survenue lors de la validation de la commande.`);
     }
