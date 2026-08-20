@@ -787,11 +787,12 @@ body.dark-theme .back-link:hover {
    ========================================== */
 .add-cart-large-btn,
 .checkout-btn,
-.submit-order-btn {
+.submit-order-btn,
+.add-to-cart-btn-green {
   width: 100%;
   padding: 15px 22px;
-  background-color: #1b4332; /* Vert Forêt Sombre */
-  color: #ffffff;
+  background-color: #1b4332 !important;
+  color: #ffffff !important;
   border: none;
   border-radius: 6px;
   font-family: var(--font-family);
@@ -811,8 +812,9 @@ body.dark-theme .back-link:hover {
 
 .add-cart-large-btn:hover,
 .checkout-btn:hover,
-.submit-order-btn:hover {
-  background-color: #081c15; /* Presque noir au survol */
+.submit-order-btn:hover,
+.add-to-cart-btn-green:hover {
+  background-color: #081c15 !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
   opacity: 1;
@@ -820,7 +822,8 @@ body.dark-theme .back-link:hover {
 
 .add-cart-large-btn:active,
 .checkout-btn:active,
-.submit-order-btn:active {
+.submit-order-btn:active,
+.add-to-cart-btn-green:active {
   transform: translateY(0);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
@@ -1245,7 +1248,8 @@ body.dark-theme .back-link:hover {
 
   .submit-order-btn,
   .checkout-btn,
-  .add-cart-large-btn {
+  .add-cart-large-btn,
+  .add-to-cart-btn-green {
     padding: 16px;
     font-size: 0.95rem;
   }
@@ -1489,14 +1493,6 @@ body.dark-theme .back-link:hover {
   font-size: 0.95rem;
 }
 
-.add-to-cart-btn-green {
-  background: #16a34a !important;
-}
-
-.add-to-cart-btn-green:hover {
-  background: #15803d !important;
-}
-
 .accordion-subtext {
   margin-top: 8px;
 }
@@ -1541,6 +1537,7 @@ body.dark-theme .back-link:hover {
   border-radius: 6px;
   font-size: 0.9rem;
   color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 
 .mr-relay-text {
@@ -1587,4 +1584,3 @@ body.dark-theme .back-link:hover {
 .payment-box-no-margin {
   margin-top: 0;
 }
-
