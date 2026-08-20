@@ -1,4 +1,3 @@
-// Catalogues des prix officiels côté serveur
 const productsCatalog = [
   { id: 1, price: 19.99 },
   { id: 2, price: 17.99 },
@@ -16,8 +15,7 @@ export default async function handler(req, res) {
   );
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
   if (req.method !== 'POST') {
@@ -25,38 +23,41 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { cart, deliveryMode, promoCode, email, orderId } = req.body;
+    // Parsing de sécurité si le body est transmis en string
+    const bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const { cart, deliveryMode, promoCode, email, orderId } = bodyData || {};
 
-    // 1. Calcul du sous-total strict depuis les prix du serveur
+    if (!cart || !Array.isArray(cart)) {
+      console.log("ERREUR: Panier invalide ou absent", bodyData);
+      return res.status(400).json({ error: 'Panier invalide' });
+    }
+
+    // 1. Calcul du sous-total strict
     let subtotal = 0;
-    if (Array.isArray(cart)) {
-      for (const item of cart) {
-        const dbProduct = productsCatalog.find(p => p.id === item.id);
-        if (dbProduct) {
-          subtotal += dbProduct.price * item.quantity;
-        }
+    for (const item of cart) {
+      const dbProduct = productsCatalog.find(p => p.id === Number(item.id));
+      if (dbProduct) {
+        subtotal += dbProduct.price * (item.quantity || 1);
       }
     }
 
-    // 2. Application du code promo s'il est valide
+    // 2. Code promo
     if (promoCode === "RAWZ10") {
       subtotal = subtotal * 0.90;
     }
 
-    // 3. Calcul des frais de port
+    // 3. Frais de port
     let shippingCost = 0.00;
     if (deliveryMode === 'Mondial Relay') shippingCost = 3.90;
-    if (deliveryMode === 'Colissimo Domicile') shippingCost = 9.50;
-    if (subtotal >= 80 || deliveryMode === 'Remise en main propre') shippingCost = 0.00;
+    if (deliveryMode === 'Colissimo (Livraison à domicile)') shippingCost = 9.50;
+    if (subtotal >= 80 || deliveryMode === 'Remise en main propre (Gratuit)') shippingCost = 0.00;
 
     const totalAmount = parseFloat((subtotal + shippingCost).toFixed(2));
 
-    if (isNaN(totalAmount) || totalAmount <= 0) {
-      return res.status(400).json({ error: 'Montant de commande invalide' });
-    }
+    console.log("Calcul effectué:", { subtotal, shippingCost, totalAmount });
 
-    // 4. Appel à l'API SumUp
-    const response = await fetch('https://api.sumup.com/v0.1/checkouts', {
+    // 4. Appel SumUp
+    const sumupResponse = await fetch('https://api.sumup.com/v0.1/checkouts', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.SUMUP_SECRET_KEY}`,
@@ -72,7 +73,8 @@ export default async function handler(req, res) {
       })
     });
 
-    const data = await response.json();
+    const data = await sumupResponse.json();
+    console.log("Réponse SumUp:", data);
 
     if (data.id) {
       return res.status(200).json({ checkoutId: data.id });
@@ -80,6 +82,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Erreur création SumUp', details: data });
     }
   } catch (error) {
+    console.error("Erreur serveur interne:", error);
     return res.status(500).json({ error: 'Erreur serveur', details: error.message });
   }
 }
