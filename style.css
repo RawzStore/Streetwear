@@ -408,19 +408,6 @@ body.dark-theme .back-link:hover {
   margin-bottom: 15px;
 }
 
-.checkout-btn {
-  width: 100%;
-  padding: 12px;
-  background: var(--success-color);
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  text-transform: uppercase;
-}
-
 /* ==========================================
    5. HERO SECTION
    ========================================== */
@@ -731,18 +718,6 @@ body.dark-theme .back-link:hover {
   font-size: 1rem;
 }
 
-.add-cart-large-btn {
-  padding: 15px;
-  background: var(--accent-color);
-  color: var(--accent-text);
-  border: none;
-  border-radius: 6px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
 .product-features {
   margin: 15px 0;
   padding-left: 20px;
@@ -808,7 +783,76 @@ body.dark-theme .back-link:hover {
 }
 
 /* ==========================================
-   8. NOTIFICATIONS, MODALES & BOUTON CB
+   8. STYLE MODERNE BOUTONS VERT (PANIER & PAIEMENT)
+   ========================================== */
+.add-cart-large-btn,
+.checkout-btn,
+.submit-order-btn {
+  width: 100%;
+  padding: 15px 22px;
+  background-color: var(--success-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px rgba(43, 147, 72, 0.25);
+  margin-top: 10px;
+}
+
+.add-cart-large-btn:hover,
+.checkout-btn:hover,
+.submit-order-btn:hover {
+  background-color: #237a3b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(43, 147, 72, 0.35);
+  opacity: 1;
+}
+
+.add-cart-large-btn:active,
+.checkout-btn:active,
+.submit-order-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(43, 147, 72, 0.2);
+}
+
+.submit-order-btn.btn-loading,
+.submit-order-btn:disabled,
+.add-cart-large-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.submit-order-btn .spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes btn-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==========================================
+   9. NOTIFICATIONS & MODALES
    ========================================== */
 .toast,
 .toast-notification {
@@ -913,64 +957,13 @@ body.dark-theme .back-link:hover {
   border-color: var(--text-color);
 }
 
-.submit-order-btn {
-  margin-top: 10px;
-  width: 100%;
-  padding: 14px;
-  background-color: var(--accent-color);
-  color: var(--bg-color);
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 1rem;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: opacity 0.2s ease, background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.submit-order-btn:hover {
-  opacity: 0.9;
-}
-
-.submit-order-btn.btn-loading,
-.submit-order-btn:disabled {
-  opacity: 0.75;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.submit-order-btn .spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid #ffffff;
-  border-radius: 50%;
-  animation: btn-spin 0.6s linear infinite;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-body.dark-theme .submit-order-btn .spinner {
-  border: 2px solid rgba(0, 0, 0, 0.2);
-  border-top: 2px solid #000000;
-}
-
-@keyframes btn-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 #paypal-button-container {
   margin-top: 20px;
   min-height: 150px;
 }
 
 /* ==========================================
-   9. FOOTER
+   10. FOOTER
    ========================================== */
 .footer,
 .site-footer {
@@ -1098,7 +1091,7 @@ body.dark-theme .submit-order-btn .spinner {
 }
 
 /* ==========================================
-   10. RESPONSIVE MOBILE
+   11. RESPONSIVE MOBILE
    ========================================== */
 @media (max-width: 768px) {
   body {
@@ -1250,7 +1243,9 @@ body.dark-theme .submit-order-btn .spinner {
     font-size: 1rem;
   }
 
-  .submit-order-btn {
+  .submit-order-btn,
+  .checkout-btn,
+  .add-cart-large-btn {
     padding: 16px;
     font-size: 0.95rem;
   }
@@ -1261,7 +1256,7 @@ body.dark-theme .submit-order-btn .spinner {
 }
 
 /* ==========================================
-   11. FIX WIDGET MONDIAL RELAY (DESKTOP & MOBILE)
+   12. FIX WIDGET MONDIAL RELAY (DESKTOP & MOBILE)
    ========================================== */
 #Zone_Widget,
 #Zone_Widget iframe,
@@ -1301,7 +1296,7 @@ body.dark-theme .submit-order-btn .spinner {
 }
 
 /* ==========================================
-   12. BANDEAU DE RÉASSURANCE
+   13. BANDEAU DE RÉASSURANCE
    ========================================== */
 .reassurance-banner,
 .reassurance-bar {
