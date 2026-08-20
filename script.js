@@ -251,7 +251,7 @@ function closeCart() {
 // ==========================================
 // 5. MODALE CHECKOUT & CALCULS
 // ==========================================
-async function openCheckoutModal() {
+function openCheckoutModal() {
   if (cart.length === 0) {
     alert("Ton panier est vide !");
     return;
@@ -262,26 +262,7 @@ async function openCheckoutModal() {
     updateCheckoutSummary();
     toggleMondialRelayZone();
     checkZipcodeState();
-    
-    const sumupContainer = document.getElementById('sumup-card');
-    if (sumupContainer) {
-      sumupContainer.innerHTML = '<p style="text-align:center; padding:15px;">Chargement du module de paiement...</p>';
-    }
-
-    // Récupération dynamique du checkoutId (à remplacer par ton appel API si tu as un serveur)
-    const checkoutId = await getSumUpCheckoutId();
-    initSumUpWidget(checkoutId);
   }
-}
-
-// Fonction pour récupérer le Checkout ID SumUp
-async function getSumUpCheckoutId() {
-  // Remplacer avec l'URL de ton backend/serverless function si dispo
-  // Ex: const res = await fetch('/api/create-checkout', { method: 'POST', body: JSON.stringify({ cart }) });
-  // Return (await res.json()).checkoutId;
-  
-  // Si tu utilises un ID généré ou passé en variable globale/data-attribute :
-  return window.SUMUP_CHECKOUT_ID || null; 
 }
 
 function closeCheckoutModal() {
@@ -425,51 +406,10 @@ function toggleMondialRelayZone() {
   }
 }
 
-function validateDeliverySelection() {
-  const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value;
-  if (selectedMode === 'Mondial Relay') {
-    const relayId = document.getElementById('mr-relay-id')?.value;
-    if (!relayId) {
-      alert("Merci de choisir un Point Relais sur la carte Mondial Relay avant de continuer.");
-      return false;
-    }
-  }
-  return true;
-}
-
 // ==========================================
-// 7. SUMUP & FORMSPREE
+// 7. ENVOI COMMANDE & FORMSPREE
 // ==========================================
-function initSumUpWidget(checkoutId) {
-  const sumupContainer = document.getElementById('sumup-card');
-  if (!sumupContainer) return;
-
-  if (typeof SumUpCard === 'undefined') {
-    sumupContainer.innerHTML = '<p style="color:red; text-align:center;">Erreur : Le SDK SumUp n\'est pas chargé dans la page HTML.</p>';
-    return;
-  }
-
-  if (!checkoutId) {
-    sumupContainer.innerHTML = '<p style="color:red; text-align:center; padding:10px;">Erreur : Identifiant de transaction (checkoutId) manquant.</p>';
-    return;
-  }
-
-  sumupContainer.innerHTML = '';
-
-  SumUpCard.mount({
-    id: 'sumup-card',
-    checkoutId: checkoutId,
-    onResponse: function(type, body) {
-      if (type === 'success') {
-        handleSuccessfulOrder(body);
-      } else if (type === 'error') {
-        alert("Une erreur est survenue lors du paiement SumUp.");
-      }
-    }
-  });
-}
-
-async function handleSuccessfulOrder(paymentDetails) {
+async function processOrderSubmit() {
   const firstname = document.getElementById('client-firstname')?.value.trim() || '';
   const lastname = document.getElementById('client-lastname')?.value.trim() || '';
   const email = document.getElementById('client-email')?.value.trim() || '';
@@ -499,13 +439,13 @@ async function handleSuccessfulOrder(paymentDetails) {
     "7_Articles_Commandes": orderDetails,
     "8_Total_Articles": `${summary.subtotal.toFixed(2)} €`,
     "9_Frais_Livraison": `${summary.shippingCost.toFixed(2)} €`,
-    "10_TOTAL_PAYE": `${summary.total.toFixed(2)} €`,
-    "11_Transaction_SumUp_ID": paymentDetails.transaction_id || paymentDetails.id || 'Confirmé'
+    "10_TOTAL_PAYE": `${summary.total.toFixed(2)} €`
   };
 
-  const sumupContainer = document.getElementById('sumup-card');
-  if (sumupContainer) {
-    sumupContainer.innerHTML = '<p style="text-align:center; padding:15px; font-weight:bold;">Validation de la commande en cours...</p>';
+  const submitBtn = document.getElementById('sumup-submit-btn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Traitement de la commande...';
   }
 
   try {
@@ -519,27 +459,31 @@ async function handleSuccessfulOrder(paymentDetails) {
     });
 
     if (response.ok) {
-      alert(`Merci ${firstname} ! Ta commande a été validée avec succès.`);
+      alert(`Merci ${firstname} ! Ta commande a été enregistrée avec succès.`);
+      cart = [];
+      saveCart();
+      updateCartUI();
+      closeCheckoutModal();
+      closeCart();
+
+      const form = document.getElementById('checkout-form');
+      if (form) form.reset();
     } else {
-      alert(`Paiement réussi, mais une erreur est survenue lors de l'enregistrement Formspree.`);
+      alert(`Une erreur est survenue lors de la validation de la commande.`);
     }
   } catch (e) {
     console.error("Erreur de sauvegarde Formspree", e);
-    alert(`Paiement réussi, mais la confirmation n'a pas pu être envoyée automatiquement.`);
+    alert(`Erreur de connexion. Impossible de valider la commande pour le moment.`);
   } finally {
-    cart = [];
-    saveCart();
-    updateCartUI();
-    closeCheckoutModal();
-    closeCart();
-
-    const form = document.getElementById('checkout-form');
-    if (form) form.reset();
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire (SumUp)';
+    }
   }
 }
 
 // ==========================================
-// 8. PAGE PRODUIT (GESTION INTERACTIVE DES VIGNETTES ET COULEURS)
+// 8. PAGE PRODUIT (INTERACTION VIGNETTES ET COULEURS)
 // ==========================================
 function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -699,6 +643,42 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   initProductPage();
   toggleMondialRelayZone();
+
+  // EMPECHER TOTALEMENT LE RECHARGEMENT DU FORMULAIRE
+  const checkoutForm = document.getElementById('checkout-form');
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      return false;
+    });
+  }
+
+  // GESTION DU BOUTON DE PAIEMENT
+  const sumupSubmitBtn = document.getElementById('sumup-submit-btn');
+  if (sumupSubmitBtn) {
+    sumupSubmitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      // Validation HTML5 des champs obligatoires
+      if (checkoutForm && !checkoutForm.checkValidity()) {
+        checkoutForm.reportValidity();
+        return;
+      }
+
+      // Validation de la sélection du point relais si Mondial Relay est choisi
+      const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value;
+      if (selectedMode === 'Mondial Relay') {
+        const relayId = document.getElementById('mr-relay-id')?.value;
+        if (!relayId) {
+          alert("Merci de sélectionner un Point Relais avant de valider la commande.");
+          return;
+        }
+      }
+
+      // Lancement de la procédure d'envoi
+      processOrderSubmit();
+    });
+  }
 
   document.querySelectorAll('input[name="mode_de_livraison"]').forEach(radio => {
     radio.addEventListener('change', () => {
