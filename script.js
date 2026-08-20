@@ -202,7 +202,6 @@ function updateCartUI() {
   if (cartBadge) cartBadge.textContent = count;
   if (cartTotalPrice) cartTotalPrice.textContent = `${finalTotal.toFixed(2).replace('.', ',')} €`;
 
-  // Sécurisation du bouton de commande si le panier est vide
   const checkoutBtn = document.getElementById('checkout-btn') || document.getElementById('open-checkout-btn');
   if (checkoutBtn) {
     const isEmpty = cart.length === 0;
@@ -252,7 +251,7 @@ function closeCart() {
 // ==========================================
 // 5. MODALE CHECKOUT & CALCULS
 // ==========================================
-function openCheckoutModal() {
+async function openCheckoutModal() {
   if (cart.length === 0) {
     alert("Ton panier est vide !");
     return;
@@ -264,14 +263,25 @@ function openCheckoutModal() {
     toggleMondialRelayZone();
     checkZipcodeState();
     
-    // Nettoyage et initialisation du widget SumUp
     const sumupContainer = document.getElementById('sumup-card');
-    if (sumupContainer) sumupContainer.innerHTML = '';
-    
-    setTimeout(() => {
-      initSumUpWidget();
-    }, 100);
+    if (sumupContainer) {
+      sumupContainer.innerHTML = '<p style="text-align:center; padding:15px;">Chargement du module de paiement...</p>';
+    }
+
+    // Récupération dynamique du checkoutId (à remplacer par ton appel API si tu as un serveur)
+    const checkoutId = await getSumUpCheckoutId();
+    initSumUpWidget(checkoutId);
   }
+}
+
+// Fonction pour récupérer le Checkout ID SumUp
+async function getSumUpCheckoutId() {
+  // Remplacer avec l'URL de ton backend/serverless function si dispo
+  // Ex: const res = await fetch('/api/create-checkout', { method: 'POST', body: JSON.stringify({ cart }) });
+  // Return (await res.json()).checkoutId;
+  
+  // Si tu utilises un ID généré ou passé en variable globale/data-attribute :
+  return window.SUMUP_CHECKOUT_ID || null; 
 }
 
 function closeCheckoutModal() {
@@ -432,7 +442,17 @@ function validateDeliverySelection() {
 // ==========================================
 function initSumUpWidget(checkoutId) {
   const sumupContainer = document.getElementById('sumup-card');
-  if (!sumupContainer || typeof SumUpCard === 'undefined') return;
+  if (!sumupContainer) return;
+
+  if (typeof SumUpCard === 'undefined') {
+    sumupContainer.innerHTML = '<p style="color:red; text-align:center;">Erreur : Le SDK SumUp n\'est pas chargé dans la page HTML.</p>';
+    return;
+  }
+
+  if (!checkoutId) {
+    sumupContainer.innerHTML = '<p style="color:red; text-align:center; padding:10px;">Erreur : Identifiant de transaction (checkoutId) manquant.</p>';
+    return;
+  }
 
   sumupContainer.innerHTML = '';
 
@@ -714,10 +734,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartToggleBtn = document.getElementById('cart-toggle-btn');
   const closeCartBtn = document.getElementById('close-cart-btn');
   const cartOverlay = document.getElementById('cart-overlay');
+  const checkoutBtn = document.getElementById('checkout-btn') || document.getElementById('open-checkout-btn');
 
   if (cartToggleBtn) cartToggleBtn.addEventListener('click', openCart);
   if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+  if (checkoutBtn) checkoutBtn.addEventListener('click', openCheckoutModal);
 
   const applyPromoBtn = document.getElementById('apply-promo-btn');
   const promoInput = document.getElementById('promo-input');
