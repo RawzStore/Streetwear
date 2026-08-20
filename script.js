@@ -1,5 +1,5 @@
 // Variable globale pour la redirection SumUp
-const SUMUP_BASE_URL = "https://pay.sumup.com/b2c/Q8QYTUT8"; 
+const SUMUP_BASE_URL = "https://pay.sumup.com/b2c/XTMC3IZ4OY"; 
 
 // ==========================================
 // 1. BASE DE DONNÉES PRODUITS
