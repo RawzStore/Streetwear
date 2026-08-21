@@ -430,16 +430,19 @@ async function processOrderSubmit() {
   ).join('\n');
 
   const formData = {
-    "1_Client": `${firstname} ${lastname}`,
-    "2_Email": email,
-    "3_Telephone": phone,
-    "4_Adresse_Livraison": `${address}, ${zipcode} ${city}`,
-    "5_Mode_de_Livraison": deliveryMode,
-    "6_Point_Relais": (deliveryMode === 'Mondial Relay' && relayId) ? `${relayName} (${relayId}) - ${relayAddress}` : 'Non applicable',
-    "7_Articles_Commandes": orderDetails,
-    "8_Total_Articles": `${summary.subtotal.toFixed(2)} €`,
-    "9_Frais_Livraison": `${summary.shippingCost.toFixed(2)} €`,
-    "10_TOTAL_ESTIME": `${summary.total.toFixed(2)} €`
+    "1_Prenom": firstname,
+    "2_Nom": lastname,
+    "3_Email": email,
+    "4_Telephone": phone,
+    "5_Adresse": address,
+    "6_Code_Postal": zipcode,
+    "7_Ville": city,
+    "8_Mode_de_Livraison": deliveryMode,
+    "9_Point_Relais": (deliveryMode === 'Mondial Relay' && relayId) ? `${relayName} (${relayId}) - ${relayAddress}` : 'Non applicable',
+    "10_Articles_Commandes": orderDetails,
+    "11_Total_Articles": `${summary.subtotal.toFixed(2)} €`,
+    "12_Frais_Livraison": `${summary.shippingCost.toFixed(2)} €`,
+    "13_TOTAL_ESTIME": `${summary.total.toFixed(2)} €`
   };
 
   const submitBtn = document.getElementById('sumup-submit-btn');
@@ -467,7 +470,16 @@ async function processOrderSubmit() {
         cart: cart,
         deliveryMode: deliveryMode,
         promoCode: (appliedDiscount > 0) ? "RAWZ10" : "",
-        email: email
+        email: email,
+        customerDetails: {
+          firstname: firstname,
+          lastname: lastname,
+          phone: phone,
+          address: address,
+          zipcode: zipcode,
+          city: city,
+          relayInfo: (deliveryMode === 'Mondial Relay' && relayId) ? `${relayName} (${relayId}) - ${relayAddress}` : 'Non applicable'
+        }
       })
     });
 
