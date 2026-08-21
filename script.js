@@ -448,7 +448,7 @@ async function processOrderSubmit() {
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Traitement de la commande...';
   }
 
-  // Envoi asynchrone à Formspree en arrière-plan (sans bloquer Stripe)
+  // Envoi asynchrone à Formspree en arrière-plan
   fetch("https://formspree.io/f/xgaweybe", {
     method: "POST",
     headers: {
@@ -483,7 +483,7 @@ async function processOrderSubmit() {
       alert("Erreur lors de la préparation du paiement : " + (checkoutData.error || "Réponse invalide."));
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer la commande';
+        submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> PAYER LA COMMANDE';
       }
     }
   } catch (e) {
@@ -491,7 +491,7 @@ async function processOrderSubmit() {
     alert("Erreur de connexion avec le serveur de paiement. Vérifie ta connexion ou retente plus tard.");
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer la commande';
+      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> PAYER LA COMMANDE';
     }
   }
 }
@@ -658,28 +658,19 @@ document.addEventListener('DOMContentLoaded', () => {
   initProductPage();
   toggleMondialRelayZone();
 
-  // EMPECHER TOTALEMENT LE RECHARGEMENT DU FORMULAIRE
+  // GESTION DU FORMULAIRE DE COMMANDE ET DU BOUTON
   const checkoutForm = document.getElementById('checkout-form');
   if (checkoutForm) {
     checkoutForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      return false;
-    });
-  }
 
-  // GESTION DU BOUTON DE PAIEMENT
-  const sumupSubmitBtn = document.getElementById('sumup-submit-btn');
-  if (sumupSubmitBtn) {
-    sumupSubmitBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      // Validation HTML5 des champs obligatoires
-      if (checkoutForm && !checkoutForm.checkValidity()) {
+      // Validation HTML5 native
+      if (!checkoutForm.checkValidity()) {
         checkoutForm.reportValidity();
         return;
       }
 
-      // Validation de la sélection du point relais si Mondial Relay est choisi
+      // Validation Point Relais si Mondial Relay est coché
       const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value;
       if (selectedMode === 'Mondial Relay') {
         const relayId = document.getElementById('mr-relay-id')?.value;
@@ -689,7 +680,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Lancement de la procédure d'envoi
       processOrderSubmit();
     });
   }
