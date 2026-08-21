@@ -150,7 +150,7 @@
         <span>Total :</span>
         <span id="cart-total-price">0,00 €</span>
       </div>
-      <button onclick="openCheckoutModal()" class="checkout-btn">Payer la commande</button>
+      <button onclick="openCheckoutModal()" id="checkout-btn" class="checkout-btn">Payer la commande</button>
     </div>
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
@@ -160,7 +160,7 @@
     <div class="modal-content">
       <button id="close-modal-btn" class="modal-close">&times;</button>
       <h2>Informations de livraison</h2>
-      <form id="checkout-form" onsubmit="return false;">
+      <form id="checkout-form">
         
         <div class="form-row">
           <div class="form-group">
@@ -256,8 +256,8 @@
           </div>
         </div>
 
-        <button type="button" id="sumup-submit-btn" class="checkout-btn" style="margin-top: 20px;">
-          <i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire
+        <button type="submit" id="stripe-submit-btn" class="checkout-btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1rem;">
+          <i class="fa-regular fa-credit-card"></i> Payer la commande
         </button>
       </form>
     </div>
