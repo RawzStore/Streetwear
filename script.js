@@ -448,7 +448,7 @@ async function processOrderSubmit() {
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Traitement de la commande...';
   }
 
-  // Envoi asynchrone à Formspree en arrière-plan
+  // Envoi asynchrone à Formspree
   fetch("https://formspree.io/f/xgaweybe", {
     method: "POST",
     headers: {
@@ -497,7 +497,7 @@ async function processOrderSubmit() {
 }
 
 // ==========================================
-// 8. PAGE PRODUIT (INTERACTION VIGNETTES ET COULEURS)
+// 8. PAGE PRODUIT
 // ==========================================
 function initProductPage() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -658,19 +658,33 @@ document.addEventListener('DOMContentLoaded', () => {
   initProductPage();
   toggleMondialRelayZone();
 
+  // GESTION DU RETOUR STRIPE (PAIEMENT RÉUSSI OU ANNULÉ)
+  const urlParams = new URLSearchParams(window.location.search);
+
+  if (urlParams.get('success') === 'true') {
+    cart = [];
+    saveCart();
+    updateCartUI();
+    alert("Merci pour ta commande sur RAWZ ! Ton paiement a été validé. Tu vas recevoir un e-mail de confirmation.");
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  if (urlParams.get('cancel') === 'true') {
+    alert("Le paiement a été annulé. Tes articles sont toujours dans ton panier.");
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
   // GESTION DU FORMULAIRE DE COMMANDE ET DU BOUTON
   const checkoutForm = document.getElementById('checkout-form');
   if (checkoutForm) {
     checkoutForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      // Validation HTML5 native
       if (!checkoutForm.checkValidity()) {
         checkoutForm.reportValidity();
         return;
       }
 
-      // Validation Point Relais si Mondial Relay est coché
       const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value;
       if (selectedMode === 'Mondial Relay') {
         const relayId = document.getElementById('mr-relay-id')?.value;
