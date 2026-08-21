@@ -66,22 +66,33 @@ export default async function handler(req, res) {
       });
     }
 
-    // 3. Création de la session de paiement Stripe avec metadata
+    // Objets métadonnées centralisés
+    const orderMetadata = {
+      prenom: customerDetails?.firstname || 'Non renseigné',
+      nom: customerDetails?.lastname || 'Non renseigné',
+      telephone: customerDetails?.phone || 'Non renseigné',
+      adresse: customerDetails?.address || 'Non renseignée',
+      code_postal: customerDetails?.zipcode || 'Non renseigné',
+      ville: customerDetails?.city || 'Non renseignée',
+      mode_livraison: deliveryMode || 'Non renseigné',
+      point_relais: customerDetails?.relayInfo || 'Non applicable',
+    };
+
+    // 3. Création de la session de paiement Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
       customer_email: email || undefined,
-      metadata: {
-        prenom: customerDetails?.firstname || 'Non renseigné',
-        nom: customerDetails?.lastname || 'Non renseigné',
-        telephone: customerDetails?.phone || 'Non renseigné',
-        adresse: customerDetails?.address || 'Non renseignée',
-        code_postal: customerDetails?.zipcode || 'Non renseigné',
-        ville: customerDetails?.city || 'Non renseignée',
-        mode_livraison: deliveryMode || 'Non renseigné',
-        point_relais: customerDetails?.relayInfo || 'Non applicable',
+
+      // Transmet aussi les métadonnées au Payment Intent (pi_...)
+      payment_intent_data: {
+        metadata: orderMetadata,
       },
+
+      // Métadonnées au niveau de la Checkout Session (cs_...)
+      metadata: orderMetadata,
+
       success_url: 'https://rawz-store.vercel.app/?success=true',
       cancel_url: 'https://rawz-store.vercel.app/?cancel=true',
     });
