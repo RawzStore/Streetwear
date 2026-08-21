@@ -154,7 +154,7 @@
         <span>Total :</span>
         <span id="cart-total-price">0,00 €</span>
       </div>
-      <button onclick="openCheckoutModal()" class="checkout-btn">Payer la commande</button>
+      <button onclick="openCheckoutModal()" id="checkout-btn" class="checkout-btn">Payer la commande</button>
     </div>
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
@@ -261,8 +261,8 @@
         </div>
 
         <!-- 5. BOUTON PAIEMENT STRIPE -->
-        <button type="submit" id="stripe-submit-btn" class="cta-btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1rem; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 4px;">
-          <i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire (Stripe)
+        <button type="submit" id="stripe-submit-btn" class="checkout-btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1rem;">
+          <i class="fa-regular fa-credit-card"></i> Payer la commande
         </button>
       </form>
     </div>
