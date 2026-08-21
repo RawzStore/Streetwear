@@ -277,7 +277,6 @@ function updateCheckoutSummary() {
   const selectedMode = document.querySelector('input[name="mode_de_livraison"]:checked')?.value || 'Mondial Relay';
   let shippingCost = 0.00;
 
-  // CORRECTION: Correspondance exacte avec les valeurs des boutons radio HTML
   if (selectedMode === 'Mondial Relay') {
     shippingCost = 3.90;
   } else if (selectedMode.includes('Colissimo')) {
@@ -408,7 +407,7 @@ function toggleMondialRelayZone() {
 }
 
 // ==========================================
-// 7. ENVOI COMMANDE & REDIRECTION SUMUP (SÉCURISÉ)
+// 7. ENVOI FORMSPREE & REDIRECTION STRIPE (CB)
 // ==========================================
 async function processOrderSubmit() {
   const firstname = document.getElementById('client-firstname')?.value.trim() || '';
@@ -450,17 +449,17 @@ async function processOrderSubmit() {
   }
 
   try {
-    // 1. Envoi à Formspree pour garder une trace de la fiche client
-    fetch("https://formspree.io/f/xgaweybe", {
+    // 1. Envoi à Formspree pour enregistrer les infos du client
+    await fetch("https://formspree.io/f/xgaweybe", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
       body: JSON.stringify(formData)
-    }).catch(err => console.error("Erreur Formspree", err));
+    }).catch(err => console.error("Erreur Formspree :", err));
 
-    // 2. Transmettre le panier à Vercel pour le traitement du paiement SumUp
+    // 2. Création de la session de paiement Stripe sur Vercel
     const checkoutResponse = await fetch("https://rawz-store.vercel.app/api/create-checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -468,30 +467,30 @@ async function processOrderSubmit() {
         cart: cart,
         deliveryMode: deliveryMode,
         promoCode: (appliedDiscount > 0) ? "RAWZ10" : "",
-        email: email,
-        orderId: `RAWZ-${Date.now()}`
+        email: email
       })
     });
 
     const checkoutData = await checkoutResponse.json();
 
-    if (checkoutData.checkoutId) {
+    if (checkoutData.url) {
+      // Nettoyage du panier
       cart = [];
       saveCart();
       updateCartUI();
 
-      // Redirection vers le paiement SumUp
-      window.location.href = `https://pay.sumup.com/checkout/${checkoutData.checkoutId}`;
+      // Redirection vers la page sécurisée de paiement CB Stripe
+      window.location.href = checkoutData.url;
     } else {
-      alert("Erreur lors de la préparation du paiement. Vérifie ton panier.");
+      alert("Erreur lors de la préparation du paiement. Vérifie tes informations.");
     }
   } catch (e) {
-    console.error("Erreur lors de la commande", e);
+    console.error("Erreur lors de la commande :", e);
     alert("Erreur de connexion avec le serveur de paiement.");
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire (SumUp)';
+      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire';
     }
   }
 }
