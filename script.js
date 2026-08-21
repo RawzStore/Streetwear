@@ -448,18 +448,18 @@ async function processOrderSubmit() {
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Traitement de la commande...';
   }
 
-  try {
-    // 1. Envoi à Formspree pour enregistrer les infos du client
-    await fetch("https://formspree.io/f/xgaweybe", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(formData)
-    }).catch(err => console.error("Erreur Formspree :", err));
+  // Envoi asynchrone à Formspree en arrière-plan (sans bloquer Stripe)
+  fetch("https://formspree.io/f/xgaweybe", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(formData)
+  }).catch(err => console.error("Erreur Formspree :", err));
 
-    // 2. Création de la session de paiement Stripe sur Vercel
+  // Création de la session Stripe et redirection
+  try {
     const checkoutResponse = await fetch("https://rawz-store.vercel.app/api/create-checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -471,21 +471,27 @@ async function processOrderSubmit() {
       })
     });
 
+    if (!checkoutResponse.ok) {
+      throw new Error(`Erreur serveur (${checkoutResponse.status})`);
+    }
+
     const checkoutData = await checkoutResponse.json();
 
     if (checkoutData.url) {
-      // Redirection vers la page sécurisée de paiement CB Stripe
       window.location.href = checkoutData.url;
     } else {
-      alert("Erreur lors de la préparation du paiement. Vérifie tes informations.");
+      alert("Erreur lors de la préparation du paiement : " + (checkoutData.error || "Réponse invalide."));
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer la commande';
+      }
     }
   } catch (e) {
     console.error("Erreur lors de la commande :", e);
-    alert("Erreur de connexion avec le serveur de paiement.");
-  } finally {
+    alert("Erreur de connexion avec le serveur de paiement. Vérifie ta connexion ou retente plus tard.");
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire';
+      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer la commande';
     }
   }
 }
