@@ -474,11 +474,6 @@ async function processOrderSubmit() {
     const checkoutData = await checkoutResponse.json();
 
     if (checkoutData.url) {
-      // Nettoyage du panier
-      cart = [];
-      saveCart();
-      updateCartUI();
-
       // Redirection vers la page sécurisée de paiement CB Stripe
       window.location.href = checkoutData.url;
     } else {
