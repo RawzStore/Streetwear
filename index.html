@@ -115,7 +115,7 @@
         <i class="fa-solid fa-shield-halved"></i>
         <div class="reassurance-text">
           <h4>Paiement 100% sécurisé</h4>
-          <p>Cartes bancaires via SumUp</p>
+          <p>Cartes bancaires via Stripe</p>
         </div>
       </div>
       <div class="reassurance-item">
@@ -159,12 +159,12 @@
   </aside>
   <div id="cart-overlay" class="cart-overlay"></div>
 
-  <!-- MODALE FORMULAIRE DE COMMANDE + SUMUP -->
+  <!-- MODALE FORMULAIRE DE COMMANDE + STRIPE -->
   <div id="checkout-modal" class="modal-overlay">
     <div class="modal-content">
       <button id="close-modal-btn" class="modal-close">&times;</button>
       <h2>Informations de livraison</h2>
-      <form id="checkout-form" onsubmit="return false;">
+      <form id="checkout-form">
         <!-- 1. Informations client -->
         <div class="form-row">
           <div class="form-group">
@@ -260,9 +260,9 @@
           </div>
         </div>
 
-        <!-- 5. BOUTON PAIEMENT SUMUP -->
-        <button type="button" id="sumup-submit-btn" class="cta-btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1rem; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 4px;">
-          <i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire (SumUp)
+        <!-- 5. BOUTON PAIEMENT STRIPE -->
+        <button type="submit" id="stripe-submit-btn" class="cta-btn" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 1rem; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 4px;">
+          <i class="fa-regular fa-credit-card"></i> Payer par Carte Bancaire (Stripe)
         </button>
       </form>
     </div>
@@ -316,7 +316,7 @@
 
     <div class="footer-bottom">
       <p>&copy; 2026 RAWZ Store. Tous droits réservés.</p>
-      <p class="secure-tag"><i class="fa-solid fa-lock"></i> Transactions 100% sécurisées via SumUp</p>
+      <p class="secure-tag"><i class="fa-solid fa-lock"></i> Transactions 100% sécurisées via Stripe</p>
     </div>
   </footer>
 
