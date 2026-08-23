@@ -66,31 +66,44 @@ export default async function handler(req, res) {
       });
     }
 
-    // Objets métadonnées centralisés
+    // 3. Formatage de la liste des articles pour les métadonnées
+    const articlesFormatted = cart.map(item => {
+      const dbProduct = productsCatalog.find(p => p.id === Number(item.id));
+      const pName = dbProduct ? dbProduct.name : (item.name || `Article #${item.id}`);
+      const priceUnit = dbProduct ? (dbProduct.price / 100).toFixed(2) : "19.99";
+      
+      const details = [];
+      if (item.selectedSize) details.push(`Taille: ${item.selectedSize}`);
+      if (item.selectedColor) details.push(`Coloris: ${item.selectedColor}`);
+      
+      return `- ${pName} | ${details.join(' | ')} | Qte: ${item.quantity || 1} | Prix: ${priceUnit}€`;
+    }).join(' -- ');
+
+    // 4. Métadonnées ordonnées pour l'affichage Stripe
     const orderMetadata = {
-      prenom: customerDetails?.firstname || 'Non renseigné',
-      nom: customerDetails?.lastname || 'Non renseigné',
-      telephone: customerDetails?.phone || 'Non renseigné',
-      adresse: customerDetails?.address || 'Non renseignée',
-      code_postal: customerDetails?.zipcode || 'Non renseigné',
-      ville: customerDetails?.city || 'Non renseignée',
-      mode_livraison: deliveryMode || 'Non renseigné',
-      point_relais: customerDetails?.relayInfo || 'Non applicable',
+      "1_Prenom": customerDetails?.firstname || 'Non renseigné',
+      "2_Nom": customerDetails?.lastname || 'Non renseigné',
+      "3_Email": email || customerDetails?.email || 'Non renseigné',
+      "4_Telephone": customerDetails?.phone || 'Non renseigné',
+      "5_Adresse": customerDetails?.address || 'Non renseignée',
+      "6_Code_Postal": customerDetails?.zipcode || 'Non renseigné',
+      "7_Ville": customerDetails?.city || 'Non renseignée',
+      "8_Mode_de_Livraison": deliveryMode || 'Non renseigné',
+      "9_Point_Relais": customerDetails?.relayInfo || 'Non applicable',
+      "10_Articles_Commandes": articlesFormatted
     };
 
-    // 3. Création de la session de paiement Stripe
+    // 5. Création de la session de paiement Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      customer_email: email || undefined,
+      customer_email: email || customerDetails?.email || undefined,
 
-      // Transmet aussi les métadonnées au Payment Intent (pi_...)
       payment_intent_data: {
         metadata: orderMetadata,
       },
 
-      // Métadonnées au niveau de la Checkout Session (cs_...)
       metadata: orderMetadata,
 
       success_url: 'https://rawz-store.vercel.app/?success=true',
