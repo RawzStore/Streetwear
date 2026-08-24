@@ -71,10 +71,9 @@ const products = [
     colors: ["Blanc", "Gris", "Noir"],
     description: "Short oversize avec effet sous-vêtement / boxer apparent imprimé. Cordons en corde lourde ajustables.",
     mainImage: "images/short-double-blanc.webp",
-    imagesByColor: {
-      "Blanc": ["images/short-double-blanc.webp", "images/short-double-blanc-porté.webp"],
-      "Gris": ["", ""],
-      "Noir": ["", ""]
+    images: {
+      "images/short-double-blanc.webp"
+      "images/short-double-blanc-porté.webp"
     }
   }
 ];
