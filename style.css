@@ -425,7 +425,7 @@ body.dark-theme .back-link:hover {
   position: relative;
   width: 100%;
   min-height: 400px;
-  background: url('images/hero-banner.jpg') center/cover no-repeat;
+  background: url('images/hero-banner.webp') center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
