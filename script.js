@@ -61,6 +61,21 @@ const products = [
       "images/tshirt-tricoté.webp",
       "images/tshirt-tricoté-back.webp"
     ]
+  },
+  { 
+    id: 5, 
+    name: "Short Double Layer", 
+    category: "short", 
+    price: 19.99, 
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["Blanc", "Gris", "Noir"],
+    description: "Short oversize avec effet sous-vêtement / boxer apparent imprimé. Cordons en corde lourde ajustables.",
+    mainImage: "images/short-double-blanc.webp",
+    imagesByColor: {
+      "Blanc": ["images/short-double-blanc.webp", "images/short-double-blanc-porté.webp"],
+      "Gris": ["", ""],
+      "Noir": ["", ""]
+    }
   }
 ];
 
