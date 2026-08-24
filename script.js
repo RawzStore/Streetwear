@@ -10,12 +10,12 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir"],
     description: "Coupe ample à manches courtes, style vintage à carreaux brodés avec double poche.",
-    mainImage: "images/chemise-devant.jpg",
+    mainImage: "images/chemise-devant.webp",
     images: [
-      "images/chemise-devant.jpg",
-      "images/chemise-back.jpg",
-      "images/chemise-zoom-logo-devant.jpg",
-      "images/chemise-zoom-logo-back.jpg"
+      "images/chemise-devant.webp",
+      "images/chemise-back.webp",
+      "images/chemise-zoom-logo-devant.webp",
+      "images/chemise-zoom-logo-back.webp"
     ]
   },
   { 
@@ -26,12 +26,12 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir/Blanc", "Noir/Rose", "Blanc/Rouge", "Rouge/Blanc"],
     description: "Col en polyester élastique avec motif à rayures color-block et imprimé typographique.",
-    mainImage: "images/polo-noir-r-blanches.jpg",
+    mainImage: "images/polo-noir-r-blanches.webp",
     imagesByColor: {
-      "Noir/Blanc": ["images/polo-noir-r-blanches.jpg", "images/polo-noir-r-blanches-back.jpg"],
-      "Noir/Rose": ["images/polo-noir-r-roses.jpg", "images/polo-noir-r-roses-back.jpg"],
-      "Blanc/Rouge": ["images/polo-blanc-r-rouges.jpg", "images/polo-blanc-r-rouges-back.jpg"],
-      "Rouge/Blanc": ["images/polo-rouge-r-blanches.jpg", "images/polo-rouge-r-blanches-back.jpg"]
+      "Noir/Blanc": ["images/polo-noir-r-blanches.webp", "images/polo-noir-r-blanches-back.webp"],
+      "Noir/Rose": ["images/polo-noir-r-roses.webp", "images/polo-noir-r-roses-back.webp"],
+      "Blanc/Rouge": ["images/polo-blanc-r-rouges.webp", "images/polo-blanc-r-rouges-back.webp"],
+      "Rouge/Blanc": ["images/polo-rouge-r-blanches.webp", "images/polo-rouge-r-blanches-back.webp"]
     }
   },
   { 
@@ -42,10 +42,10 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Noir"],
     description: "Style : Streetwear | Matière : 100 % Coton | Col : Col rabattu",
-    mainImage: "images/polo-signature.jpg",
+    mainImage: "images/polo-signature.webp",
     images: [
-      "images/polo-signature.jpg",
-      "images/polo-signature-zoom.jpg"
+      "images/polo-signature.webp",
+      "images/polo-signature-zoom.webp"
     ]
   },
   { 
@@ -56,10 +56,10 @@ const products = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Militaire"],
     description: "T-Shirt Tricoté couleur sable / orange / blanc",
-    mainImage: "images/tshirt-tricoté.jpg",
+    mainImage: "images/tshirt-tricoté.webp",
     images: [
-      "images/tshirt-tricoté.jpg",
-      "images/tshirt-tricoté-back.jpg"
+      "images/tshirt-tricoté.webp",
+      "images/tshirt-tricoté-back.webp"
     ]
   }
 ];
