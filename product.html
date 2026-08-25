@@ -71,8 +71,8 @@
       <!-- Galerie photo -->
       <div class="product-gallery">
         <div class="main-image-container">
-          <img id="main-product-img" src="" alt="Produit">
-          <button type="button" id="open-lightbox-btn" class="zoom-btn" title="Agrandir l'image">
+          <img id="main-product-img" src="images/produit.jpg" alt="Produit RAWZ">
+          <button type="button" id="open-lightbox-btn" class="zoom-btn" title="Agrandir l'image" aria-label="Agrandir l'image">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
@@ -160,7 +160,7 @@
     <div class="modal-content">
       <button id="close-modal-btn" class="modal-close">&times;</button>
       <h2>Informations de livraison</h2>
-      <form id="checkout-form" onsubmit="return false;">
+      <form id="checkout-form">
         
         <div class="form-row">
           <div class="form-group">
@@ -263,10 +263,10 @@
     </div>
   </div>
 
-  <!-- LIGHTBOX IMAGE -->
-  <div id="lightbox-modal" class="lightbox-modal">
-    <button type="button" id="close-lightbox-btn" class="lightbox-close">&times;</button>
-    <img id="lightbox-img" class="lightbox-content" src="" alt="Image agrandie">
+  <!-- LIGHTBOX IMAGE (ZOOM MODALE) -->
+  <div id="lightbox-modal" class="lightbox-modal" aria-hidden="true">
+    <button type="button" id="close-lightbox-btn" class="lightbox-close" aria-label="Fermer la vue agrandie">&times;</button>
+    <img id="lightbox-img" class="lightbox-content" src="" alt="Image agrandie du produit">
   </div>
 
   <!-- BANDEAU DE RÉASSURANCE -->
