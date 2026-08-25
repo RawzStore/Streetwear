@@ -160,7 +160,7 @@
     <div class="modal-content">
       <button id="close-modal-btn" class="modal-close">&times;</button>
       <h2>Informations de livraison</h2>
-      <form id="checkout-form">
+      <form id="checkout-form" onsubmit="return false;">
         
         <div class="form-row">
           <div class="form-group">
@@ -382,33 +382,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://widget.mondialrelay.com/parcelshop-picker/jquery.plugin.mondialrelay.parcelshoppicker.min.js"></script>
   <script src="script.js"></script>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const openBtn = document.getElementById('open-lightbox-btn');
-      const closeBtn = document.getElementById('close-lightbox-btn');
-      const modal = document.getElementById('lightbox-modal');
-      const mainImg = document.getElementById('main-product-img');
-      const lightboxImg = document.getElementById('lightbox-img');
-
-      if (openBtn && modal && mainImg && lightboxImg) {
-        openBtn.addEventListener('click', () => {
-          lightboxImg.src = mainImg.src;
-          modal.classList.add('active');
-        });
-
-        closeBtn.addEventListener('click', () => {
-          modal.classList.remove('active');
-        });
-
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) {
-            modal.classList.remove('active');
-          }
-        });
-      }
-    });
-  </script>
 
   <!-- Vercel Web Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
