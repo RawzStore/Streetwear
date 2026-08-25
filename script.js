@@ -459,7 +459,8 @@ async function processOrderSubmit() {
     "13_TOTAL_ESTIME": `${summary.total.toFixed(2)} €`
   };
 
-  const submitBtn = document.getElementById('sumup-submit-btn');
+  // ID aligné avec index.html et product.html
+  const submitBtn = document.getElementById('stripe-submit-btn');
   if (submitBtn) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Traitement de la commande...';
@@ -509,7 +510,7 @@ async function processOrderSubmit() {
       alert("Erreur lors de la préparation du paiement : " + (checkoutData.error || "Réponse invalide."));
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> PAYER LA COMMANDE';
+        submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer la commande';
       }
     }
   } catch (e) {
@@ -517,7 +518,7 @@ async function processOrderSubmit() {
     alert("Erreur de connexion avec le serveur de paiement. Vérifie ta connexion ou retente plus tard.");
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> PAYER LA COMMANDE';
+      submitBtn.innerHTML = '<i class="fa-regular fa-credit-card"></i> Payer la commande';
     }
   }
 }
@@ -537,6 +538,7 @@ function initProductPage() {
   const priceEl = document.getElementById('product-price');
   const descEl = document.getElementById('product-description');
   const mainImgEl = document.getElementById('display-img') || document.getElementById('main-product-img');
+  const lightboxImgEl = document.getElementById('lightbox-img');
   const thumbsContainer = document.getElementById('thumbnails-container');
   const colorSwatchesContainer = document.getElementById('color-swatches-container');
   const selectedColorName = document.getElementById('selected-color-name');
@@ -564,6 +566,7 @@ function initProductPage() {
     
     thumbsContainer.innerHTML = '';
     mainImgEl.src = imageList[0];
+    if (lightboxImgEl) lightboxImgEl.src = imageList[0];
 
     imageList.forEach((imgSrc, index) => {
       const thumb = document.createElement('img');
@@ -576,6 +579,7 @@ function initProductPage() {
         e.stopPropagation();
 
         mainImgEl.src = imgSrc;
+        if (lightboxImgEl) lightboxImgEl.src = imgSrc;
 
         const currentThumbs = thumbsContainer.querySelectorAll('.thumbnail');
         currentThumbs.forEach(t => t.classList.remove('active'));
@@ -684,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProductPage();
   toggleMondialRelayZone();
 
-  // GESTION DU RETOUR STRIPE (PAIEMENT RÉUSSI OU ANNULÉ)
+  // GESTION DU RETOUR STRIPE
   const urlParams = new URLSearchParams(window.location.search);
 
   if (urlParams.get('success') === 'true') {
@@ -700,7 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 
-  // GESTION DU FORMULAIRE DE COMMANDE ET DU BOUTON
+  // GESTION DU FORMULAIRE DE COMMANDE
   const checkoutForm = document.getElementById('checkout-form');
   if (checkoutForm) {
     checkoutForm.addEventListener('submit', (e) => {
@@ -820,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelectorAll('.menu-filter-link').forEach(link => {
-    link.addEventListener('click', (e) => {
+    link.addEventListener('click', () => {
       filterByCategory(link.getAttribute('data-category'));
       closeMenu();
     });
