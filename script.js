@@ -814,11 +814,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (applyPromoBtn && promoInput && promoMsg) {
     applyPromoBtn.addEventListener('click', () => {
       const code = promoInput.value.trim().toUpperCase();
+
+      /* Code temporairement coupé
       if (code === "RAWZ10") {
         appliedDiscount = 0.10;
         promoMsg.textContent = "Code RAWZ10 appliqué (-10%) !";
         promoMsg.className = "promo-message success";
-      } else if (code === "") {
+      } else */
+      
+      if (code === "") {
         appliedDiscount = 0;
         promoMsg.textContent = "";
         promoMsg.className = "promo-message";
