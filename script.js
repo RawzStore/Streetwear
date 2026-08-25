@@ -459,14 +459,12 @@ async function processOrderSubmit() {
     "13_TOTAL_ESTIME": `${summary.total.toFixed(2)} €`
   };
 
-  // ID aligné avec index.html et product.html
   const submitBtn = document.getElementById('stripe-submit-btn');
   if (submitBtn) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Traitement de la commande...';
   }
 
-  // Envoi asynchrone à Formspree
   fetch("https://formspree.io/f/xgaweybe", {
     method: "POST",
     headers: {
@@ -476,7 +474,6 @@ async function processOrderSubmit() {
     body: JSON.stringify(formData)
   }).catch(err => console.error("Erreur Formspree :", err));
 
-  // Création de la session Stripe et redirection
   try {
     const checkoutResponse = await fetch("https://rawz-store.vercel.app/api/create-checkout", {
       method: "POST",
@@ -568,6 +565,7 @@ function initProductPage() {
     mainImgEl.src = imageList[0];
     if (lightboxImgEl) lightboxImgEl.src = imageList[0];
 
+    // Création des vignettes avec défilement fluide
     imageList.forEach((imgSrc, index) => {
       const thumb = document.createElement('img');
       thumb.src = imgSrc;
@@ -584,10 +582,50 @@ function initProductPage() {
         const currentThumbs = thumbsContainer.querySelectorAll('.thumbnail');
         currentThumbs.forEach(t => t.classList.remove('active'));
         thumb.classList.add('active');
+
+        thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       });
 
       thumbsContainer.appendChild(thumb);
     });
+
+    // Support du swipe mobile (glissement au doigt sur l'image principale)
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let currentIndex = 0;
+
+    const handleSwipe = () => {
+      const swipeDistance = touchEndX - touchStartX;
+      if (Math.abs(swipeDistance) > 40) {
+        if (swipeDistance < 0 && currentIndex < imageList.length - 1) {
+          currentIndex++;
+        } else if (swipeDistance > 0 && currentIndex > 0) {
+          currentIndex--;
+        }
+
+        const newSrc = imageList[currentIndex];
+        mainImgEl.src = newSrc;
+        if (lightboxImgEl) lightboxImgEl.src = newSrc;
+
+        const currentThumbs = thumbsContainer.querySelectorAll('.thumbnail');
+        currentThumbs.forEach((t, i) => {
+          t.classList.toggle('active', i === currentIndex);
+        });
+
+        if (currentThumbs[currentIndex]) {
+          currentThumbs[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }
+    };
+
+    mainImgEl.ontouchstart = (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    };
+
+    mainImgEl.ontouchend = (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    };
   };
 
   if (colorSwatchesContainer && product.colors && product.colors.length > 0) {
